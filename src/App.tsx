@@ -5,6 +5,7 @@ import DashboardLayout from "./layouts/dashboard/DashboardLayout";
 import Dashboard from "./features/dashboard/pages/Dashboard";
 import HomeLayout from "./layouts/home/HomeLayout";
 import ThemePage from "./theme/ThemePage";
+import AppComponentsPage from "./theme/AppComponentsPage";
 // import ThemePalette from "./components/theme/ThemePalette";
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
             <Route path="" element={<Home />} />
             <Route path="home" element={<Home />} />
             <Route path="theme" element={<ThemePage />} />
+            <Route path="app" element={<AppComponentsPage />} />
           </Route>
 
           <Route element={<DashboardLayout />}>

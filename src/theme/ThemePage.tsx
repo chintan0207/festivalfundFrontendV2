@@ -39,7 +39,6 @@ const ThemePage = () => {
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold">Theme Test Page</h1>
 
-        <ThemeToggle />
       </div>
 
       <Card>
