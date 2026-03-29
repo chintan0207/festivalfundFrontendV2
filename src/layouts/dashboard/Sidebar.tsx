@@ -36,27 +36,27 @@ const menuItems = [
   {
     title: "Contributors",
     icon: Users,
-    href: "/dashboard/contributors",
+    href: "/contributors",
   },
   {
     title: "Contributions",
     icon: Wallet,
-    href: "/dashboard/contributions",
+    href: "/contributions",
   },
   {
     title: "Expenses",
     icon: Receipt,
-    href: "/dashboard/expenses",
+    href: "/expenses",
   },
   {
     title: "Reports",
     icon: BarChart3,
-    href: "/dashboard/reports",
+    href: "/reports",
   },
   {
     title: "Settings",
     icon: Settings,
-    href: "/dashboard/settings",
+    href: "/settings",
   },
 ];
 

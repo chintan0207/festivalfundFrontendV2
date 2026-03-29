@@ -34,7 +34,7 @@ const Navbar = () => {
       className={`sticky z-50 transition-all duration-700 ease-[cubic-bezier(0.4,0,0.2,1)] will-change-transform
   ${
     scrolled
-      ? "top-3 mx-auto rounded-full border bg-background/70 backdrop-blur-xl shadow-lg px-6 scale-[0.97]"
+      ? "top-3 mx-auto max-w-5xl rounded-full border bg-background/70 backdrop-blur-xl shadow-lg px-6 scale-[0.97]"
       : "top-0 w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-4 scale-100"
   }`}
     >
