@@ -4,11 +4,13 @@ import Footer from "./Footer";
 
 const HomeLayout = () => {
   return (
-    <div className="max-w-7xl mx-auto">
+    <div className="flex min-h-screen flex-col">
       <Navbar />
-      <main className="flex-1 overflow-auto p-4 md:p-8 py-10 md:py-16 min-h-screen">
+
+      <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col">
         <Outlet />
       </main>
+
       <Footer />
     </div>
   );

@@ -1,26 +1,33 @@
+import { Outlet } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import Topbar from "./Topbar";
-import { Outlet } from "react-router-dom";
 import MobileBottomNav from "./MobileBottomNav";
 import FloatingActionButton from "./FloatingActionButton";
 
+import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
+import { TooltipProvider } from "@/components/ui/tooltip";
+
 const DashboardLayout = () => {
   return (
-    <div className="flex h-screen bg-muted/30">
-      <Sidebar />
+    <TooltipProvider>
+      <SidebarProvider>
+        <Sidebar />
 
-      <div className="flex flex-col flex-1">
-        <Topbar />
+        <SidebarInset className="flex flex-col min-h-screen">
+          <Topbar />
 
-        <main className="flex-1 overflow-auto p-4 md:p-6">
-          <Outlet />
-        </main>
+          <main className="flex-1 overflow-auto p-4 md:p-6 bg-muted/30">
+            <Outlet />
+          </main>
 
-        <MobileBottomNav />
+          <div className="md:hidden">
+            <MobileBottomNav />
+          </div>
 
-        <FloatingActionButton />
-      </div>
-    </div>
+          <FloatingActionButton />
+        </SidebarInset>
+      </SidebarProvider>
+    </TooltipProvider>
   );
 };
 

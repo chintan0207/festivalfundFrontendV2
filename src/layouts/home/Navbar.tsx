@@ -34,7 +34,7 @@ const Navbar = () => {
       className={`sticky z-50 transition-all duration-700 ease-[cubic-bezier(0.4,0,0.2,1)] will-change-transform
   ${
     scrolled
-      ? "top-3 mx-auto max-w-5xl rounded-full border bg-background/70 backdrop-blur-xl shadow-lg px-6 scale-[0.97]"
+      ? "top-3 mx-auto rounded-full border bg-background/70 backdrop-blur-xl shadow-lg px-6 scale-[0.97]"
       : "top-0 w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-4 scale-100"
   }`}
     >
@@ -96,6 +96,9 @@ const Navbar = () => {
           <AppButton size="sm" className="hidden md:flex">
             <Link to="/signup">Sign Up</Link>
           </AppButton>
+          <AppButton size="sm" className="hidden md:flex">
+            <Link to="/dashboard">Dashboard</Link>
+          </AppButton>
 
           {/* Mobile Menu */}
           <Sheet>
@@ -108,7 +111,11 @@ const Navbar = () => {
             <SheetContent side="right" className="bg-background p-4">
               <div className="flex flex-col gap-4 mt-8">
                 {navLinks.map((link) => (
-                  <AppButton className="justify-start" variant={"ghost"} key={link.href}>
+                  <AppButton
+                    className="justify-start"
+                    variant={"ghost"}
+                    key={link.href}
+                  >
                     <Link key={link.href} to={link.href}>
                       {link.name}
                     </Link>
@@ -121,6 +128,10 @@ const Navbar = () => {
 
                 <AppButton className="w-full">
                   <Link to="/signup">Sign Up</Link>
+                </AppButton>
+
+                <AppButton className="w-full">
+                  <Link to="/dashboard">Dashboard</Link>
                 </AppButton>
               </div>
             </SheetContent>
