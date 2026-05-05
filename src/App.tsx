@@ -1,6 +1,6 @@
 import "./App.css";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import Home from "./features/home/pages/Home";
+import Home from "./pages/Home";
 import DashboardLayout from "./layouts/dashboard/DashboardLayout";
 import Dashboard from "./features/dashboard/pages/Dashboard";
 import HomeLayout from "./layouts/home/HomeLayout";
@@ -12,14 +12,16 @@ import Expenses from "./features/expenses/pages/Expenses";
 import Reports from "./features/reports/pages/Reports";
 import Settings from "./features/settings/pages/Settings";
 import AppPageNotFound from "./components/common/AppPageNotFound";
-import Features from "./features/features/pages/Features";
-import Pricing from "./features/pricing/pages/Pricing";
-import About from "./features/about/pages/About";
-import Contact from "./features/contact/pages/Contact";
-import Support from "./features/support/pages/Support";
-import PrivacyPolicy from "./features/privacy-policy/pages/PrivacyPolicy";
-import TermsOfService from "./features/terms-of-service/pages/TermsOfService";
-import CookiePolicy from "./features/cookie-policy/pages/CookiePolicy";
+import Features from "./pages/Features";
+import Pricing from "./pages/Pricing";
+import About from "./pages/About";
+import Contact from "./pages/Contact";
+import Support from "./pages/Support";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsOfService from "./pages/TermsOfService";
+import CookiePolicy from "./pages/CookiePolicy";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
 // import ThemePalette from "./components/theme/ThemePalette";
 
 function App() {
@@ -29,7 +31,8 @@ function App() {
         <Routes>
           {/* Public Routes */}
           <Route path="*" element={<AppPageNotFound />} />
-
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
           <Route element={<HomeLayout />}>
             <Route path="" element={<Home />} />
             <Route path="home" element={<Home />} />
