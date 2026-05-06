@@ -15,10 +15,8 @@ const AppPageNotFound = () => {
         </p>
 
         <div className="mt-6">
-          <AppButton leftIcon={<Home />} >
-            <Link to="/">
-              Back to Home
-            </Link>
+          <AppButton leftIcon={<Home />}>
+            <Link to="/">Back to Home</Link>
           </AppButton>
         </div>
       </div>

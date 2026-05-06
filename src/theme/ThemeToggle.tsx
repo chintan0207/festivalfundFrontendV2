@@ -8,11 +8,7 @@ export function ThemeToggle() {
 
   return (
     <AppButton variant="ghost" size="icon" onClick={toggleTheme}>
-      {theme === "dark" ? (
-        <Sun className="h-5 w-5" />
-      ) : (
-        <Moon className="h-5 w-5" />
-      )}
+      {theme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
     </AppButton>
   );
 }

@@ -1,40 +1,30 @@
 /* Dashboard – Blue */
 
 .module-dashboard {
-
   --primary: oklch(0.488 0.243 264.376);
   --primary-foreground: oklch(0.97 0.014 254.604);
-
 }
 
 /* Contributors – Green */
 
 .module-contributors {
-
   --primary: oklch(0.72 0.18 145);
-
 }
 
 /* Contributions – Purple */
 
 .module-contributions {
-
   --primary: oklch(0.62 0.23 295);
-
 }
 
 /* Expenses – Red */
 
 .module-expenses {
-
   --primary: oklch(0.65 0.24 15);
-
 }
 
 /* Reports – Orange */
 
 .module-reports {
-
   --primary: oklch(0.72 0.19 55);
-
 }

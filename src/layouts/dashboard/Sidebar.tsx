@@ -1,5 +1,11 @@
 import { AppButton } from "@/components/common/AppButton";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   Sidebar as SidebarRoot,
   SidebarHeader,
@@ -89,9 +95,7 @@ const Sidebar = () => {
               {/* Text */}
               <div className="flex flex-col text-left group-data-[collapsible=icon]:hidden">
                 <span className="text-sm font-semibold">{workspace.name}</span>
-                <span className="text-xs text-muted-foreground">
-                  {workspace.role}
-                </span>
+                <span className="text-xs text-muted-foreground">{workspace.role}</span>
               </div>
 
               <ChevronDown className="ml-auto h-4 w-4 group-data-[collapsible=icon]:hidden" />
@@ -115,7 +119,6 @@ const Sidebar = () => {
             return (
               <SidebarMenuItem key={item.title}>
                 <SidebarMenuButton asChild isActive={active} className="p-5 rounded-2xl">
-                  
                   <Link to={item.href}>
                     <Icon />
 
@@ -142,9 +145,7 @@ const Sidebar = () => {
               <img src={user.avatar} className="h-8 w-8 rounded-full" />
               <div className="flex flex-col text-left group-data-[collapsible=icon]:hidden">
                 <span className="text-sm font-medium">{user.name}</span>
-                <span className="text-xs text-muted-foreground">
-                  {user.email}
-                </span>
+                <span className="text-xs text-muted-foreground">{user.email}</span>
               </div>
               <ChevronDown className="ml-auto h-4 w-4 group-data-[collapsible=icon]:hidden" />
             </AppButton>

@@ -1,10 +1,5 @@
-
 const PrivacyPolicy = () => {
-  return (
-    <div>
-        Privacy Policy
-    </div>
-  )
-}
+  return <div>Privacy Policy</div>;
+};
 
-export default PrivacyPolicy
+export default PrivacyPolicy;

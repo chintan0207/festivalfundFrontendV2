@@ -59,22 +59,15 @@ const AppComponentsPage = () => {
 
           {/* Icons */}
 
-          <AppButton leftIcon={<Plus className="h-4 w-4" />}>
-            Add Contributor
-          </AppButton>
+          <AppButton leftIcon={<Plus className="h-4 w-4" />}>Add Contributor</AppButton>
 
-          <AppButton rightIcon={<ArrowRight className="h-4 w-4" />}>
-            Next
-          </AppButton>
+          <AppButton rightIcon={<ArrowRight className="h-4 w-4" />}>Next</AppButton>
 
           <AppButton variant="outline" size="icon">
             <Settings className="h-4 w-4" />
           </AppButton>
 
-          <AppButton
-            variant="destructive"
-            leftIcon={<Trash className="h-4 w-4" />}
-          >
+          <AppButton variant="destructive" leftIcon={<Trash className="h-4 w-4" />}>
             Delete Item
           </AppButton>
 
@@ -89,17 +82,11 @@ const AppComponentsPage = () => {
 
         {/* Categories */}
 
-        <AppBadge
-          icon={<Users className="h-4 w-4" />}
-          className={badgeColors.boys}
-        >
+        <AppBadge icon={<Users className="h-4 w-4" />} className={badgeColors.boys}>
           Boys
         </AppBadge>
 
-        <AppBadge
-          icon={<Users className="h-4 w-4" />}
-          className={badgeColors.girls}
-        >
+        <AppBadge icon={<Users className="h-4 w-4" />} className={badgeColors.girls}>
           Girls
         </AppBadge>
 
@@ -112,10 +99,7 @@ const AppComponentsPage = () => {
 
         {/* Contribution Status */}
 
-        <AppBadge
-          icon={<Clock className="h-4 w-4" />}
-          className={badgeColors.pending}
-        >
+        <AppBadge icon={<Clock className="h-4 w-4" />} className={badgeColors.pending}>
           Pending Deposit
         </AppBadge>
 
@@ -135,17 +119,11 @@ const AppComponentsPage = () => {
           Decoration
         </AppBadge>
 
-        <AppBadge
-          icon={<Tent className="h-4 w-4" />}
-          className={badgeColors.mandap}
-        >
+        <AppBadge icon={<Tent className="h-4 w-4" />} className={badgeColors.mandap}>
           Mandap
         </AppBadge>
 
-        <AppBadge
-          icon={<Volume2 className="h-4 w-4" />}
-          className={badgeColors.sound}
-        >
+        <AppBadge icon={<Volume2 className="h-4 w-4" />} className={badgeColors.sound}>
           Sound
         </AppBadge>
       </div>

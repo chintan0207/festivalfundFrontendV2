@@ -11,7 +11,6 @@ import { useEffect, useState } from "react";
 import { ThemeToggle } from "@/theme/ThemeToggle";
 import { AppButton } from "@/components/common/AppButton";
 const Navbar = () => {
-  
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -111,11 +110,7 @@ const Navbar = () => {
             <SheetContent side="right" className="bg-background p-4">
               <div className="flex flex-col gap-4 mt-8">
                 {navLinks.map((link) => (
-                  <AppButton
-                    className="justify-start"
-                    variant={"ghost"}
-                    key={link.href}
-                  >
+                  <AppButton className="justify-start" variant={"ghost"} key={link.href}>
                     <Link key={link.href} to={link.href}>
                       {link.name}
                     </Link>

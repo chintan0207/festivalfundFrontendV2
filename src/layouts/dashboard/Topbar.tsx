@@ -1,6 +1,6 @@
 import { SidebarTrigger } from "@/components/ui/sidebar";
 
-import { Bell} from "lucide-react";
+import { Bell } from "lucide-react";
 import { AppButton } from "@/components/common/AppButton";
 import { ThemeToggle } from "@/theme/ThemeToggle";
 
@@ -11,9 +11,7 @@ const Topbar = () => {
         <SidebarTrigger />
 
         <div className="flex-1">
-          <h2 className="text-sm font-semibold lg:text-base">
-            Festival Dashboard
-          </h2>
+          <h2 className="text-sm font-semibold lg:text-base">Festival Dashboard</h2>
         </div>
 
         <div className="flex items-center gap-2">
@@ -22,7 +20,7 @@ const Topbar = () => {
           </AppButton>
 
           <AppButton variant="ghost" size="icon">
-            <ThemeToggle/>
+            <ThemeToggle />
           </AppButton>
         </div>
       </div>

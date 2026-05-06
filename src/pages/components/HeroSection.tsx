@@ -53,10 +53,7 @@ const HeroSection = () => {
       <div className="container mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center">
         {/* LEFT SIDE */}
         <div className="space-y-6 text-center lg:text-left">
-          <AppBadge
-            icon={<Star className="h-4 w-4 text-primary" />}
-            className="w-fit"
-          >
+          <AppBadge icon={<Star className="h-4 w-4 text-primary" />} className="w-fit">
             {content.badge}
           </AppBadge>
 
@@ -66,9 +63,7 @@ const HeroSection = () => {
             for <span className="text-primary">{content.titleHighlight}</span>
           </h1>
 
-          <p className="text-muted-foreground max-w-xl text-lg">
-            {content.description}
-          </p>
+          <p className="text-muted-foreground max-w-xl text-lg">{content.description}</p>
 
           {/* Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
@@ -141,14 +136,7 @@ type HeroCardProps = {
   className?: string;
 };
 
-const HeroCard = ({
-  title,
-  amount,
-  meta1,
-  meta2,
-  icon,
-  className,
-}: HeroCardProps) => {
+const HeroCard = ({ title, amount, meta1, meta2, icon, className }: HeroCardProps) => {
   return (
     <div
       className={`group w-[220px] bg-card/70 backdrop-blur border border-border rounded-2xl p-6 shadow-xl transition-all duration-300 hover:scale-105 hover:-translate-y-1 ${className}`}

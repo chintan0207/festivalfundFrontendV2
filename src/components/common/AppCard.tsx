@@ -14,22 +14,14 @@ interface AppCardProps extends React.ComponentProps<typeof Card> {
   icon?: React.ReactNode;
 }
 
-export function AppCard({
-  title,
-  subtitle,
-  icon,
-  children,
-  ...props
-}: AppCardProps) {
+export function AppCard({ title, subtitle, icon, children, ...props }: AppCardProps) {
   return (
     <Card {...props}>
       {(title || subtitle || icon) && (
         <CardHeader>
           <div className="flex items-start gap-3">
             {icon && (
-              <div className="rounded-md bg-primary/10 p-2 text-primary">
-                {icon}
-              </div>
+              <div className="rounded-md bg-primary/10 p-2 text-primary">{icon}</div>
             )}
 
             <div className="space-y-1">

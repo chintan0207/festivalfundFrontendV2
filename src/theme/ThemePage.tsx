@@ -38,7 +38,6 @@ const ThemePage = () => {
 
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold">Theme Test Page</h1>
-
       </div>
 
       <Card>
@@ -51,16 +50,8 @@ const ThemePage = () => {
           <section>
             <h3 className="mb-3 font-semibold">Core Colors</h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <ColorBlock
-                name="Background"
-                className="bg-background"
-                recommended
-              />
-              <ColorBlock
-                name="Foreground"
-                className="bg-foreground"
-                recommended
-              />
+              <ColorBlock name="Background" className="bg-background" recommended />
+              <ColorBlock name="Foreground" className="bg-foreground" recommended />
               <ColorBlock name="Primary" className="bg-primary" recommended />
               <ColorBlock name="Secondary" className="bg-secondary" />
               <ColorBlock name="Accent" className="bg-accent" />
@@ -139,9 +130,7 @@ const ThemePage = () => {
 
               <Alert variant="destructive">
                 <AlertTitle>Error</AlertTitle>
-                <AlertDescription>
-                  Uses destructive color tokens.
-                </AlertDescription>
+                <AlertDescription>Uses destructive color tokens.</AlertDescription>
               </Alert>
             </div>
           </section>
@@ -155,9 +144,7 @@ const ThemePage = () => {
                 Muted foreground (descriptions, hints)
               </p>
               <p className="text-primary font-medium">Primary colored text</p>
-              <p className="text-destructive font-medium">
-                Destructive / error text
-              </p>
+              <p className="text-destructive font-medium">Destructive / error text</p>
             </div>
           </section>
 
@@ -165,17 +152,9 @@ const ThemePage = () => {
           <section>
             <h3 className="mb-3 font-semibold">Border & Ring</h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <ColorBlock
-                name="Border"
-                className="border-4 border-border"
-                recommended
-              />
+              <ColorBlock name="Border" className="border-4 border-border" recommended />
               <ColorBlock name="Input" className="bg-input" />
-              <ColorBlock
-                name="Ring"
-                className="ring-4 ring-ring"
-                recommended
-              />
+              <ColorBlock name="Ring" className="ring-4 ring-ring" recommended />
             </div>
           </section>
 
@@ -197,26 +176,11 @@ const ThemePage = () => {
           <section>
             <h3 className="mb-3 font-semibold">Charts</h3>
             <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-              <ColorBlock
-                name="Chart 1"
-                className="bg-[color:var(--chart-1)]"
-              />
-              <ColorBlock
-                name="Chart 2"
-                className="bg-[color:var(--chart-2)]"
-              />
-              <ColorBlock
-                name="Chart 3"
-                className="bg-[color:var(--chart-3)]"
-              />
-              <ColorBlock
-                name="Chart 4"
-                className="bg-[color:var(--chart-4)]"
-              />
-              <ColorBlock
-                name="Chart 5"
-                className="bg-[color:var(--chart-5)]"
-              />
+              <ColorBlock name="Chart 1" className="bg-[color:var(--chart-1)]" />
+              <ColorBlock name="Chart 2" className="bg-[color:var(--chart-2)]" />
+              <ColorBlock name="Chart 3" className="bg-[color:var(--chart-3)]" />
+              <ColorBlock name="Chart 4" className="bg-[color:var(--chart-4)]" />
+              <ColorBlock name="Chart 5" className="bg-[color:var(--chart-5)]" />
             </div>
           </section>
         </CardContent>

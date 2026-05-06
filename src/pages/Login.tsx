@@ -52,8 +52,8 @@ export default function Login() {
           </h1>
 
           <p className="text-muted-foreground text-base leading-relaxed">
-            Track contributions, manage expenses, and generate professional
-            reports for Ganesh Chaturthi, Navratri, and more.
+            Track contributions, manage expenses, and generate professional reports for
+            Ganesh Chaturthi, Navratri, and more.
           </p>
 
           <div className="space-y-3 text-sm">
@@ -119,11 +119,7 @@ export default function Login() {
             </div>
 
             {/* Login */}
-            <AppButton
-              type="submit"
-              loading={isSubmitting}
-              className="w-full text-base"
-            >
+            <AppButton type="submit" loading={isSubmitting} className="w-full text-base">
               Login
             </AppButton>
 

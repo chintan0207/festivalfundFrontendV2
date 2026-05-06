@@ -39,19 +39,13 @@ function Stepper({ step }: { step: number }) {
         <div key={s} className="flex items-center">
           <div
             className={`h-10 w-10 flex items-center justify-center rounded-full text-sm font-semibold transition
-            ${
-              step >= s
-                ? "bg-primary text-white"
-                : "bg-muted text-muted-foreground"
-            }`}
+            ${step >= s ? "bg-primary text-white" : "bg-muted text-muted-foreground"}`}
           >
             {step > s ? "✓" : s}
           </div>
 
           {i !== 2 && (
-            <div
-              className={`w-10 h-[2px] ${step > s ? "bg-primary" : "bg-muted"}`}
-            />
+            <div className={`w-10 h-[2px] ${step > s ? "bg-primary" : "bg-muted"}`} />
           )}
         </div>
       ))}
@@ -112,7 +106,6 @@ export default function Signup() {
 
       {/* RIGHT SIDE */}
       <div className="flex items-center justify-center px-4 py-10 overflow-hidden">
-        
         <AppCard className="w-full max-w-md">
           <Stepper step={step} />
 
@@ -189,12 +182,7 @@ export default function Signup() {
 
                 {/* FIXED BUTTON LAYOUT */}
                 <div className="flex justify-between pt-2">
-                  <AppButton
-                    size="sm"
-                    type="button"
-                    variant="outline"
-                    onClick={prevStep}
-                  >
+                  <AppButton size="sm" type="button" variant="outline" onClick={prevStep}>
                     ← Previous
                   </AppButton>
 
@@ -226,9 +214,7 @@ export default function Signup() {
 
                 <div className="rounded-xl border p-3 bg-muted/50 text-xs sm:text-sm">
                   <p className="font-medium">Selected Plan: Standard</p>
-                  <p className="text-muted-foreground">
-                    ₹499/month • 30-day free trial
-                  </p>
+                  <p className="text-muted-foreground">₹499/month • 30-day free trial</p>
                 </div>
 
                 {/* FIXED BUTTON LAYOUT */}

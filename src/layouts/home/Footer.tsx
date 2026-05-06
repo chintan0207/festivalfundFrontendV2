@@ -52,9 +52,8 @@ const Footer = () => {
             </div>
 
             <p className="text-sm text-muted-foreground">
-              Empowering Festivalfund across India with modern tools for
-              festival management, contribution tracking, and community
-              organization.
+              Empowering Festivalfund across India with modern tools for festival
+              management, contribution tracking, and community organization.
             </p>
           </div>
 

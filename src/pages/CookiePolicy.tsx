@@ -1,9 +1,5 @@
 const CookiePolicy = () => {
-  return (
-    <div>
-      Cookie Policy
-    </div>
-  )
-}
+  return <div>Cookie Policy</div>;
+};
 
-export default CookiePolicy
+export default CookiePolicy;
