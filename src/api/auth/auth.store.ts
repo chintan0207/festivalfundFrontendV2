@@ -15,6 +15,7 @@ type AuthState = {
   login: (email: string, password: string) => Promise<boolean>;
   signup: (data: SignupPayload) => Promise<boolean>;
   logout: () => void;
+  getMe: () => Promise<void>;
 };
 
 export const useAuthStore = create<AuthState>()(
@@ -67,6 +68,27 @@ export const useAuthStore = create<AuthState>()(
           set({ isLoading: false });
           toast.error(error?.response?.data?.message || "Signup failed");
           return false;
+        }
+      },
+
+      getMe: async () => {
+        try {
+          const res = await AuthService.getMe();
+          const { loggedInUser, organization } = res.data;
+          set({
+            user: loggedInUser,
+            organization,
+            isAuthenticated: true,
+          });
+        } catch (error: any) {
+          console.error("Failed to fetch user data:", error);
+          set({
+            user: null,
+            organization: null,
+            accessToken: null,
+            refreshToken: null,
+            isAuthenticated: false,
+          });
         }
       },
 

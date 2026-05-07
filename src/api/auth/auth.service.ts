@@ -26,4 +26,9 @@ export const AuthService = {
 
     return response.data;
   },
+
+  getMe: async () => {
+    const response = await ApiClient.get<ApiResponse<AuthResponse>>("/auth/me");
+    return response.data;
+  },
 };
