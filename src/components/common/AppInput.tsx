@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import * as React from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -5,7 +6,7 @@ import { cn } from "@/lib/utils";
 
 interface AppInputProps extends React.ComponentProps<typeof Input> {
   label?: string;
-  error?: string;
+  error?: any;
   hint?: string;
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;

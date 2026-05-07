@@ -22,6 +22,9 @@ import TermsOfService from "./pages/TermsOfService";
 import CookiePolicy from "./pages/CookiePolicy";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import { PublicRoute } from "./routes/PublicRoute";
+import { ProtectedRoute } from "./routes/ProtectedRoute";
+import { GlobalRoleEnum } from "./lib/constants";
 // import ThemePalette from "./components/theme/ThemePalette";
 
 function App() {
@@ -31,8 +34,10 @@ function App() {
         <Routes>
           {/* Public Routes */}
           <Route path="*" element={<AppPageNotFound />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
+          <Route element={<PublicRoute />}>
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+          </Route>
           <Route element={<HomeLayout />}>
             <Route path="" element={<Home />} />
             <Route path="home" element={<Home />} />
@@ -47,14 +52,15 @@ function App() {
             <Route path="theme" element={<ThemePage />} />
             <Route path="app" element={<AppComponentsPage />} />
           </Route>
-
-          <Route element={<DashboardLayout />}>
-            <Route path="dashboard" element={<Dashboard />} />
-            <Route path="contributions" element={<Contributions />} />
-            <Route path="contributors" element={<Contributors />} />
-            <Route path="expenses" element={<Expenses />} />
-            <Route path="reports" element={<Reports />} />
-            <Route path="settings" element={<Settings />} />
+          <Route element={<ProtectedRoute allowedRoles={[GlobalRoleEnum.ORG_ADMIN]} />}>
+            <Route element={<DashboardLayout />}>
+              <Route path="dashboard" element={<Dashboard />} />
+              <Route path="contributions" element={<Contributions />} />
+              <Route path="contributors" element={<Contributors />} />
+              <Route path="expenses" element={<Expenses />} />
+              <Route path="reports" element={<Reports />} />
+              <Route path="settings" element={<Settings />} />
+            </Route>
           </Route>
         </Routes>
       </BrowserRouter>

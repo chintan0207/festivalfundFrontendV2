@@ -1,3 +1,4 @@
+import { useAuthStore } from "@/api/auth/auth.store";
 import { AppButton } from "@/components/common/AppButton";
 import {
   DropdownMenu,
@@ -66,13 +67,8 @@ const menuItems = [
   },
 ];
 
-const user = {
-  name: "Admin",
-  email: "admin@servicehub.com",
-  avatar: "https://github.com/shadcn.png",
-};
-
 const Sidebar = () => {
+  const { user, logout } = useAuthStore();
   const location = useLocation();
 
   return (
@@ -103,8 +99,10 @@ const Sidebar = () => {
           </DropdownMenuTrigger>
 
           <DropdownMenuContent align="start">
-            <DropdownMenuItem>{workspace.name}</DropdownMenuItem>
-            <DropdownMenuItem>Create workspace</DropdownMenuItem>
+            <Link to="/">
+              <DropdownMenuItem>Home</DropdownMenuItem>
+            </Link>
+            <DropdownMenuItem>Create Festival</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarHeader>
@@ -142,10 +140,10 @@ const Sidebar = () => {
               className="py-7 group-data-[collapsible=icon]:p-0"
             >
               {" "}
-              <img src={user.avatar} className="h-8 w-8 rounded-full" />
+              <img src="https://github.com/shadcn.png" className="h-8 w-8 rounded-full" />
               <div className="flex flex-col text-left group-data-[collapsible=icon]:hidden">
-                <span className="text-sm font-medium">{user.name}</span>
-                <span className="text-xs text-muted-foreground">{user.email}</span>
+                <span className="text-sm font-medium">{user?.name}</span>
+                <span className="text-xs text-muted-foreground">{user?.email}</span>
               </div>
               <ChevronDown className="ml-auto h-4 w-4 group-data-[collapsible=icon]:hidden" />
             </AppButton>
@@ -162,7 +160,7 @@ const Sidebar = () => {
 
             <DropdownMenuSeparator />
 
-            <DropdownMenuItem>Log out</DropdownMenuItem>
+            <DropdownMenuItem onClick={logout}>Log out</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarFooter>

@@ -1,42 +1,36 @@
-import { Link } from "react-router-dom";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
-
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-
 import { AppButton } from "@/components/common/AppButton";
 import { AppCard } from "@/components/common/AppCard";
 import { AppInput } from "@/components/common/AppInput";
-
-/* ---------------- VALIDATION ---------------- */
-
-const schema = z.object({
-  email: z.string().email("Invalid email"),
-  password: z.string().min(6, "Minimum 6 characters"),
-});
-
-type FormData = z.infer<typeof schema>;
+import { loginSchema } from "./schema/AuthSchema";
+import { useAuthStore } from "@/api/auth/auth.store";
 
 export default function Login() {
+  const { login } = useAuthStore();
+  const navigate = useNavigate();
   const [rememberMe, setRememberMe] = useState(false);
 
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<FormData>({
-    resolver: zodResolver(schema),
+  } = useForm<any>({
+    resolver: zodResolver(loginSchema),
     mode: "onChange",
   });
 
-  const onSubmit = async (data: FormData) => {
+  const onSubmit = async (data: any) => {
     console.log({ ...data, rememberMe });
-    await new Promise((res) => setTimeout(res, 1000)); // simulate API
-    alert("Login successful (UI only)");
+    const success = await login(data.email, data.password);
+    if (success) {
+      navigate("/dashboard");
+    }
   };
 
   return (
@@ -97,7 +91,7 @@ export default function Login() {
               type="password"
               placeholder="••••••••"
               {...register("password")}
-              error={errors.password?.message}
+              error={errors?.password?.message}
             />
 
             {/* Remember + Forgot */}
