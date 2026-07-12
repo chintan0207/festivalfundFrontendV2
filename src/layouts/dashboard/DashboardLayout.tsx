@@ -1,4 +1,4 @@
-import { Outlet } from "react-router-dom";
+import { Outlet } from "@tanstack/react-router";
 import { useCurrentUser } from "@/api/hooks/useAuth";
 import Sidebar from "./Sidebar";
 import Topbar from "./Topbar";

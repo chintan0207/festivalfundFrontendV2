@@ -2,7 +2,7 @@ import { FiFacebook } from "react-icons/fi";
 import { FaXTwitter } from "react-icons/fa6";
 import { FaInstagram } from "react-icons/fa";
 import { FiLinkedin } from "react-icons/fi";
-import { Link } from "react-router-dom";
+import { Link } from "@tanstack/react-router";
 
 const Footer = () => {
   const footerSections = [

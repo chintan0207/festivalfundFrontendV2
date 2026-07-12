@@ -1,5 +1,5 @@
 import { AppButton } from "./AppButton";
-import { Link } from "react-router-dom";
+import { Link } from "@tanstack/react-router";
 import { Home } from "lucide-react";
 
 const AppPageNotFound = () => {

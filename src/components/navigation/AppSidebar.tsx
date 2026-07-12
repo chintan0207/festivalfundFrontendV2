@@ -17,7 +17,7 @@ import {
   Settings,
 } from "lucide-react";
 
-import { Link } from "react-router-dom";
+import { Link } from "@tanstack/react-router";
 
 export function AppSidebar() {
   return (
@@ -37,7 +37,7 @@ export function AppSidebar() {
 
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
-                  <Link to="/contributors">
+                  <Link to="/dashboard/contributors">
                     <Users />
                     Contributors
                   </Link>
@@ -46,7 +46,7 @@ export function AppSidebar() {
 
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
-                  <Link to="/contributions">
+                  <Link to="/dashboard/contributions">
                     <IndianRupee />
                     Contributions
                   </Link>
@@ -55,7 +55,7 @@ export function AppSidebar() {
 
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
-                  <Link to="/expenses">
+                  <Link to="/dashboard/expenses">
                     <ReceiptText />
                     Expenses
                   </Link>
@@ -64,7 +64,7 @@ export function AppSidebar() {
 
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
-                  <Link to="/reports">
+                  <Link to="/dashboard/reports">
                     <BarChart3 />
                     Reports
                   </Link>
@@ -73,7 +73,7 @@ export function AppSidebar() {
 
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
-                  <Link to="/settings">
+                  <Link to="/dashboard/settings">
                     <Settings />
                     Settings
                   </Link>

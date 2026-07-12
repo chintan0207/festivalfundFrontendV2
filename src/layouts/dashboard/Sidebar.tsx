@@ -28,7 +28,7 @@ import {
   ChevronDown,
 } from "lucide-react";
 
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation } from "@tanstack/react-router";
 
 const workspace = {
   name: "FestivalFund",
@@ -44,27 +44,27 @@ const menuItems = [
   {
     title: "Contributors",
     icon: Users,
-    href: "/contributors",
+    href: "/dashboard/contributors",
   },
   {
     title: "Contributions",
     icon: Wallet,
-    href: "/contributions",
+    href: "/dashboard/contributions",
   },
   {
     title: "Expenses",
     icon: Receipt,
-    href: "/expenses",
+    href: "/dashboard/expenses",
   },
   {
     title: "Reports",
     icon: BarChart3,
-    href: "/reports",
+    href: "/dashboard/reports",
   },
   {
     title: "Settings",
     icon: Settings,
-    href: "/settings",
+    href: "/dashboard/settings",
   },
 ];
 

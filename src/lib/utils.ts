@@ -11,10 +11,10 @@ export const getDashboardRoute = (user: any) => {
   console.log("getDashboardRoute user:", user);
   switch (user?.role) {
     case GlobalRoleEnum.ORG_ADMIN:
-      return "/dashboard";
+      return "/dashboard" as const;
     case GlobalRoleEnum.ORG_VIEWER:
-      return "/viewer/dashboard";
+      return "/dashboard" as const;
     default:
-      return "/";
+      return "/" as const;
   }
 };
