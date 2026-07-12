@@ -8,7 +8,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { AppButton } from "@/components/common/AppButton";
 import { AppCard } from "@/components/common/AppCard";
 import { AppInput } from "@/components/common/AppInput";
-import { loginSchema } from "./schema/AuthSchema";
+import { loginSchema } from "../auth/schema/AuthSchema";
 import { useLogin } from "@/api/hooks/useAuth";
 
 export default function Login() {

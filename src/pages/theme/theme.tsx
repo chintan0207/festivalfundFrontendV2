@@ -1,8 +1,8 @@
 import { Badge } from "@/components/ui/badge";
-import { ThemeToggle } from "./ThemeToggle";
+import { ThemeToggle } from "@/theme/ThemeToggle";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { gradientColors } from "./colors";
+import { gradientColors } from "@/theme/colors";
 import { MdCancel } from "react-icons/md";
 import { FaCheckCircle, FaClock } from "react-icons/fa";
 import { Input } from "@/components/ui/input";

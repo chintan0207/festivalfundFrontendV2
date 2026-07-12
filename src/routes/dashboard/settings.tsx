@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import Settings from "@/features/settings/pages/Settings";
+import Settings from "@/pages/settings/settings";
 
 export const Route = createFileRoute("/dashboard/settings")({
   component: Settings,

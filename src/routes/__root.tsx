@@ -9,7 +9,7 @@ interface RouterContext {
   queryClient: QueryClient;
 }
 
-const AppPageNotFound = lazy(() => import("@/components/common/AppPageNotFound"));
+const AppPageNotFound = lazy(() => import("@/pages/404/404"));
 
 export const Route = createRootRouteWithContext<RouterContext>()({
   component: RootLayout,

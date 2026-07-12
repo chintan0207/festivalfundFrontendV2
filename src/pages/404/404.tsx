@@ -1,4 +1,4 @@
-import { AppButton } from "./AppButton";
+import { AppButton } from "@/components/common/AppButton";
 import { Link } from "@tanstack/react-router";
 import { Home } from "lucide-react";
 
@@ -11,7 +11,7 @@ const AppPageNotFound = () => {
         <h2 className="mt-4 text-2xl font-semibold">Page Not Found</h2>
 
         <p className="mt-2 max-w-md text-muted-foreground">
-          The page you are looking for doesn’t exist or has been moved.
+          The page you are looking for doesn't exist or has been moved.
         </p>
 
         <div className="mt-6">

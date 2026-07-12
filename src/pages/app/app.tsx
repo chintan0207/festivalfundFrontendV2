@@ -1,5 +1,5 @@
 import { AppButton } from "@/components/common/AppButton";
-import { badgeColors, gradientColors } from "./colors";
+import { badgeColors, gradientColors } from "@/theme/colors";
 import {
   ArrowRight,
   CheckCircle,

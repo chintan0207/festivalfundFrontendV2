@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowBigLeft, ArrowBigRight } from "lucide-react";
 import { AppCard } from "@/components/common/AppCard";
 import { AppButton } from "@/components/common/AppButton";
-import { registerSchema, type RegisterFormData } from "./schema/AuthSchema";
+import { registerSchema, type RegisterFormData } from "../auth/schema/AuthSchema";
 import { stepContent, StepOne, StepThree, StepTwo } from "./components/SignupSteps";
 import SignupStepper from "./components/SignupStepper";
 import { useSignup } from "@/api/hooks/useAuth";
