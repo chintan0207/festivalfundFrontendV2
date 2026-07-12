@@ -1,13 +1,8 @@
-import { useAuthStore } from "@/api/auth/auth.store";
+import { useCurrentUser } from "@/api/hooks/useAuth";
 import HeroSection from "./components/HeroSection";
-import { useEffect } from "react";
 
 const Home = () => {
-  const { getMe } = useAuthStore();
-
-  useEffect(() => {
-    getMe();
-  }, [getMe]);
+  useCurrentUser();
   
   return (
     <div className="py-10">

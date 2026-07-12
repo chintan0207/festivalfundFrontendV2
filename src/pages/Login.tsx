@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -9,11 +9,10 @@ import { AppButton } from "@/components/common/AppButton";
 import { AppCard } from "@/components/common/AppCard";
 import { AppInput } from "@/components/common/AppInput";
 import { loginSchema } from "./schema/AuthSchema";
-import { useAuthStore } from "@/api/auth/auth.store";
+import { useLogin } from "@/api/hooks/useAuth";
 
 export default function Login() {
-  const { login } = useAuthStore();
-  const navigate = useNavigate();
+  const loginMutation = useLogin();
   const [rememberMe, setRememberMe] = useState(false);
 
   const {
@@ -26,11 +25,7 @@ export default function Login() {
   });
 
   const onSubmit = async (data: any) => {
-    console.log({ ...data, rememberMe });
-    const success = await login(data.email, data.password);
-    if (success) {
-      navigate("/dashboard");
-    }
+    loginMutation.mutate({ email: data.email, password: data.password });
   };
 
   return (
@@ -113,7 +108,7 @@ export default function Login() {
             </div>
 
             {/* Login */}
-            <AppButton type="submit" loading={isSubmitting} className="w-full text-base">
+            <AppButton type="submit" loading={isSubmitting || loginMutation.isPending} className="w-full text-base">
               Login
             </AppButton>
 

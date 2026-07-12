@@ -1,4 +1,5 @@
 import { Outlet } from "react-router-dom";
+import { useCurrentUser } from "@/api/hooks/useAuth";
 import Sidebar from "./Sidebar";
 import Topbar from "./Topbar";
 import MobileBottomNav from "./MobileBottomNav";
@@ -8,6 +9,8 @@ import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
 const DashboardLayout = () => {
+  useCurrentUser();
+
   return (
     <TooltipProvider>
       <SidebarProvider>

@@ -1,4 +1,4 @@
-import type { AuthResponse, SignupPayload } from "@/types/Types";
+import type { AuthResponse, SignupPayload, User } from "@/types/Types";
 import ApiClient from "../apiClient";
 
 type ApiResponse<T> = {
@@ -28,7 +28,7 @@ export const AuthService = {
   },
 
   getMe: async () => {
-    const response = await ApiClient.get<ApiResponse<AuthResponse>>("/auth/me");
+    const response = await ApiClient.get<ApiResponse<User>>("/auth/me");
     return response.data;
   },
 };

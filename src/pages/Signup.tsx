@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -8,11 +8,10 @@ import { AppButton } from "@/components/common/AppButton";
 import { registerSchema, type RegisterFormData } from "./schema/AuthSchema";
 import { stepContent, StepOne, StepThree, StepTwo } from "./components/SignupSteps";
 import SignupStepper from "./components/SignupStepper";
-import { useAuthStore } from "@/api/auth/auth.store";
+import { useSignup } from "@/api/hooks/useAuth";
 
 export default function Signup() {
-  const { signup } = useAuthStore();
-  const navigate = useNavigate();
+  const signupMutation = useSignup();
   const [step, setStep] = useState(1);
 
   const {
@@ -48,10 +47,9 @@ export default function Signup() {
   };
 
   const onSubmit = async (data: RegisterFormData) => {
-    console.log(data);
     const { name, address, adminName, email, phone, adminPassword } = data;
 
-    const success = await signup({
+    signupMutation.mutate({
       name,
       address,
       adminName,
@@ -59,10 +57,6 @@ export default function Signup() {
       phone,
       adminPassword,
     });
-
-    if (success) {
-      navigate("/dashboard");
-    }
   };
 
   const currentStep = stepContent[step as keyof typeof stepContent];

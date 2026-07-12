@@ -1,9 +1,6 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import type { Organization, SignupPayload, User } from "@/types/Types";
-import { toast } from "sonner";
+import type { Organization, User } from "@/types/Types";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { AuthService } from "./auth.service";
 
 type AuthState = {
   user: User | null;
@@ -11,11 +8,13 @@ type AuthState = {
   accessToken: string | null;
   refreshToken: string | null;
   isAuthenticated: boolean;
-  isLoading: boolean;
-  login: (email: string, password: string) => Promise<boolean>;
-  signup: (data: SignupPayload) => Promise<boolean>;
-  logout: () => void;
-  getMe: () => Promise<void>;
+  setAuth: (data: {
+    user: User;
+    organization?: Organization;
+    accessToken?: string;
+    refreshToken?: string;
+  }) => void;
+  clearAuth: () => void;
 };
 
 export const useAuthStore = create<AuthState>()(
@@ -26,74 +25,27 @@ export const useAuthStore = create<AuthState>()(
       accessToken: null,
       refreshToken: null,
       isAuthenticated: false,
-      isLoading: false,
-      login: async (email, password) => {
-        try {
-          set({ isLoading: true });
-          const res = await AuthService.login(email, password);
-          const { accessToken, refreshToken, loggedInUser } = res.data;
-          set({
-            user: loggedInUser,
-            accessToken,
-            refreshToken,
-            isAuthenticated: true,
-            isLoading: false,
-          });
 
-          toast.success(res.message || "Login successful");
-          return true;
-        } catch (error: any) {
-          set({ isLoading: false });
-          toast.error(error?.response?.data?.message || "Login failed");
-          return false;
-        }
+      setAuth: ({ user, organization, accessToken, refreshToken }) => {
+        const token = accessToken ?? localStorage.getItem("token");
+        const rToken = refreshToken ?? localStorage.getItem("refreshToken");
+        if (token) localStorage.setItem("token", token);
+        if (rToken) localStorage.setItem("refreshToken", rToken);
+
+        return set({
+          user,
+          organization: organization ?? null,
+          accessToken: token,
+          refreshToken: rToken,
+          isAuthenticated: true,
+        });
       },
 
-      signup: async (data) => {
-        try {
-          set({ isLoading: true });
-          const res = await AuthService.signup(data);
-          const { accessToken, refreshToken, loggedInUser, organization } = res.data;
-          set({
-            user: loggedInUser,
-            organization,
-            accessToken,
-            refreshToken,
-            isAuthenticated: true,
-            isLoading: false,
-          });
-          toast.success(res.message || "Organization created successfully");
-          return true;
-        } catch (error: any) {
-          set({ isLoading: false });
-          toast.error(error?.response?.data?.message || "Signup failed");
-          return false;
-        }
-      },
+      clearAuth: () => {
+        localStorage.removeItem("token");
+        localStorage.removeItem("refreshToken");
 
-      getMe: async () => {
-        try {
-          const res = await AuthService.getMe();
-          const { loggedInUser, organization } = res.data;
-          set({
-            user: loggedInUser,
-            organization,
-            isAuthenticated: true,
-          });
-        } catch (error: any) {
-          console.error("Failed to fetch user data:", error);
-          set({
-            user: null,
-            organization: null,
-            accessToken: null,
-            refreshToken: null,
-            isAuthenticated: false,
-          });
-        }
-      },
-
-      logout: () => {
-        set({
+        return set({
           user: null,
           organization: null,
           accessToken: null,

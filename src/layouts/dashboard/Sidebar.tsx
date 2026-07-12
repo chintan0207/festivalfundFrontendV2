@@ -1,4 +1,5 @@
 import { useAuthStore } from "@/api/auth/auth.store";
+import { useLogout } from "@/api/hooks/useAuth";
 import { AppButton } from "@/components/common/AppButton";
 import {
   DropdownMenu,
@@ -68,7 +69,8 @@ const menuItems = [
 ];
 
 const Sidebar = () => {
-  const { user, logout } = useAuthStore();
+  const { user } = useAuthStore();
+  const logout = useLogout();
   const location = useLocation();
 
   return (
@@ -160,7 +162,7 @@ const Sidebar = () => {
 
             <DropdownMenuSeparator />
 
-            <DropdownMenuItem onClick={logout}>Log out</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => logout()}>Log out</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarFooter>

@@ -19,8 +19,10 @@ import { ThemeToggle } from "@/theme/ThemeToggle";
 import { AppButton } from "@/components/common/AppButton";
 import { getDashboardRoute } from "@/lib/utils";
 import { useAuthStore } from "@/api/auth/auth.store";
+import { useLogout } from "@/api/hooks/useAuth";
 const Navbar = () => {
-  const { isAuthenticated, user, logout } = useAuthStore();
+  const { isAuthenticated, user } = useAuthStore();
+  const logout = useLogout();
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -92,7 +94,7 @@ const Navbar = () => {
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={logout}>
+                <DropdownMenuItem onClick={() => logout()}>
                   <LogOut className="h-4 w-4" />
                   Logout
                 </DropdownMenuItem>

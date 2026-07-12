@@ -1,5 +1,6 @@
 import axios from "axios";
 import { API_BASE_URL, REFRESH_TOKEN_URL } from "./env";
+import { useAuthStore } from "./auth/auth.store";
 
 const ApiClient = axios.create({
   baseURL: API_BASE_URL || "http://localhost:5000/api",
@@ -46,6 +47,14 @@ ApiClient.interceptors.response.use(
         localStorage.setItem("token", accessToken);
         localStorage.setItem("refreshToken", refreshToken);
 
+        // sync Zustand store with new tokens
+        const store = useAuthStore.getState();
+        store.setAuth({
+          user: store.user!,
+          accessToken,
+          refreshToken,
+        });
+
         // update authorization header
         originalRequest.headers.Authorization = `Bearer ${accessToken}`;
 
@@ -55,6 +64,7 @@ ApiClient.interceptors.response.use(
         // logout if refresh fails
         localStorage.removeItem("token");
         localStorage.removeItem("refreshToken");
+        useAuthStore.getState().clearAuth();
 
         window.location.href = "/login";
 

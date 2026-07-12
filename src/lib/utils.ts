@@ -8,6 +8,7 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export const getDashboardRoute = (user: any) => {
+  console.log("getDashboardRoute user:", user);
   switch (user?.role) {
     case GlobalRoleEnum.ORG_ADMIN:
       return "/dashboard";
