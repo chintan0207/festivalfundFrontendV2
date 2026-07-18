@@ -1,6 +1,7 @@
 :root {
   --radius: 0.7rem;
   --background: oklch(1 0 0);
+  --tertiary: oklch(0.7 0.02 286);
   /* Responsive font system */
   --text-xs: clamp(0.7rem, 0.65rem + 0.2vw, 0.75rem);
   --text-sm: clamp(0.8rem, 0.75rem + 0.3vw, 0.875rem);
@@ -45,6 +46,7 @@
 .dark {
   --background: oklch(0.141 0.005 285.823);
   --foreground: oklch(0.985 0 0);
+  --tertiary: oklch(0.6 0.02 286);
   --card: oklch(0.21 0.006 285.885);
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.21 0.006 285.885);

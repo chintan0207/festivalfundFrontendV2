@@ -1,12 +1,30 @@
 import { useCurrentUser } from "@/api/hooks/useAuth";
 import HeroSection from "./components/HeroSection";
+import DashboardPreview from "./components/DashboardPreview";
+import FeaturesSection from "./components/FeaturesSection";
+import WhyFestivalFund from "./components/WhyFestivalFund";
+import HowItWorks from "./components/HowItWorks";
+import PricingSection from "./components/PricingSection";
+import TestimonialsSection from "./components/TestimonialsSection";
+import SecuritySection from "./components/SecuritySection";
+import MultiTenantSection from "./components/MultiTenantSection";
+import CTASection from "./components/CTASection";
 
 const Home = () => {
   useCurrentUser();
-  
+
   return (
-    <div className="py-10">
+    <div className="bg-background">
       <HeroSection />
+      <DashboardPreview />
+      <FeaturesSection />
+      <WhyFestivalFund />
+      <HowItWorks />
+      <PricingSection />
+      <TestimonialsSection />
+      <SecuritySection />
+      <MultiTenantSection />
+      <CTASection />
     </div>
   );
 };
