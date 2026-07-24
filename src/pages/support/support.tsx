@@ -1,7 +1,4 @@
-import { AppBadge } from "@/components/common/AppBadge";
-import { AppButton } from "@/components/common/AppButton";
-import { AppCard } from "@/components/common/AppCard";
-import { iconGradients } from "@/lib/data/landingPageData";
+import { AppButton, AppCard, AppPageHero, AppIconBadge, AppSectionHeader } from "@/components/common";
 import { Star, LifeBuoy, Book, MessageCircle, Mail, ChevronRight, ArrowRight, Search, FileText, Users, Settings, Shield } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 
@@ -26,57 +23,47 @@ const quickLinks = [
 const Support = () => {
   return (
     <div className="bg-background">
-      {/* Hero */}
-      <section className="relative overflow-hidden px-4 pb-16 pt-24 sm:px-6 md:pt-32">
-        <div className="absolute left-1/2 top-0 h-[600px] w-[600px] -translate-x-1/2 rounded-full bg-gradient-to-br from-primary/10 via-chart-2/10 to-transparent blur-3xl" />
-        <div className="relative mx-auto max-w-7xl">
-          <div className="mx-auto max-w-3xl text-center">
-            <AppBadge icon={<Star className="h-4 w-4 text-primary" />} className="mb-5 mx-auto w-fit">
-              <span className="inline-flex items-center gap-2">
-                <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-500" />
-                Help Center
-              </span>
-            </AppBadge>
-            <h1 className="text-4xl font-extrabold leading-[1.15] tracking-tight sm:text-5xl lg:text-6xl">
-              How can we{" "}
-              <span className="gradient-text">help you?</span>
-            </h1>
-            <p className="mx-auto mt-5 max-w-2xl text-base sm:text-lg text-muted-foreground leading-relaxed">
-              Search our knowledge base, browse guides, or reach out to our support team.
-            </p>
-            <div className="mx-auto mt-8 max-w-xl">
-              <div className="relative">
-                <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
-                <input
-                  type="text"
-                  placeholder="Search for help articles..."
-                  className="w-full rounded-2xl border border-border/60 bg-background py-4 pl-12 pr-4 text-sm shadow-sm transition-all focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/30"
-                />
-              </div>
-            </div>
+      {/* Hero, Search & Categories */}
+      <AppPageHero
+        badge={
+          <span className="inline-flex items-center gap-2">
+            <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-500" />
+            Help Center
+          </span>
+        }
+        badgeIcon={<Star className="h-4 w-4 text-primary" />}
+        title={
+          <>
+            How can we{" "}
+            <span className="gradient-text">help you?</span>
+          </>
+        }
+        description="Search our knowledge base, browse guides, or reach out to our support team."
+      >
+        <div className="mx-auto mt-6 max-w-xl mb-12">
+          <div className="relative">
+            <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
+            <input
+              type="text"
+              placeholder="Search for help articles..."
+              className="w-full rounded-2xl border border-border/60 bg-background/90 backdrop-blur-md py-3.5 pl-12 pr-4 text-sm shadow-md transition-all focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/30"
+            />
           </div>
         </div>
-      </section>
 
-      {/* Support Categories */}
-      <section className="px-4 pb-16 sm:px-6">
-        <div className="mx-auto max-w-7xl">
-          <div className="mx-auto max-w-2xl text-center">
-            <AppBadge className="mb-3 mx-auto w-fit">Browse by Topic</AppBadge>
-            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl text-foreground">Find the answers you need</h2>
-            <p className="mt-3 text-base sm:text-lg text-muted-foreground">
-              Explore our comprehensive knowledge base organized by topic.
-            </p>
-          </div>
+        <div className="mx-auto max-w-7xl pt-2 text-left">
+          <AppSectionHeader
+            badge="Browse by Topic"
+            title="Find the answers you need"
+            subtitle="Explore our comprehensive knowledge base organized by topic."
+          />
           <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {supportCategories.map((cat, i) => {
               const Icon = cat.icon;
               return (
-                <AppCard key={i} className="group cursor-pointer border-border/60 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg p-5 bg-card/80">
+                <AppCard key={i} className="group cursor-pointer border-border/60 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg p-5 bg-card/90">
                   <div className="flex items-center justify-between">
-                    <div className={`flex h-10 w-10 items-center justify-center rounded-xl text-white shadow-sm ${iconGradients[i % iconGradients.length]}`}>
-                      <Icon className="h-5 w-5" />
-                    </div>
+                    <AppIconBadge icon={<Icon className="h-5 w-5" />} colorIndex={i} size="md" />
                     <span className="text-xs text-muted-foreground font-medium">{cat.articles} articles</span>
                   </div>
                   <h3 className="mt-3.5 text-base font-semibold text-foreground">{cat.title}</h3>
@@ -89,10 +76,10 @@ const Support = () => {
             })}
           </div>
         </div>
-      </section>
+      </AppPageHero>
 
       {/* Quick Links + Contact */}
-      <section className="bg-muted/30 px-4 py-16 sm:px-6">
+      <section className="px-4 py-16 sm:px-6">
         <div className="mx-auto max-w-7xl">
           <div className="grid gap-8 lg:grid-cols-2">
             <AppCard className="border-border/60 p-6 bg-card/90">

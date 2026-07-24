@@ -14,6 +14,7 @@ import {
 import { AppButton } from "@/components/common/AppButton";
 import { AppCard } from "@/components/common/AppCard";
 import { AppBadge } from "@/components/common/AppBadge";
+import { AppLogo } from "@/components/common";
 import { registerSchema, type RegisterFormData } from "../auth/schema/AuthSchema";
 import { stepContent, StepOne, StepTwo, StepThree } from "./components/SignupSteps";
 import SignupStepper from "./components/SignupStepper";
@@ -128,17 +129,7 @@ function Signup() {
               <div className="relative">
                 {/* Brand Header */}
                 <div className="flex items-center gap-2 mb-4">
-                  <Link
-                    to="/"
-                    className="flex items-center gap-2.5 hover:opacity-85 transition-opacity"
-                  >
-                    <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-primary/80 text-primary-foreground text-sm font-bold shadow-md shadow-primary/20">
-                      F
-                    </div>
-                    <span className="text-lg font-bold tracking-tight text-foreground">
-                      FestivalFund
-                    </span>
-                  </Link>
+                  <AppLogo size="sm" />
                 </div>
 
                 <div className="mb-3 space-y-0.5">

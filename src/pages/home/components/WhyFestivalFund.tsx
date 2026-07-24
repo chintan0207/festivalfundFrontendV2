@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 
 const WhyFestivalFund = () => {
   return (
-    <section className="bg-muted/30 px-4 py-16 sm:px-6">
+    <section className="px-4 py-16 sm:px-6">
       <div className="mx-auto max-w-7xl">
         <AppSectionHeader
           badge="Why FestivalFund"

@@ -3,7 +3,7 @@ import { testimonials } from "@/lib/data/landingPageData";
 
 const TestimonialsSection = () => {
   return (
-    <section id="reviews" className="bg-muted/30 px-4 py-16 sm:px-6">
+    <section id="reviews" className="px-4 py-16 sm:px-6">
       <div className="mx-auto max-w-7xl">
         <AppSectionHeader
           badge="Testimonials"

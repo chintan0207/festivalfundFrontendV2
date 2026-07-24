@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   AppBadge,
   AppButton,
@@ -36,7 +37,7 @@ const values = [
   {
     title: "Inclusivity",
     description: "Simple enough for small mandals, powerful enough for large organizations. Technology for everyone.",
-    icon: Users,
+    icon: Eye,
   },
 ];
 
@@ -50,7 +51,7 @@ const team = [
 const About = () => {
   return (
     <div className="bg-background">
-      {/* Hero */}
+      {/* Hero & Stats */}
       <AppPageHero
         badge={
           <span className="inline-flex items-center gap-2">
@@ -66,24 +67,21 @@ const About = () => {
           </>
         }
         description="FestivalFund was founded with a simple mission: help Indian community organizations manage their festival finances with transparency and ease."
-      />
-
-      {/* Stats */}
-      <section className="px-4 pb-16 sm:px-6">
-        <div className="mx-auto max-w-5xl">
+      >
+        <div className="mx-auto max-w-5xl pt-4">
           <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
             {stats.map((stat) => (
-              <AppCard key={stat.label} className="border-border/60 text-center p-6 bg-card/80">
+              <AppCard key={stat.label} className="border-border/60 text-center p-6 bg-card/90 shadow-md">
                 <p className="text-3xl font-extrabold gradient-text">{stat.value}</p>
                 <p className="mt-1 text-sm font-medium text-muted-foreground">{stat.label}</p>
               </AppCard>
             ))}
           </div>
         </div>
-      </section>
+      </AppPageHero>
 
       {/* Mission */}
-      <section className="bg-muted/30 px-4 py-16 sm:px-6">
+      <section className="px-4 py-16 sm:px-6">
         <div className="mx-auto max-w-7xl">
           <div className="grid items-center gap-12 md:grid-cols-2">
             <div>
@@ -133,7 +131,7 @@ const About = () => {
       </section>
 
       {/* Team */}
-      <section className="bg-muted/30 px-4 py-16 sm:px-6">
+      <section className="px-4 py-16 sm:px-6">
         <div className="mx-auto max-w-7xl">
           <AppSectionHeader
             badge="Our Team"

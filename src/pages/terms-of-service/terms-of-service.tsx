@@ -1,4 +1,4 @@
-import { AppPageHero } from "@/components/common";
+import { AppCard, AppPageHero } from "@/components/common";
 import { FileText, Star } from "lucide-react";
 
 const sections = [
@@ -61,25 +61,25 @@ const TermsOfService = () => {
           </>
         }
         description="Last updated: January 1, 2025"
-      />
-
-      <section className="px-4 pb-20 sm:px-6">
-        <div className="mx-auto max-w-3xl">
-          <p className="text-muted-foreground leading-relaxed">
-            Please read these Terms of Service carefully before using the FestivalFund platform. These terms govern your use of our services and form a binding agreement between you and FestivalFund.
-          </p>
-          <div className="mt-10 space-y-8">
-            {sections.map((section, i) => (
-              <div key={i}>
-                <h2 className="text-xl font-bold text-foreground">
-                  <span className="gradient-text">{i + 1}.</span> {section.title}
-                </h2>
-                <p className="mt-2 leading-relaxed text-muted-foreground">{section.content}</p>
-              </div>
-            ))}
-          </div>
+      >
+        <div className="mx-auto max-w-3xl pt-4 text-left">
+          <AppCard className="p-6 sm:p-8 border-border/60 bg-card/90 shadow-md">
+            <p className="text-muted-foreground leading-relaxed text-sm sm:text-base border-b border-border/50 pb-6 mb-6">
+              Please read these Terms of Service carefully before using the FestivalFund platform. These terms govern your use of our services and form a binding agreement between you and FestivalFund.
+            </p>
+            <div className="space-y-8">
+              {sections.map((section, i) => (
+                <div key={i}>
+                  <h2 className="text-lg font-bold text-foreground">
+                    <span className="gradient-text">{i + 1}.</span> {section.title}
+                  </h2>
+                  <p className="mt-2 text-xs sm:text-sm leading-relaxed text-muted-foreground">{section.content}</p>
+                </div>
+              ))}
+            </div>
+          </AppCard>
         </div>
-      </section>
+      </AppPageHero>
     </div>
   );
 };

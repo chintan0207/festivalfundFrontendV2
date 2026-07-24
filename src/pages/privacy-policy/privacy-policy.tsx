@@ -1,4 +1,4 @@
-import { AppPageHero } from "@/components/common";
+import { AppCard, AppPageHero } from "@/components/common";
 import { Shield, Star } from "lucide-react";
 
 const sections = [
@@ -61,27 +61,25 @@ const PrivacyPolicy = () => {
           </>
         }
         description="Last updated: January 1, 2025"
-      />
-
-      <section className="px-4 pb-20 sm:px-6">
-        <div className="mx-auto max-w-3xl">
-          <div className="prose prose-sm max-w-none">
-            <p className="text-muted-foreground leading-relaxed">
+      >
+        <div className="mx-auto max-w-3xl pt-4 text-left">
+          <AppCard className="p-6 sm:p-8 border-border/60 bg-card/90 shadow-md">
+            <p className="text-muted-foreground leading-relaxed text-sm sm:text-base border-b border-border/50 pb-6 mb-6">
               At FestivalFund, we take your privacy seriously. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our platform. By using FestivalFund, you consent to the practices described in this policy.
             </p>
-          </div>
-          <div className="mt-10 space-y-8">
-            {sections.map((section, i) => (
-              <div key={i}>
-                <h2 className="text-xl font-bold text-foreground">
-                  <span className="gradient-text">{i + 1}.</span> {section.title}
-                </h2>
-                <p className="mt-2 leading-relaxed text-muted-foreground">{section.content}</p>
-              </div>
-            ))}
-          </div>
+            <div className="space-y-8">
+              {sections.map((section, i) => (
+                <div key={i}>
+                  <h2 className="text-lg font-bold text-foreground">
+                    <span className="gradient-text">{i + 1}.</span> {section.title}
+                  </h2>
+                  <p className="mt-2 text-xs sm:text-sm leading-relaxed text-muted-foreground">{section.content}</p>
+                </div>
+              ))}
+            </div>
+          </AppCard>
         </div>
-      </section>
+      </AppPageHero>
     </div>
   );
 };

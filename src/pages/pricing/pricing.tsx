@@ -41,7 +41,7 @@ const faqItems = [
 const Pricing = () => {
   return (
     <div className="bg-background">
-      {/* Hero */}
+      {/* Hero & Pricing Cards */}
       <AppPageHero
         badge={
           <span className="inline-flex items-center gap-2">
@@ -57,12 +57,9 @@ const Pricing = () => {
           </>
         }
         description="Choose the plan that fits your mandal, trust, or committee. Upgrade or downgrade anytime with no hidden fees."
-      />
-
-      {/* Pricing Cards */}
-      <section className="px-4 pb-16 sm:px-6">
-        <div className="mx-auto max-w-5xl">
-          <div className="grid gap-6 md:grid-cols-3">
+      >
+        <div className="mx-auto max-w-5xl pt-4">
+          <div className="grid gap-6 md:grid-cols-3 text-left">
             {pricingPlans.map((plan, i) => (
               <AppCard
                 key={i}
@@ -114,10 +111,10 @@ const Pricing = () => {
             All plans include a 14-day free trial. No credit card required. Cancel anytime.
           </p>
         </div>
-      </section>
+      </AppPageHero>
 
       {/* Feature Comparison */}
-      <section className="bg-muted/30 px-4 py-16 sm:px-6">
+      <section className="px-4 py-16 sm:px-6">
         <div className="mx-auto max-w-5xl">
           <AppSectionHeader
             badge="Comparison"
@@ -164,7 +161,7 @@ const Pricing = () => {
 
       {/* FAQ */}
       <section className="px-4 py-16 sm:px-6">
-        <div className="mx-auto max-w-3xl">
+        <div className="mx-auto max-w-3xl text-left">
           <AppSectionHeader
             badge="FAQ"
             title="Frequently asked questions"
@@ -172,7 +169,7 @@ const Pricing = () => {
           />
           <div className="mt-10 space-y-3.5">
             {faqItems.map((item, i) => (
-              <details key={i} className="group rounded-2xl border border-border/60 bg-card/70 [&_summary::-webkit-details-marker]:hidden transition-colors hover:border-primary/40">
+              <details key={i} className="group rounded-2xl border border-border/60 bg-card/80 [&_summary::-webkit-details-marker]:hidden transition-colors hover:border-primary/40">
                 <summary className="flex cursor-pointer items-center justify-between gap-4 px-6 py-4 text-sm font-semibold text-foreground">
                   {item.question}
                   <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground transition-transform group-open:rotate-90 group-open:text-primary" />
@@ -186,7 +183,6 @@ const Pricing = () => {
         </div>
       </section>
 
-      {/* CTA */}
       <AppCTASection
         title="Still have questions?"
         description="Our team is here to help you find the perfect plan for your organization."

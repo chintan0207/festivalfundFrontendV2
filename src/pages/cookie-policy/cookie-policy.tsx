@@ -1,4 +1,4 @@
-import { AppPageHero } from "@/components/common";
+import { AppCard, AppPageHero } from "@/components/common";
 import { Cookie, Star } from "lucide-react";
 
 const sections = [
@@ -61,35 +61,35 @@ const CookiePolicy = () => {
           </>
         }
         description="Last updated: January 1, 2025"
-      />
-
-      <section className="px-4 pb-20 sm:px-6">
-        <div className="mx-auto max-w-3xl">
-          <p className="text-muted-foreground leading-relaxed">
-            This Cookie Policy explains how FestivalFund uses cookies and similar tracking technologies to recognize you when you visit our platform. Understanding these technologies helps you make informed choices about your privacy.
-          </p>
-          <div className="mt-10 space-y-8">
-            {sections.map((section, i) => (
-              <div key={i}>
-                <h2 className="text-xl font-bold text-foreground">
-                  <span className="gradient-text">{i + 1}.</span> {section.title}
-                </h2>
-                <p className="mt-2 leading-relaxed text-muted-foreground">{section.content}</p>
-                {"examples" in section && (
-                  <ul className="mt-3 space-y-1.5">
-                    {(section as typeof sections[0] & { examples: string[] }).examples.map((example) => (
-                      <li key={example} className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <span className="h-1.5 w-1.5 rounded-full bg-primary shrink-0" />
-                        {example}
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-            ))}
-          </div>
+      >
+        <div className="mx-auto max-w-3xl pt-4 text-left">
+          <AppCard className="p-6 sm:p-8 border-border/60 bg-card/90 shadow-md">
+            <p className="text-muted-foreground leading-relaxed text-sm sm:text-base border-b border-border/50 pb-6 mb-6">
+              This Cookie Policy explains how FestivalFund uses cookies and similar tracking technologies to recognize you when you visit our platform. Understanding these technologies helps you make informed choices about your privacy.
+            </p>
+            <div className="space-y-8">
+              {sections.map((section, i) => (
+                <div key={i}>
+                  <h2 className="text-lg font-bold text-foreground">
+                    <span className="gradient-text">{i + 1}.</span> {section.title}
+                  </h2>
+                  <p className="mt-2 text-xs sm:text-sm leading-relaxed text-muted-foreground">{section.content}</p>
+                  {"examples" in section && (
+                    <ul className="mt-3 space-y-1.5">
+                      {(section as typeof sections[0] & { examples: string[] }).examples.map((example) => (
+                        <li key={example} className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground">
+                          <span className="h-1.5 w-1.5 rounded-full bg-primary shrink-0" />
+                          {example}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              ))}
+            </div>
+          </AppCard>
         </div>
-      </section>
+      </AppPageHero>
     </div>
   );
 };

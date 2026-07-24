@@ -114,7 +114,7 @@ const additionalFeatures = [
 const Features = () => {
   return (
     <div className="bg-background">
-      {/* Hero */}
+      {/* Hero & Detailed Feature Showcase */}
       <AppPageHero
         badge={
           <span className="inline-flex items-center gap-2">
@@ -144,17 +144,14 @@ const Features = () => {
             </Link>
           </>
         }
-      />
-
-      {/* Detailed Features */}
-      <section className="px-4 py-16 sm:px-6">
-        <div className="mx-auto max-w-7xl">
+      >
+        <div className="mx-auto max-w-7xl pt-8 text-left">
           <AppSectionHeader
             badge="Feature Details"
             title="Deep dive into every feature"
             subtitle="Every tool is built specifically for Indian festival management workflows."
           />
-          <div className="mt-14 space-y-16">
+          <div className="mt-12 space-y-16">
             {featureHighlights.map((feature, i) => {
               const Icon = feature.icon;
               const isReversed = i % 2 === 1;
@@ -176,7 +173,7 @@ const Features = () => {
                     </ul>
                   </div>
 
-                  <AppCard className="flex-1 w-full p-6 sm:p-8 border-border/60 bg-card/90">
+                  <AppCard className="flex-1 w-full p-6 sm:p-8 border-border/60 bg-card/90 shadow-md">
                     <div className="flex items-center gap-2.5 text-sm text-muted-foreground mb-5">
                       <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary font-semibold">
                         <Icon className="h-4 w-4" />
@@ -199,10 +196,10 @@ const Features = () => {
             })}
           </div>
         </div>
-      </section>
+      </AppPageHero>
 
       {/* Additional Features Grid */}
-      <section className="bg-muted/30 px-4 py-16 sm:px-6">
+      <section className="px-4 py-16 sm:px-6">
         <div className="mx-auto max-w-7xl">
           <AppSectionHeader
             badge="More Features"

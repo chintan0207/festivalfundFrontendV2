@@ -6,3 +6,4 @@ export * from "./AppSectionHeader";
 export * from "./AppPageHero";
 export * from "./AppCTASection";
 export * from "./AppIconBadge";
+export * from "./AppLogo";

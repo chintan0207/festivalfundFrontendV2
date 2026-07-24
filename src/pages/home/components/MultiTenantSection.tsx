@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 
 const MultiTenantSection = () => {
   return (
-    <section className="bg-muted/30 px-4 py-16 sm:px-6">
+    <section className="px-4 py-16 sm:px-6">
       <div className="mx-auto grid max-w-7xl items-center gap-12 md:grid-cols-2">
         <div>
           <AppBadge className="mb-4 w-fit">Multi-Tenant Architecture</AppBadge>

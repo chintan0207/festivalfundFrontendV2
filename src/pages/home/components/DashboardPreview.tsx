@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils";
 const DashboardPreview = () => {
   return (
     <div className="relative mx-auto mt-16 max-w-5xl animate-fade-up px-4 sm:px-6">
-      <div className="absolute -inset-4 rounded-3xl bg-gradient-to-br from-primary/20 to-chart-2/20 blur-2xl pointer-events-none" />
+      <div className="absolute -inset-4 rounded-3xl  pointer-events-none" />
       <AppCard className="relative overflow-hidden p-0 border-border/60">
         <div className="flex h-10 items-center gap-2 border-b border-border bg-muted/50 px-4">
           <div className="flex gap-1.5">
@@ -23,7 +23,7 @@ const DashboardPreview = () => {
             app.festivalfund.com/dashboard
           </div>
         </div>
-        <div className="p-4 sm:p-6">
+        <div className="p-4 sm:p-6 text-left">
           <div className="mb-5 flex items-center justify-between">
             <div>
               <p className="text-sm font-bold text-foreground">Dashboard Overview</p>
@@ -132,7 +132,7 @@ const DashboardPreview = () => {
           </div>
         </div>
       </AppCard>
-      <div className="mt-24 mb-4 text-center">
+      <div className="mt-16 mb-2 text-center">
         <p className="mb-6 text-sm text-muted-foreground font-medium">
           Trusted by organizations of all sizes
         </p>

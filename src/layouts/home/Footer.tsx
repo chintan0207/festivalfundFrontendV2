@@ -1,6 +1,7 @@
 import { FiFacebook, FiLinkedin } from "react-icons/fi";
 import { FaXTwitter, FaInstagram } from "react-icons/fa6";
 import { Link } from "@tanstack/react-router";
+import { AppLogo } from "@/components/common";
 
 const Footer = () => {
   const footerSections = [
@@ -38,22 +39,17 @@ const Footer = () => {
   ];
 
   return (
-    <footer className="border-t border-border/60 bg-card/60 backdrop-blur-sm mt-auto">
+    <footer className="mt-auto">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 max-w-7xl">
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-5">
           {/* Brand Column */}
           <div className="md:col-span-2 space-y-4">
-            <Link to="/" className="flex items-center gap-2.5 hover:opacity-85 transition-opacity w-fit">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-primary/80 text-primary-foreground font-bold text-lg shadow-md shadow-primary/20">
-                F
-              </div>
-              <span className="text-xl font-bold tracking-tight text-foreground">
-                FestivalFund
-              </span>
-            </Link>
+            <AppLogo />
 
             <p className="text-sm text-muted-foreground leading-relaxed max-w-sm">
-              Empowering mandals, trusts, and committees across India with modern digital tools for festival finance management, contribution tracking, and community transparency.
+              Empowering mandals, trusts, and committees across India with modern digital
+              tools for festival finance management, contribution tracking, and community
+              transparency.
             </p>
           </div>
 
@@ -81,9 +77,10 @@ const Footer = () => {
         </div>
 
         {/* Bottom Footer */}
-        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-border/50 pt-8 sm:flex-row">
+        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-dashed border-border/50 pt-8 sm:flex-row">
           <p className="text-xs sm:text-sm text-muted-foreground">
-            © {new Date().getFullYear()} FestivalFund. All rights reserved. Built for Indian Festival Mandals & Committees.
+            © {new Date().getFullYear()} FestivalFund. All rights reserved. Built for
+            Indian Festival Mandals & Committees.
           </p>
 
           <div className="flex items-center gap-3">

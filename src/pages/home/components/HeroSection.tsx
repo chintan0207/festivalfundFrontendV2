@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { AppButton, AppPageHero } from "@/components/common";
 import { Star, ChevronRight } from "lucide-react";
+import DashboardPreview from "./DashboardPreview";
 
 const heroContent = {
   badge: "Built for mandals, trusts, and festival committees",
@@ -50,9 +51,7 @@ const HeroSection = () => {
         </>
       }
     >
-      <p className="mt-4 text-xs sm:text-sm text-muted-foreground">
-        No credit card required · 14-day free trial · Cancel anytime
-      </p>
+      <DashboardPreview />
     </AppPageHero>
   );
 };

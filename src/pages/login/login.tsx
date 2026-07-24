@@ -8,6 +8,7 @@ import { AppButton } from "@/components/common/AppButton";
 import { AppCard } from "@/components/common/AppCard";
 import { AppInput } from "@/components/common/AppInput";
 import { AppBadge } from "@/components/common/AppBadge";
+import { AppLogo } from "@/components/common";
 import { loginSchema } from "../auth/schema/AuthSchema";
 import { useLogin } from "@/api/hooks/useAuth";
 import { gradientColors } from "@/theme/colors";
@@ -107,17 +108,7 @@ function Login() {
               <div className="relative">
                 {/* Brand Header */}
                 <div className="flex items-center gap-2 mb-4">
-                  <Link
-                    to="/"
-                    className="flex items-center gap-2.5 hover:opacity-85 transition-opacity"
-                  >
-                    <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-primary/80 text-primary-foreground text-sm font-bold shadow-md shadow-primary/20">
-                      F
-                    </div>
-                    <span className="text-lg font-bold tracking-tight text-foreground">
-                      FestivalFund
-                    </span>
-                  </Link>
+                  <AppLogo size="sm" />
                 </div>
 
                 <div className="mb-4 space-y-0.5">

@@ -10,7 +10,7 @@ import {
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { useEffect, useState } from "react";
 import { ThemeToggle } from "@/theme/ThemeToggle";
-import { AppButton } from "@/components/common/AppButton";
+import { AppButton, AppLogo } from "@/components/common";
 import { getDashboardRoute } from "@/lib/utils";
 import { useAuthStore } from "@/api/auth/auth.store";
 import { useLogout } from "@/api/hooks/useAuth";
@@ -39,34 +39,26 @@ const Navbar = () => {
 
   return (
     <nav
-      className={`sticky z-50 transition-all duration-500
-    ${
+      className={`sticky z-50 transition-all duration-300 ${
         scrolled
-        ? "top-3 mx-auto w-[90%] max-w-7xl rounded-full border border-border/50 bg-background/80 backdrop-blur-xl shadow-xl"
-        : "top-0 w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
+          ? "top-3 mx-auto w-[92%] max-w-7xl rounded-full border border-border/60 bg-background/85 backdrop-blur-sm shadow-lg"
+          : "top-0 w-full bg-transparent border-b border-transparent"
       }`}
     >
-      <div className="mx-auto flex h-16 max-w-7xl items-center px-4 md:px-6">
+      <div className="mx-auto flex h-16 max-w-7xl items-center px-4 sm:px-6">
         {/* Left Section: Logo */}
         <div className="flex flex-1 items-center">
-          <Link to="/" className="flex items-center gap-2.5 hover:opacity-90 transition-opacity">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-primary/80 text-primary-foreground font-bold text-lg shadow-md shadow-primary/20">
-              F
-            </div>
-            <span className="text-xl font-bold tracking-tight text-foreground">
-              FestivalFund
-            </span>
-          </Link>
+          <AppLogo />
         </div>
 
         {/* Center Section: Links */}
         <div className="hidden flex-1 justify-center md:flex">
-          <div className="flex items-center gap-1 rounded-full  p-1">
+          <div className="flex items-center gap-1 rounded-full p-1">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 to={link.href}
-                className="px-4 py-1.5 rounded-full text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-card transition-colors"
+                className="px-4 py-1.5 rounded-full text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-card/60 transition-colors"
               >
                 {link.name}
               </Link>

@@ -10,6 +10,7 @@ interface AppPageHeroProps {
   actions?: React.ReactNode;
   children?: React.ReactNode;
   className?: string;
+  containerClassName?: string;
 }
 
 export function AppPageHero({
@@ -20,11 +21,23 @@ export function AppPageHero({
   actions,
   children,
   className,
+  containerClassName,
 }: AppPageHeroProps) {
   return (
-    <section className={cn("relative overflow-hidden px-4 pb-16 pt-24 sm:px-6 md:pt-32", className)}>
-      <div className="absolute left-1/2 top-0 h-[600px] w-[600px] -translate-x-1/2 rounded-full bg-gradient-to-br from-primary/10 via-chart-2/10 to-transparent blur-3xl pointer-events-none" />
-      <div className="relative mx-auto max-w-7xl">
+    <section className={cn("relative overflow-hidden px-4 pb-12 -mt-16 pt-24 sm:px-6 md:pt-28", className)}>
+      {/* Seamless Ambient Background Glow extending all the way up behind transparent Navbar */}
+      <div className="absolute left-1/2 -top-20 h-[900px] w-[1100px] -translate-x-1/2 rounded-full bg-gradient-to-b from-primary/16 via-chart-2/8 to-transparent blur-3xl pointer-events-none" />
+      
+      {/* Background Dot Pattern for Texture */}
+      <div
+        className="absolute inset-0 opacity-[0.025] dark:opacity-[0.04] pointer-events-none"
+        style={{
+          backgroundImage: `radial-gradient(circle at 1px 1px, hsl(var(--primary) / 0.4) 1px, transparent 0)`,
+          backgroundSize: "36px 36px",
+        }}
+      />
+
+      <div className={cn("relative mx-auto max-w-7xl space-y-12", containerClassName)}>
         <div className="mx-auto max-w-3xl text-center">
           {badge && (
             <AppBadge icon={badgeIcon} className="mb-5 mx-auto w-fit">
@@ -47,9 +60,10 @@ export function AppPageHero({
               {actions}
             </div>
           )}
-
-          {children}
         </div>
+
+        {/* Seamlessly connected child content inside the ambient hero background */}
+        {children && <div className="relative z-10">{children}</div>}
       </div>
     </section>
   );
