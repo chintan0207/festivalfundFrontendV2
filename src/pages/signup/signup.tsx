@@ -72,7 +72,7 @@ function Signup() {
   const currentStep = stepContent[step as keyof typeof stepContent];
 
   return (
-    <div className="h-screen w-screen overflow-hidden bg-background flex flex-col justify-center">
+    <div className="min-h-screen w-screen bg-background flex flex-col justify-center py-6 sm:py-0 overflow-y-auto sm:overflow-hidden">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl h-full flex items-center justify-center">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-14 items-center w-full">
           {/* Left Side Feature Showcase */}
@@ -124,7 +124,7 @@ function Signup() {
           {/* Right Side Signup Form Card */}
           <div className="flex items-center justify-center w-full">
             <AppCard className="w-full max-w-md p-5 sm:p-6 relative overflow-hidden">
-              <div className="absolute -top-10 -right-10 w-36 h-36 bg-gradient-to-br from-primary/15 via-chart-2/10 to-transparent rounded-full blur-2xl pointer-events-none" />
+              <div className="absolute -top-10 -right-10 w-36 h-36 bg-gradient-to-br from-primary/15 via-chart-2/10 to-transparent rounded-full blur-md pointer-events-none" />
 
               <div className="relative">
                 {/* Brand Header */}

@@ -50,10 +50,9 @@ function Login() {
   ];
 
   return (
-    <div className="h-screen w-screen overflow-hidden bg-background flex flex-col justify-center">
+    <div className="min-h-screen w-screen bg-background flex flex-col justify-center py-6 sm:py-0 overflow-y-auto sm:overflow-hidden">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl h-full flex items-center justify-center">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-14 items-center w-full">
-          
           {/* Left Side Feature Showcase */}
           <div className="hidden md:block space-y-6 max-w-lg mx-auto lg:mx-0">
             <AppBadge icon={<Star className="h-4 w-4 text-primary" />}>
@@ -64,13 +63,13 @@ function Login() {
             </AppBadge>
 
             <h1 className="text-3xl lg:text-4xl xl:text-5xl font-extrabold leading-[1.15] tracking-tight">
-              Access Your{" "}
-              <span className="gradient-text">Festival Dashboard</span>
+              Access Your <span className="gradient-text">Festival Dashboard</span>
             </h1>
 
             <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
               Track contributions, manage expenses, and generate professional reports for
-              Ganesh Chaturthi, Navratri, and major events with India's trusted mandal platform.
+              Ganesh Chaturthi, Navratri, and major events with India's trusted mandal
+              platform.
             </p>
 
             <div className="space-y-3 pt-1">
@@ -103,7 +102,7 @@ function Login() {
           {/* Right Side Login Card */}
           <div className="flex items-center justify-center w-full">
             <AppCard className="w-full max-w-md p-5 sm:p-6 relative overflow-hidden">
-              <div className="absolute -top-10 -right-10 w-36 h-36 bg-gradient-to-br from-primary/15 via-chart-2/10 to-transparent rounded-full blur-2xl pointer-events-none" />
+              <div className="absolute -top-10 -right-10 w-36 h-36 bg-gradient-to-br from-primary/15 via-chart-2/10 to-transparent rounded-full blur-md pointer-events-none" />
 
               <div className="relative">
                 {/* Brand Header */}
@@ -181,7 +180,9 @@ function Login() {
                     loading={isSubmitting || loginMutation.isPending}
                     className="w-full h-9.5"
                   >
-                    {isSubmitting || loginMutation.isPending ? "Signing in..." : "Sign in"}
+                    {isSubmitting || loginMutation.isPending
+                      ? "Signing in..."
+                      : "Sign in"}
                   </AppButton>
 
                   <div className="relative my-4">
@@ -224,7 +225,6 @@ function Login() {
               </div>
             </AppCard>
           </div>
-
         </div>
       </div>
     </div>

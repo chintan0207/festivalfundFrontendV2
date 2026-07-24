@@ -29,19 +29,19 @@ export const AppInput = React.forwardRef<HTMLInputElement, AppInputProps>(
     ref,
   ) => {
     return (
-      <div className={cn("space-y-2", containerClassName)}>
+      <div className={cn("space-y-1.5 sm:space-y-2 w-full", containerClassName)}>
         {/* Label */}
         {label && (
-          <Label htmlFor={id} className="text-sm font-medium">
+          <Label htmlFor={id} className="text-xs sm:text-sm font-semibold text-foreground">
             {label}
           </Label>
         )}
 
         {/* Input Wrapper */}
-        <div className="relative">
+        <div className="relative w-full">
           {/* Left Icon */}
           {leftIcon && (
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground flex items-center justify-center pointer-events-none">
               {leftIcon}
             </span>
           )}
@@ -50,10 +50,10 @@ export const AppInput = React.forwardRef<HTMLInputElement, AppInputProps>(
             id={id}
             ref={ref}
             className={cn(
-              // base style (match your theme)
-              "h-9 rounded-xl border bg-background px-3 text-sm shadow-sm transition-all",
+              // base style
+              "h-10 sm:h-10.5 w-full rounded-xl border border-input bg-background/90 px-3.5 text-xs sm:text-sm shadow-sm transition-all",
 
-              // focus style (important)
+              // focus style
               "focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:border-primary",
 
               // icon spacing
@@ -71,7 +71,7 @@ export const AppInput = React.forwardRef<HTMLInputElement, AppInputProps>(
 
           {/* Right Icon */}
           {rightIcon && (
-            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground flex items-center justify-center">
               {rightIcon}
             </span>
           )}
@@ -79,9 +79,9 @@ export const AppInput = React.forwardRef<HTMLInputElement, AppInputProps>(
 
         {/* Hint / Error */}
         {error ? (
-          <p className="text-xs text-destructive">{error}</p>
+          <p className="text-[11px] sm:text-xs font-medium text-destructive leading-tight">{error}</p>
         ) : hint ? (
-          <p className="text-xs text-muted-foreground">{hint}</p>
+          <p className="text-[11px] sm:text-xs text-muted-foreground leading-tight">{hint}</p>
         ) : null}
       </div>
     );

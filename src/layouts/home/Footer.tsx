@@ -77,7 +77,7 @@ const Footer = () => {
         </div>
 
         {/* Bottom Footer */}
-        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-dashed border-border/50 pt-8 sm:flex-row">
+        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-dashed pt-8 sm:flex-row">
           <p className="text-xs sm:text-sm text-muted-foreground">
             © {new Date().getFullYear()} FestivalFund. All rights reserved. Built for
             Indian Festival Mandals & Committees.

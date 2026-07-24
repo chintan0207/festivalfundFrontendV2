@@ -56,10 +56,9 @@ function ResetPassword() {
   }
 
   return (
-    <div className="h-screen w-screen overflow-hidden bg-background flex flex-col justify-center">
+    <div className="min-h-screen w-screen bg-background flex flex-col justify-center py-6 sm:py-0 overflow-y-auto sm:overflow-hidden">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl h-full flex items-center justify-center">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-14 items-center w-full">
-          
           {/* Left Side Info */}
           <div className="hidden md:block space-y-6 max-w-lg mx-auto lg:mx-0">
             <AppBadge icon={<Star className="h-4 w-4 text-primary" />} className="w-fit">
@@ -74,16 +73,21 @@ function ResetPassword() {
             </h1>
 
             <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
-              Choose a strong password that you haven't used before. Make sure it's at least 6 characters long for account safety.
+              Choose a strong password that you haven't used before. Make sure it's at
+              least 6 characters long for account safety.
             </p>
 
             <div className="space-y-3 pt-1">
               <div className="flex items-start gap-3.5 p-3 rounded-2xl border border-border/40 bg-card/50 backdrop-blur-sm">
-                <div className={`flex h-9 w-9 items-center justify-center rounded-xl text-white shadow-md ${gradientColors[0]} flex-shrink-0`}>
+                <div
+                  className={`flex h-9 w-9 items-center justify-center rounded-xl text-white shadow-md ${gradientColors[0]} flex-shrink-0`}
+                >
                   <Lock className="h-4.5 w-4.5" />
                 </div>
                 <div>
-                  <p className="font-semibold text-sm text-foreground">Secure Credentials</p>
+                  <p className="font-semibold text-sm text-foreground">
+                    Secure Credentials
+                  </p>
                   <p className="text-xs text-muted-foreground mt-0.5">
                     Minimum 6 characters required
                   </p>
@@ -91,11 +95,15 @@ function ResetPassword() {
               </div>
 
               <div className="flex items-start gap-3.5 p-3 rounded-2xl border border-border/40 bg-card/50 backdrop-blur-sm">
-                <div className={`flex h-9 w-9 items-center justify-center rounded-xl text-white shadow-md ${gradientColors[1]} flex-shrink-0`}>
+                <div
+                  className={`flex h-9 w-9 items-center justify-center rounded-xl text-white shadow-md ${gradientColors[1]} flex-shrink-0`}
+                >
                   <CheckCircle2 className="h-4.5 w-4.5" />
                 </div>
                 <div>
-                  <p className="font-semibold text-sm text-foreground">Encrypted Storage</p>
+                  <p className="font-semibold text-sm text-foreground">
+                    Encrypted Storage
+                  </p>
                   <p className="text-xs text-muted-foreground mt-0.5">
                     Your password is hashed with bcrypt encryption
                   </p>
@@ -107,7 +115,7 @@ function ResetPassword() {
           {/* Right Side Reset Password Card */}
           <div className="flex items-center justify-center w-full">
             <AppCard className="w-full max-w-md p-5 sm:p-6 relative overflow-hidden">
-              <div className="absolute -top-10 -right-10 w-36 h-36 bg-gradient-to-br from-primary/15 via-chart-2/10 to-transparent rounded-full blur-2xl pointer-events-none" />
+              <div className="absolute -top-10 -right-10 w-36 h-36 bg-gradient-to-br from-primary/15 via-chart-2/10 to-transparent rounded-full blur-md pointer-events-none" />
 
               <div className="relative">
                 {/* Brand Header */}
@@ -116,7 +124,9 @@ function ResetPassword() {
                 </div>
 
                 <div className="mb-4 space-y-0.5">
-                  <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">Reset Password</h2>
+                  <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
+                    Reset Password
+                  </h2>
                   <p className="text-xs sm:text-sm text-muted-foreground">
                     Enter your new password below
                   </p>
@@ -190,7 +200,6 @@ function ResetPassword() {
               </div>
             </AppCard>
           </div>
-
         </div>
       </div>
     </div>

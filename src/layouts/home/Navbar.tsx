@@ -147,7 +147,7 @@ const Navbar = () => {
             </SheetTrigger>
 
             <SheetContent side="right" className="w-[300px] sm:w-[340px] p-6">
-              <SheetTitle className="text-left text-lg font-bold">Navigation</SheetTitle>
+              <SheetTitle className="text-left text-lg font-bold"><AppLogo/></SheetTitle>
 
               <div className="mt-6 flex flex-col gap-2">
                 {navLinks.map((link) => (

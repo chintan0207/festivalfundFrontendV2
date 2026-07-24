@@ -22,23 +22,23 @@ export function AppSectionHeader({
   return (
     <div
       className={cn(
-        "max-w-2xl space-y-3",
+        "max-w-2xl space-y-2.5 sm:space-y-3",
         align === "center" ? "mx-auto text-center" : "text-left",
         className
       )}
     >
       {badge && (
-        <AppBadge icon={badgeIcon} className={cn("w-fit mb-3", align === "center" && "mx-auto")}>
+        <AppBadge icon={badgeIcon} className={cn("w-fit mb-2.5 sm:mb-3", align === "center" && "mx-auto")}>
           {badge}
         </AppBadge>
       )}
 
-      <h2 className="text-3xl font-bold tracking-tight sm:text-4xl text-foreground">
+      <h2 className="text-2xl font-bold tracking-tight sm:text-3xl md:text-4xl text-foreground leading-snug">
         {title}
       </h2>
 
       {subtitle && (
-        <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
+        <p className="text-sm sm:text-base md:text-lg text-muted-foreground leading-relaxed">
           {subtitle}
         </p>
       )}

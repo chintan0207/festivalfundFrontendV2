@@ -61,7 +61,7 @@ const Contact = () => {
         }
         description="Have a question, feedback, or need help setting up your festival mandal? Reach out and our support team will assist you."
       >
-        <div className="mx-auto max-w-6xl pt-6 text-left">
+        <div className="mx-auto max-w-6xl pt-6 pb-8 text-left">
           <div className="grid gap-8 lg:grid-cols-5">
             {/* Contact Form */}
             <div className="lg:col-span-3">
