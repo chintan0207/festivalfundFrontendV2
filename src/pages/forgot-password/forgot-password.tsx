@@ -1,7 +1,8 @@
+import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Mail, Star, Shield, ArrowLeft } from "lucide-react";
+import { Mail, Star, Shield, ArrowLeft, MailCheck, RotateCcw } from "lucide-react";
 import { AppButton } from "@/components/common/AppButton";
 import { AppCard } from "@/components/common/AppCard";
 import { AppInput } from "@/components/common/AppInput";
@@ -13,6 +14,8 @@ import {
 import { useForgotPassword } from "@/api/hooks/useAuth";
 
 function ForgotPassword() {
+  const [emailSent, setEmailSent] = useState(false);
+  const [submittedEmail, setSubmittedEmail] = useState("");
   const forgotPasswordMutation = useForgotPassword();
 
   const {
@@ -25,110 +28,193 @@ function ForgotPassword() {
   });
 
   const onSubmit = async (data: ForgotPasswordFormData) => {
-    forgotPasswordMutation.mutate({ email: data.email });
+    forgotPasswordMutation.mutate(
+      { email: data.email },
+      {
+        onSuccess: () => {
+          setSubmittedEmail(data.email);
+          setEmailSent(true);
+        },
+      }
+    );
+  };
+
+  const handleResend = () => {
+    if (!submittedEmail) return;
+    forgotPasswordMutation.mutate({ email: submittedEmail });
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-8 md:grid md:grid-cols-2 md:gap-12 md:items-center md:min-h-screen">
-        <div className="hidden md:block relative">
-          <div className="relative space-y-8 max-w-lg mx-auto">
+    <div className="h-screen w-screen overflow-hidden bg-background flex flex-col justify-center">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl h-full flex items-center justify-center">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-14 items-center w-full">
+          
+          {/* Left Side Info */}
+          <div className="hidden md:block space-y-6 max-w-lg mx-auto lg:mx-0">
             <AppBadge icon={<Star className="h-4 w-4 text-primary" />} className="w-fit">
               <span className="inline-flex items-center gap-2">
-                <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-green-500" />
-                Forgot Password
+                <span className="inline-block h-2 w-2 animate-pulse rounded-full bg-emerald-500" />
+                {emailSent ? "Check Your Inbox" : "Forgot Password"}
               </span>
             </AppBadge>
 
-            <h1 className="text-5xl font-bold leading-tight tracking-tight">
-              Reset Your<span className="gradient-text"> Password</span>
+            <h1 className="text-3xl lg:text-4xl xl:text-5xl font-extrabold leading-[1.15] tracking-tight">
+              {emailSent ? (
+                <>
+                  Reset Link <span className="gradient-text">Sent</span>
+                </>
+              ) : (
+                <>
+                  Reset Your <span className="gradient-text">Password</span>
+                </>
+              )}
             </h1>
 
-            <p className="text-lg text-muted-foreground leading-relaxed">
-              Enter your registered email address and we'll send you a link to reset your
-              password.
+            <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
+              {emailSent
+                ? `We've sent a password reset link to ${submittedEmail}. Please check your inbox and follow the instructions.`
+                : "Enter your registered email address and we'll send you a link to reset your password securely."}
             </p>
 
-            <div className="grid grid-cols-2 gap-3">
-              <div className="flex items-start gap-3">
-                <div className="flex h-8 w-8 items-center justify-center rounded-xl text-white bg-gradient-to-r from-green-500 to-emerald-500 flex-shrink-0">
-                  <Mail className="h-4 w-4" />
+            <div className="space-y-3 pt-1">
+              <div className="flex items-start gap-3.5 p-3 rounded-2xl border border-border/40 bg-card/50 backdrop-blur-sm">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl text-white shadow-md bg-gradient-to-r from-emerald-500 to-green-500 flex-shrink-0">
+                  <MailCheck className="h-4.5 w-4.5" />
                 </div>
                 <div>
-                  <p className="font-medium text-sm">Email Verification</p>
-                  <p className="text-xs text-muted-foreground">
-                    We'll verify your identity
+                  <p className="font-semibold text-sm text-foreground">Fast & Secure Reset</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    Temporary reset token expires in 20 minutes
                   </p>
                 </div>
               </div>
-              <div className="flex items-start gap-3">
-                <div className="flex h-8 w-8 items-center justify-center rounded-xl text-white bg-gradient-to-r from-indigo-500 to-purple-500 flex-shrink-0">
-                  <Shield className="h-4 w-4" />
+
+              <div className="flex items-start gap-3.5 p-3 rounded-2xl border border-border/40 bg-card/50 backdrop-blur-sm">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl text-white shadow-md bg-gradient-to-r from-indigo-500 to-purple-500 flex-shrink-0">
+                  <Shield className="h-4.5 w-4.5" />
                 </div>
                 <div>
-                  <p className="font-medium text-sm">Secure Reset Link</p>
-                  <p className="text-xs text-muted-foreground">
-                    Temporary token expires in 1 hour
+                  <p className="font-semibold text-sm text-foreground">Protected Access</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    Identity verified via secure encrypted email link
                   </p>
                 </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <div className="flex items-center justify-center">
-          <AppCard className="w-full max-w-md relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-primary/10 to-chart-2/10 rounded-bl-full" />
-            <div className="relative">
-              <div className="flex items-center gap-2 mb-6">
-                <Link
-                  to="/"
-                  className="flex items-center gap-2 hover:opacity-80 transition-opacity"
-                >
-                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground text-sm font-bold">
-                    F
-                  </div>
-                  <span className="text-lg font-semibold">FestivalFund</span>
-                </Link>
-              </div>
+          {/* Right Side Card */}
+          <div className="flex items-center justify-center w-full">
+            <AppCard className="w-full max-w-md p-5 sm:p-6 rounded-2xl border border-border/60 bg-card/95 backdrop-blur-md shadow-xl shadow-primary/5 relative overflow-hidden">
+              <div className="absolute -top-10 -right-10 w-36 h-36 bg-gradient-to-br from-primary/15 via-chart-2/10 to-transparent rounded-full blur-2xl pointer-events-none" />
 
-              <div className="mb-6">
-                <h2 className="text-2xl font-bold">Forgot Password</h2>
-                <p className="text-muted-foreground mt-1">
-                  Enter your email to receive reset instructions
-                </p>
-              </div>
-
-              <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-                <AppInput
-                  id="email"
-                  label="Email Address"
-                  placeholder="name@example.com"
-                  leftIcon={<Mail className="h-4 w-4" />}
-                  {...register("email")}
-                  error={errors.email?.message}
-                />
-
-                <AppButton
-                  type="submit"
-                  loading={forgotPasswordMutation.isPending}
-                  className="w-full font-medium"
-                >
-                  {forgotPasswordMutation.isPending ? "Sending..." : "Send Reset Link"}
-                </AppButton>
-
-                <div className="mt-4 text-center">
+              <div className="relative">
+                {/* Brand Header */}
+                <div className="flex items-center gap-2 mb-4">
                   <Link
-                    to="/login"
-                    className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:text-primary/80"
+                    to="/"
+                    className="flex items-center gap-2.5 hover:opacity-85 transition-opacity"
                   >
-                    <ArrowLeft className="h-3 w-3" />
-                    Back to Login
+                    <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-primary/80 text-primary-foreground text-sm font-bold shadow-md shadow-primary/20">
+                      F
+                    </div>
+                    <span className="text-lg font-bold tracking-tight text-foreground">
+                      FestivalFund
+                    </span>
                   </Link>
                 </div>
-              </form>
-            </div>
-          </AppCard>
+
+                {emailSent ? (
+                  <div className="space-y-5 text-center py-1">
+                    <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary border border-primary/20">
+                      <MailCheck className="h-7 w-7 text-primary animate-pulse" />
+                    </div>
+
+                    <div className="space-y-1">
+                      <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">Check your email</h2>
+                      <p className="text-muted-foreground text-xs sm:text-sm leading-relaxed max-w-xs mx-auto">
+                        We've sent a password reset link to{" "}
+                        <span className="font-semibold text-foreground">{submittedEmail}</span>.
+                        Please check your inbox and spam folder.
+                      </p>
+                    </div>
+
+                    <div className="space-y-2.5 pt-1">
+                      <AppButton
+                        variant="outline"
+                        className="w-full font-medium rounded-xl h-9.5 text-xs sm:text-sm border-border/80"
+                        onClick={handleResend}
+                        loading={forgotPasswordMutation.isPending}
+                      >
+                        <RotateCcw className="mr-2 h-4 w-4" />
+                        {forgotPasswordMutation.isPending ? "Resending..." : "Resend Email"}
+                      </AppButton>
+
+                      <AppButton
+                        variant="ghost"
+                        className="w-full text-muted-foreground hover:text-foreground font-medium rounded-xl text-xs sm:text-sm"
+                        onClick={() => setEmailSent(false)}
+                      >
+                        Try a different email
+                      </AppButton>
+                    </div>
+
+                    <div className="pt-3 border-t border-border/50">
+                      <Link
+                        to="/login"
+                        className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-primary hover:text-primary/80 transition-colors"
+                      >
+                        <ArrowLeft className="h-3.5 w-3.5" />
+                        Back to Sign In
+                      </Link>
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <div className="mb-4 space-y-0.5">
+                      <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">Forgot Password?</h2>
+                      <p className="text-xs sm:text-sm text-muted-foreground">
+                        Enter your email and we'll send you a reset link
+                      </p>
+                    </div>
+
+                    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+                      <AppInput
+                        id="email"
+                        label="Email Address"
+                        type="email"
+                        placeholder="you@company.com"
+                        leftIcon={<Mail className="h-4 w-4" />}
+                        {...register("email")}
+                        error={errors.email?.message}
+                      />
+
+                      <AppButton
+                        type="submit"
+                        loading={forgotPasswordMutation.isPending}
+                        className="w-full font-semibold h-9.5 rounded-xl shadow-md shadow-primary/20"
+                      >
+                        {forgotPasswordMutation.isPending ? "Sending..." : "Send Reset Link"}
+                      </AppButton>
+
+                      <div className="mt-4 text-center pt-2 border-t border-border/50">
+                        <p className="text-xs sm:text-sm text-muted-foreground">
+                          Remember your password?{" "}
+                          <Link
+                            to="/login"
+                            className="font-semibold text-primary hover:underline transition-all"
+                          >
+                            Sign in
+                          </Link>
+                        </p>
+                      </div>
+                    </form>
+                  </>
+                )}
+              </div>
+            </AppCard>
+          </div>
+
         </div>
       </div>
     </div>

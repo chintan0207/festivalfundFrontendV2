@@ -78,13 +78,10 @@ export const useCurrentUser = () => {
 };
 
 export const useForgotPassword = () => {
-  const navigate = useNavigate();
-
   return useMutation({
     mutationFn: (data: ForgotPasswordPayload) => AuthService.forgotPassword(data),
     onSuccess: (res) => {
       toast.success(res.message || "Password reset link sent to your email");
-      navigate({ to: "/login", replace: true });
     },
     onError: (error: any) => {
       toast.error(error?.response?.data?.message || "Failed to send reset link");
