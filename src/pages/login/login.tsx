@@ -3,15 +3,16 @@ import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Mail, Lock, Star, CreditCard, Wallet, TrendingUp } from "lucide-react";
 import { AppButton } from "@/components/common/AppButton";
 import { AppCard } from "@/components/common/AppCard";
 import { AppInput } from "@/components/common/AppInput";
+import { AppBadge } from "@/components/common/AppBadge";
 import { loginSchema } from "../auth/schema/AuthSchema";
 import { useLogin } from "@/api/hooks/useAuth";
+import { gradientColors } from "@/theme/colors";
 
-export default function Login() {
+function Login() {
   const loginMutation = useLogin();
   const [rememberMe, setRememberMe] = useState(false);
 
@@ -28,114 +29,169 @@ export default function Login() {
     loginMutation.mutate({ email: data.email, password: data.password });
   };
 
+  const features = [
+    {
+      icon: CreditCard,
+      label: "Contribution Tracking",
+      desc: "Monitor and manage all contributions",
+    },
+    { icon: Wallet, label: "Expense Management", desc: "Track and organize expenses" },
+    {
+      icon: TrendingUp,
+      label: "Real-time Reports",
+      desc: "Get instant insights into your festival finances",
+    },
+  ];
+
   return (
-    <div className="min-h-screen w-full overflow-x-hidden grid md:grid-cols-2 bg-muted/40">
-      {/* LEFT SIDE */}
-      <div className="hidden md:flex flex-col justify-center px-16 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-primary/5" />
+    <div className="min-h-screen bg-background">
+      <div className="container mx-auto px-4 py-8 md:grid md:grid-cols-2 md:gap-12 md:items-center md:min-h-screen">
+        <div className="hidden md:block relative">
+          <div className="relative space-y-8 max-w-lg mx-auto">
+            <AppBadge icon={<Star className="h-4 w-4 text-primary" />} className="w-fit">
+              <span className="inline-flex items-center gap-2">
+                <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-green-500" />
+                Welcome Back
+              </span>
+            </AppBadge>
 
-        <div className="relative max-w-lg space-y-8">
-          <h1 className="text-4xl font-bold leading-tight tracking-tight">
-            Modern Festival Management for{" "}
-            <span className="text-primary">Every Mandal</span>
-          </h1>
+            <h1 className="text-5xl font-bold leading-tight tracking-tight">
+              Access Your
+              <span className="gradient-text"> Festival Dashboard </span>
+            </h1>
 
-          <p className="text-muted-foreground text-base leading-relaxed">
-            Track contributions, manage expenses, and generate professional reports for
-            Ganesh Chaturthi, Navratri, and more.
-          </p>
+            <p className="text-lg text-muted-foreground leading-relaxed">
+              Track contributions, manage expenses, and generate professional reports for
+              Ganesh Chaturthi, Navratri, and more with India's most trusted festival
+              platform.
+            </p>
 
-          <div className="space-y-3 text-sm">
-            <div className="flex items-center gap-2">
-              <span className="h-1.5 w-1.5 rounded-full bg-primary" />
-              Contribution Tracking
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="h-1.5 w-1.5 rounded-full bg-primary" />
-              Expense Management
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="h-1.5 w-1.5 rounded-full bg-primary" />
-              Real-time Reports
+            <div className="grid grid-cols-2 gap-3">
+              {features.map((feature, i) => {
+                const Icon = feature.icon;
+                return (
+                  <div key={i} className="flex items-start gap-3">
+                    <div
+                      className={`flex h-8 w-8 items-center justify-center rounded-xl text-white ${gradientColors[i % gradientColors.length]} flex-shrink-0`}
+                    >
+                      <Icon className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <p className="font-medium text-sm">{feature.label}</p>
+                      <p className="text-xs text-muted-foreground">{feature.desc}</p>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>
-      </div>
 
-      {/* RIGHT SIDE */}
-      <div className="flex items-center justify-center px-4 py-10 w-full">
-        <AppCard
-          className="w-full max-w-md"
-          title="Login"
-          subtitle="Access your FestivalFund dashboard"
-        >
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-            {/* Email */}
-            <AppInput
-              id="email"
-              label="Email"
-              placeholder="name@example.com"
-              {...register("email")}
-              error={errors.email?.message}
-            />
+        <div className="flex items-center justify-center">
+          <AppCard className="w-full max-w-md relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-primary/10 to-chart-2/10 rounded-bl-full" />
 
-            {/* Password */}
-            <AppInput
-              id="password"
-              label="Password"
-              type="password"
-              placeholder="••••••••"
-              {...register("password")}
-              error={errors?.password?.message}
-            />
-
-            {/* Remember + Forgot */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="remember"
-                  checked={rememberMe}
-                  onCheckedChange={(val) => setRememberMe(!!val)}
-                />
-                <Label htmlFor="remember" className="text-sm">
-                  Remember me
-                </Label>
+            <div className="relative">
+              <div className="mb-6">
+                <h2 className="text-2xl font-bold">Login</h2>
+                <p className="text-muted-foreground mt-1">
+                  Access your FestivalFund dashboard
+                </p>
               </div>
 
-              <AppButton variant="link" className="px-0 text-sm">
-                Forgot password?
-              </AppButton>
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+                <AppInput
+                  id="email"
+                  label="Email Address"
+                  placeholder="name@example.com"
+                  leftIcon={<Mail className="h-4 w-4" />}
+                  {...register("email")}
+                  error={errors.email?.message}
+                />
+
+                <AppInput
+                  id="password"
+                  label="Password"
+                  type="password"
+                  placeholder="Enter your password"
+                  leftIcon={<Lock className="h-4 w-4" />}
+                  {...register("password")}
+                  error={errors?.password?.message}
+                />
+
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <input
+                      id="remember"
+                      type="checkbox"
+                      checked={rememberMe}
+                      onChange={(e) => setRememberMe(e.target.checked)}
+                      className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                    />
+                    <label htmlFor="remember" className="text-sm font-medium">
+                      Remember me
+                    </label>
+                  </div>
+
+                  <Link
+                    to="/forgot-password"
+                    className="text-sm font-medium text-primary hover:text-primary/80"
+                  >
+                    Forgot password?
+                  </Link>
+                </div>
+
+                <AppButton
+                  type="submit"
+                  loading={isSubmitting || loginMutation.isPending}
+                  className="w-full font-medium"
+                >
+                  {isSubmitting || loginMutation.isPending ? "Signing in..." : "Sign in"}
+                </AppButton>
+
+                <div className="relative my-6">
+                  <div className="absolute inset-0 flex items-center">
+                    <div className="w-full border-t border-border/50" />
+                  </div>
+                  <div className="relative flex justify-center text-sm">
+                    <span className="px-4 bg-card text-muted-foreground">
+                      Or continue with
+                    </span>
+                  </div>
+                </div>
+
+                <AppButton
+                  variant="outline"
+                  className="w-full flex items-center justify-center gap-2 font-medium"
+                  type="button"
+                  onClick={() => alert("Google login (UI only)")}
+                >
+                  <img
+                    src="https://www.svgrepo.com/show/475656/google-color.svg"
+                    className="h-4 w-4"
+                    alt="Google"
+                  />
+                  Continue with Google
+                </AppButton>
+
+                <div className="mt-6 text-center">
+                  <p className="text-sm text-muted-foreground">
+                    Don't have an account?{" "}
+                    <Link
+                      to="/signup"
+                      className="font-semibold text-primary hover:text-primary/80"
+                    >
+                      Sign up for free
+                    </Link>
+                  </p>
+                </div>
+              </form>
             </div>
-
-            {/* Login */}
-            <AppButton type="submit" loading={isSubmitting || loginMutation.isPending} className="w-full text-base">
-              Login
-            </AppButton>
-
-            {/* Google */}
-            <AppButton
-              variant="outline"
-              className="w-full flex items-center gap-2"
-              type="button"
-              onClick={() => alert("Google login (UI only)")}
-            >
-              <img
-                src="https://www.svgrepo.com/show/475656/google-color.svg"
-                className="h-4 w-4"
-              />
-              Continue with Google
-            </AppButton>
-
-            {/* Signup */}
-            <div className="text-center text-sm">
-              Don’t have an account?{" "}
-              <Link to="/signup" className="text-primary font-medium">
-                Sign up
-              </Link>
-            </div>
-          </form>
-        </AppCard>
+          </AppCard>
+        </div>
       </div>
     </div>
   );
 }
+
+export default Login;
