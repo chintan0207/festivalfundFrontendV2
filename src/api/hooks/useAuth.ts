@@ -4,15 +4,19 @@ import { useNavigate } from "@tanstack/react-router";
 import { useAuthStore } from "../auth/auth.store";
 import { AuthService } from "../auth/auth.service";
 import { toast } from "sonner";
-import type { SignupPayload } from "@/types/Types";
+import type {
+  SignupPayload,
+  LoginPayload,
+  ForgotPasswordPayload,
+  ResetPasswordPayload,
+} from "@/types/Types";
 
 export const useLogin = () => {
   const setAuth = useAuthStore((s) => s.setAuth);
   const navigate = useNavigate();
 
   return useMutation({
-    mutationFn: ({ email, password }: { email: string; password: string }) =>
-      AuthService.login(email, password),
+    mutationFn: (data: LoginPayload) => AuthService.login(data),
     onSuccess: (res) => {
       const data = res.data;
       if (!data) {
@@ -70,6 +74,36 @@ export const useCurrentUser = () => {
     enabled: !!accessToken,
     retry: false,
     staleTime: 5 * 60 * 1000,
+  });
+};
+
+export const useForgotPassword = () => {
+  const navigate = useNavigate();
+
+  return useMutation({
+    mutationFn: (data: ForgotPasswordPayload) => AuthService.forgotPassword(data),
+    onSuccess: (res) => {
+      toast.success(res.message || "Password reset link sent to your email");
+      navigate({ to: "/login", replace: true });
+    },
+    onError: (error: any) => {
+      toast.error(error?.response?.data?.message || "Failed to send reset link");
+    },
+  });
+};
+
+export const useResetPassword = () => {
+  const navigate = useNavigate();
+
+  return useMutation({
+    mutationFn: (data: ResetPasswordPayload) => AuthService.resetPassword(data),
+    onSuccess: (res) => {
+      toast.success(res.message || "Password reset successful. Please login.");
+      navigate({ to: "/login", replace: true });
+    },
+    onError: (error: any) => {
+      toast.error(error?.response?.data?.message || "Failed to reset password");
+    },
   });
 };
 

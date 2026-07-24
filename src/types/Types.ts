@@ -54,3 +54,18 @@ export type SignupPayload = {
   phone: string;
   address?: string;
 };
+
+export type LoginPayload = {
+  email: string;
+  password: string;
+};
+
+export type ForgotPasswordPayload = {
+  email: string;
+};
+
+export type ResetPasswordPayload = {
+  token: string;
+  password: string;
+  newPassword?: string;
+};

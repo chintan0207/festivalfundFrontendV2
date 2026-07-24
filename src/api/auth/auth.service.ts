@@ -1,4 +1,11 @@
-import type { AuthResponse, SignupPayload, User } from "@/types/Types";
+import type {
+  AuthResponse,
+  SignupPayload,
+  LoginPayload,
+  ForgotPasswordPayload,
+  ResetPasswordPayload,
+  User,
+} from "@/types/Types";
 import ApiClient from "../apiClient";
 
 type ApiResponse<T> = {
@@ -8,13 +15,15 @@ type ApiResponse<T> = {
   data: T;
 };
 
-export const AuthService = {
-  login: async (email: string, password: string) => {
-    const response = await ApiClient.post<ApiResponse<AuthResponse>>("/auth/login", {
-      email,
-      password,
-    });
+type ApiMessageResponse = {
+  statusCode: number;
+  success: boolean;
+  message: string;
+};
 
+export const AuthService = {
+  login: async (payload: LoginPayload) => {
+    const response = await ApiClient.post<ApiResponse<AuthResponse>>("/auth/login", payload);
     return response.data;
   },
 
@@ -23,12 +32,25 @@ export const AuthService = {
       "/organizations",
       payload,
     );
-
     return response.data;
   },
 
   getMe: async () => {
     const response = await ApiClient.get<ApiResponse<User>>("/auth/me");
+    return response.data;
+  },
+
+  forgotPassword: async (payload: ForgotPasswordPayload) => {
+    const response = await ApiClient.post<ApiMessageResponse>("/auth/forgot-password", payload);
+    return response.data;
+  },
+
+  resetPassword: async (payload: ResetPasswordPayload) => {
+    const response = await ApiClient.post<ApiMessageResponse>("/auth/reset-password", {
+      token: payload.token,
+      newPassword: payload.password,
+      password: payload.password,
+    });
     return response.data;
   },
 };
