@@ -1,5 +1,4 @@
-import { AppBadge } from "@/components/common/AppBadge";
-import { Card, CardContent } from "@/components/ui/card";
+import { AppBadge, AppCard } from "@/components/common";
 import { Area, AreaChart, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
 import {
   kpiData,
@@ -12,8 +11,8 @@ import { cn } from "@/lib/utils";
 const DashboardPreview = () => {
   return (
     <div className="relative mx-auto mt-16 max-w-5xl animate-fade-up px-4 sm:px-6">
-      <div className="absolute -inset-4 rounded-3xl bg-gradient-to-br from-primary/20 to-chart-2/20 blur-2xl" />
-      <Card className="relative overflow-hidden">
+      <div className="absolute -inset-4 rounded-3xl bg-gradient-to-br from-primary/20 to-chart-2/20 blur-2xl pointer-events-none" />
+      <AppCard className="relative overflow-hidden p-0 border-border/60">
         <div className="flex h-10 items-center gap-2 border-b border-border bg-muted/50 px-4">
           <div className="flex gap-1.5">
             <div className="h-3 w-3 rounded-full bg-red-400" />
@@ -24,32 +23,32 @@ const DashboardPreview = () => {
             app.festivalfund.com/dashboard
           </div>
         </div>
-        <CardContent className="p-4 sm:p-6">
+        <div className="p-4 sm:p-6">
           <div className="mb-5 flex items-center justify-between">
             <div>
-              <p className="text-sm font-semibold">Dashboard Overview</p>
+              <p className="text-sm font-bold text-foreground">Dashboard Overview</p>
               <p className="text-2xs text-muted-foreground">
                 Shri Ganesh Temple Trust · 2025-26
               </p>
             </div>
-            <AppBadge className="bg-green-500/10 text-green-600 dark:text-green-400">
-              <span className="mr-1 inline-block h-1.5 w-1.5 rounded-full bg-green-500" />
+            <AppBadge className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-semibold">
+              <span className="mr-1 inline-block h-1.5 w-1.5 rounded-full bg-emerald-500" />
               Live
             </AppBadge>
           </div>
 
           <div className="mb-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
             {kpiData.map((kpi, i) => (
-              <div key={i} className="rounded-xl border border-border bg-muted/50 p-3">
+              <div key={i} className="rounded-xl border border-border/60 bg-muted/50 p-3">
                 <p className="text-2xs text-muted-foreground">{kpi.label}</p>
-                <p className="mt-0.5 text-lg font-bold">{kpi.value}</p>
+                <p className="mt-0.5 text-lg font-bold text-foreground">{kpi.value}</p>
                 <div className="mt-1 flex items-center justify-between">
                   <span
                     className={cn(
-                      "text-2xs font-medium",
+                      "text-2xs font-semibold",
                       kpi.change.startsWith("+")
-                        ? "text-green-600 dark:text-green-400"
-                        : "text-red-500",
+                        ? "text-emerald-600 dark:text-emerald-400"
+                        : "text-rose-500",
                     )}
                   >
                     {kpi.change}
@@ -61,8 +60,8 @@ const DashboardPreview = () => {
           </div>
 
           <div className="grid gap-3 sm:grid-cols-3">
-            <div className="rounded-xl border border-border bg-muted/50 p-4 sm:col-span-2">
-              <p className="mb-3 text-xs font-medium text-muted-foreground">
+            <div className="rounded-xl border border-border/60 bg-muted/50 p-4 sm:col-span-2">
+              <p className="mb-3 text-xs font-semibold text-muted-foreground">
                 Collection Trend
               </p>
               <ResponsiveContainer width="100%" height={140}>
@@ -92,8 +91,8 @@ const DashboardPreview = () => {
                 </AreaChart>
               </ResponsiveContainer>
             </div>
-            <div className="rounded-xl border border-border bg-muted/50 p-4">
-              <p className="mb-3 text-xs font-medium text-muted-foreground">
+            <div className="rounded-xl border border-border/60 bg-muted/50 p-4">
+              <p className="mb-3 text-xs font-semibold text-muted-foreground">
                 By Category
               </p>
               <div className="flex items-center justify-center">
@@ -131,10 +130,10 @@ const DashboardPreview = () => {
               </div>
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </AppCard>
       <div className="mt-24 mb-4 text-center">
-        <p className="mb-6 text-sm" style={{ color: "var(--tertiary)" }}>
+        <p className="mb-6 text-sm text-muted-foreground font-medium">
           Trusted by organizations of all sizes
         </p>
         <div className="flex flex-wrap items-center justify-center gap-6 opacity-60 sm:gap-10">

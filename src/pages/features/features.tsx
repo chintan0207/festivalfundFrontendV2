@@ -1,7 +1,11 @@
-import { AppBadge } from "@/components/common/AppBadge";
-import { AppButton } from "@/components/common/AppButton";
-import { Card, CardContent } from "@/components/ui/card";
-import { features, iconGradients } from "@/lib/data/landingPageData";
+import {
+  AppButton,
+  AppCard,
+  AppPageHero,
+  AppSectionHeader,
+  AppCTASection,
+  AppIconBadge,
+} from "@/components/common";
 import { Check, ChevronRight, Calendar, Users, IndianRupee, Receipt, FileText, Building2, Shield, Search, UserCheck, Wallet, ArrowRight, Star } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 
@@ -16,7 +20,6 @@ const featureHighlights = [
       "Manage multiple festivals simultaneously",
       "Assign team members to specific festivals",
     ],
-    color: "#10b981",
   },
   {
     title: "Contributor Profiles",
@@ -28,7 +31,6 @@ const featureHighlights = [
       "Full contribution history at a glance",
       "Contact information and communication logs",
     ],
-    color: "#6366f1",
   },
   {
     title: "Contribution Tracking",
@@ -40,7 +42,6 @@ const featureHighlights = [
       "Pending/collected status workflow",
       "Bulk contribution entry for events",
     ],
-    color: "#f59e0b",
   },
   {
     title: "Expense Management",
@@ -52,7 +53,6 @@ const featureHighlights = [
       "Attach bills and receipts digitally",
       "Expense approval workflow for accountability",
     ],
-    color: "#06b6d4",
   },
   {
     title: "PDF Receipts & Reports",
@@ -64,7 +64,6 @@ const featureHighlights = [
       "One-click festival financial reports",
       "Export data to Excel for offline analysis",
     ],
-    color: "#8b5cf6",
   },
   {
     title: "Multi-Organization Support",
@@ -76,7 +75,6 @@ const featureHighlights = [
       "Centralized or decentralized management",
       "Cross-organization reporting for admins",
     ],
-    color: "#ef4444",
   },
 ];
 
@@ -117,50 +115,45 @@ const Features = () => {
   return (
     <div className="bg-background">
       {/* Hero */}
-      <section className="relative overflow-hidden px-4 pb-20 pt-32 sm:px-6">
-        <div className="absolute left-1/2 top-0 h-[600px] w-[600px] -translate-x-1/2 rounded-full bg-gradient-to-br from-primary/10 via-chart-2/10 to-transparent blur-3xl" />
-        <div className="relative mx-auto max-w-7xl">
-          <div className="mx-auto max-w-3xl text-center">
-            <AppBadge icon={<Star className="h-4 w-4 text-primary" />} className="mb-5 mx-auto w-fit">
-              <span className="inline-flex items-center gap-2">
-                <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-green-500" />
-                Powerful Features
-              </span>
-            </AppBadge>
-            <h1 className="text-4xl font-bold leading-[1.1] tracking-tight sm:text-5xl lg:text-6xl">
-              Everything you need to manage
-              <br />
-              <span className="gradient-text">festival finances</span>
-            </h1>
-            <p className="mx-auto mt-5 max-w-2xl text-lg text-muted-foreground">
-              From contributions to expenses, billing to reports — FestivalFund brings your entire financial workflow into one elegant platform.
-            </p>
-            <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-              <Link to="/signup">
-                <AppButton size="lg" rightIcon={<ChevronRight className="h-4 w-4" />}>
-                  Start Free Trial
-                </AppButton>
-              </Link>
-              <Link to="/#features">
-                <AppButton variant="secondary" size="lg">
-                  View Demo
-                </AppButton>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
+      <AppPageHero
+        badge={
+          <span className="inline-flex items-center gap-2">
+            <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-500" />
+            Powerful Features
+          </span>
+        }
+        badgeIcon={<Star className="h-4 w-4 text-primary" />}
+        title={
+          <>
+            Everything you need to manage{" "}
+            <span className="gradient-text">festival finances</span>
+          </>
+        }
+        description="From contributions to expenses, billing to reports — FestivalFund brings your entire financial workflow into one elegant platform."
+        actions={
+          <>
+            <Link to="/signup">
+              <AppButton size="lg" rightIcon={<ChevronRight className="h-4 w-4" />}>
+                Start Free Trial
+              </AppButton>
+            </Link>
+            <Link to="/contact">
+              <AppButton variant="secondary" size="lg">
+                Contact Sales
+              </AppButton>
+            </Link>
+          </>
+        }
+      />
 
       {/* Detailed Features */}
-      <section className="px-4 py-20 sm:px-6">
+      <section className="px-4 py-16 sm:px-6">
         <div className="mx-auto max-w-7xl">
-          <div className="mx-auto max-w-2xl text-center">
-            <AppBadge className="mb-3 mx-auto w-fit">Feature Details</AppBadge>
-            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Deep dive into every feature</h2>
-            <p className="mt-3 text-lg text-muted-foreground">
-              Every tool is built specifically for Indian festival management workflows.
-            </p>
-          </div>
+          <AppSectionHeader
+            badge="Feature Details"
+            title="Deep dive into every feature"
+            subtitle="Every tool is built specifically for Indian festival management workflows."
+          />
           <div className="mt-14 space-y-16">
             {featureHighlights.map((feature, i) => {
               const Icon = feature.icon;
@@ -168,40 +161,39 @@ const Features = () => {
               return (
                 <div key={i} className={`flex flex-col gap-8 md:flex-row ${isReversed ? "md:flex-row-reverse" : ""} items-center`}>
                   <div className="flex-1 space-y-4">
-                    <div className={`flex h-12 w-12 items-center justify-center rounded-2xl text-white ${iconGradients[i]}`}>
-                      <Icon className="h-6 w-6" />
+                    <div className="flex items-center gap-3.5">
+                      <AppIconBadge icon={<Icon className="h-5 w-5" />} colorIndex={i} size="lg" />
+                      <h3 className="text-2xl font-bold text-foreground">{feature.title}</h3>
                     </div>
-                    <h3 className="text-2xl font-bold">{feature.title}</h3>
-                    <p className="text-muted-foreground">{feature.description}</p>
-                    <ul className="space-y-2">
+                    <p className="text-muted-foreground leading-relaxed">{feature.description}</p>
+                    <ul className="space-y-2.5">
                       {feature.details.map((detail) => (
-                        <li key={detail} className="flex items-center gap-2 text-sm">
-                          <Check className="h-4 w-4 text-primary" />
+                        <li key={detail} className="flex items-center gap-2.5 text-sm font-medium text-foreground/90">
+                          <Check className="h-4 w-4 text-primary shrink-0" />
                           <span>{detail}</span>
                         </li>
                       ))}
                     </ul>
                   </div>
-                  <Card className="flex-1 w-full" style={{ borderTopColor: feature.color, borderTopWidth: 3 }}>
-                    <CardContent className="p-6 sm:p-8">
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4">
-                        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted">
-                          <Icon className="h-4 w-4" />
-                        </div>
-                        <span className="font-medium text-foreground">{feature.title}</span>
+
+                  <AppCard className="flex-1 w-full p-6 sm:p-8 border-border/60 bg-card/90">
+                    <div className="flex items-center gap-2.5 text-sm text-muted-foreground mb-5">
+                      <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary font-semibold">
+                        <Icon className="h-4 w-4" />
                       </div>
-                      <div className="space-y-3">
-                        {feature.details.slice(0, 3).map((detail) => (
-                          <div key={detail} className="flex items-center gap-3 rounded-lg border border-border/50 bg-muted/30 p-3">
-                            <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10">
-                              <Check className="h-3 w-3 text-primary" />
-                            </div>
-                            <span className="text-sm">{detail}</span>
+                      <span className="font-semibold text-foreground">{feature.title}</span>
+                    </div>
+                    <div className="space-y-3">
+                      {feature.details.slice(0, 3).map((detail) => (
+                        <div key={detail} className="flex items-center gap-3 rounded-xl border border-border/50 bg-muted/40 p-3">
+                          <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/15 text-primary">
+                            <Check className="h-3.5 w-3.5" />
                           </div>
-                        ))}
-                      </div>
-                    </CardContent>
-                  </Card>
+                          <span className="text-xs sm:text-sm font-medium text-foreground">{detail}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </AppCard>
                 </div>
               );
             })}
@@ -210,28 +202,24 @@ const Features = () => {
       </section>
 
       {/* Additional Features Grid */}
-      <section className="bg-muted/30 px-4 py-20 sm:px-6">
+      <section className="bg-muted/30 px-4 py-16 sm:px-6">
         <div className="mx-auto max-w-7xl">
-          <div className="mx-auto max-w-2xl text-center">
-            <AppBadge className="mb-3 mx-auto w-fit">More Features</AppBadge>
-            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Plus everything else you need</h2>
-            <p className="mt-3 text-lg text-muted-foreground">
-              Security, flexibility, and scalability built into every layer.
-            </p>
-          </div>
+          <AppSectionHeader
+            badge="More Features"
+            title="Plus everything else you need"
+            subtitle="Security, flexibility, and scalability built into every layer."
+          />
           <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {additionalFeatures.map((f, i) => {
               const Icon = f.icon;
               return (
-                <Card key={i} className="group overflow-hidden border-border/50 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg">
-                  <CardContent className="p-5">
-                    <div className={`flex h-10 w-10 items-center justify-center rounded-xl text-white ${iconGradients[i % iconGradients.length]}`}>
-                      <Icon className="h-5 w-5" />
-                    </div>
-                    <h3 className="mt-3 text-sm font-semibold">{f.title}</h3>
-                    <p className="mt-1.5 text-xs text-muted-foreground">{f.description}</p>
-                  </CardContent>
-                </Card>
+                <AppCard key={i} className="group overflow-hidden border-border/60 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg p-5 bg-card/80 space-y-2.5">
+                  <div className="flex items-center gap-3">
+                    <AppIconBadge icon={<Icon className="h-4.5 w-4.5" />} colorIndex={i} size="sm" />
+                    <h3 className="text-base font-semibold text-foreground">{f.title}</h3>
+                  </div>
+                  <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">{f.description}</p>
+                </AppCard>
               );
             })}
           </div>
@@ -239,31 +227,21 @@ const Features = () => {
       </section>
 
       {/* CTA */}
-      <section className="relative px-4 py-24 sm:px-6">
-        <div className="absolute left-1/2 top-0 h-[500px] w-[800px] -translate-x-1/2 rounded-full bg-gradient-to-br from-primary/15 via-chart-2/15 to-transparent blur-3xl" />
-        <div className="relative mx-auto max-w-5xl">
-          <div className="rounded-3xl border border-border/50 bg-background/60 p-10 text-center shadow-xl backdrop-blur-xl sm:p-16">
-            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Ready to simplify your festival management?</h2>
-            <p className="mx-auto mt-4 max-w-xl text-lg text-muted-foreground">
-              Join thousands of organizations managing their festival finances with clarity and trust.
-            </p>
-            <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-              <Link
-                to="/signup"
-                className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3.5 text-sm font-semibold text-primary-foreground shadow-lg transition-transform hover:scale-[1.03]"
-              >
-                Get Started Free <ArrowRight className="h-4 w-4" />
-              </Link>
-              <Link
-                to="/contact"
-                className="inline-flex items-center justify-center rounded-xl border border-border/50 px-6 py-3.5 text-sm font-semibold text-foreground transition-colors hover:bg-accent/50"
-              >
-                Talk to Sales
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
+      <AppCTASection
+        title="Ready to simplify your festival management?"
+        description="Join thousands of organizations managing their festival finances with clarity and trust."
+      >
+        <Link to="/signup">
+          <AppButton size="lg" rightIcon={<ArrowRight className="h-4 w-4" />}>
+            Get Started Free
+          </AppButton>
+        </Link>
+        <Link to="/contact">
+          <AppButton variant="outline" size="lg">
+            Talk to Sales
+          </AppButton>
+        </Link>
+      </AppCTASection>
     </div>
   );
 };

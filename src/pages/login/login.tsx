@@ -53,9 +53,9 @@ function Login() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl h-full flex items-center justify-center">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-14 items-center w-full">
           
-          {/* Left Side Feature Showcase (Desktop / Tablet) */}
+          {/* Left Side Feature Showcase */}
           <div className="hidden md:block space-y-6 max-w-lg mx-auto lg:mx-0">
-            <AppBadge icon={<Star className="h-4 w-4 text-primary" />} className="w-fit">
+            <AppBadge icon={<Star className="h-4 w-4 text-primary" />}>
               <span className="inline-flex items-center gap-2">
                 <span className="inline-block h-2 w-2 animate-pulse rounded-full bg-emerald-500" />
                 Welcome Back
@@ -101,7 +101,7 @@ function Login() {
 
           {/* Right Side Login Card */}
           <div className="flex items-center justify-center w-full">
-            <AppCard className="w-full max-w-md p-5 sm:p-6 rounded-2xl border border-border/60 bg-card/95 backdrop-blur-md shadow-xl shadow-primary/5 relative overflow-hidden">
+            <AppCard className="w-full max-w-md p-5 sm:p-6 relative overflow-hidden">
               <div className="absolute -top-10 -right-10 w-36 h-36 bg-gradient-to-br from-primary/15 via-chart-2/10 to-transparent rounded-full blur-2xl pointer-events-none" />
 
               <div className="relative">
@@ -170,7 +170,7 @@ function Login() {
                         type="checkbox"
                         checked={rememberMe}
                         onChange={(e) => setRememberMe(e.target.checked)}
-                        className="h-4 w-4 rounded border-input text-primary focus:ring-primary/20 accent-primary transition-all cursor-pointer"
+                        className="h-4 w-4 rounded border-input text-primary focus:ring-primary/20 accent-primary cursor-pointer"
                       />
                       <span className="text-xs sm:text-sm font-medium text-muted-foreground">
                         Remember me
@@ -188,7 +188,7 @@ function Login() {
                   <AppButton
                     type="submit"
                     loading={isSubmitting || loginMutation.isPending}
-                    className="w-full font-semibold h-9.5 rounded-xl shadow-md shadow-primary/20"
+                    className="w-full h-9.5"
                   >
                     {isSubmitting || loginMutation.isPending ? "Signing in..." : "Sign in"}
                   </AppButton>
@@ -206,7 +206,7 @@ function Login() {
 
                   <AppButton
                     variant="outline"
-                    className="w-full flex items-center justify-center gap-2 font-medium h-9.5 rounded-xl border-border/80 hover:bg-muted/50 text-xs sm:text-sm"
+                    className="w-full h-9.5 text-xs sm:text-sm"
                     type="button"
                     onClick={() => alert("Google login (UI ready)")}
                   >

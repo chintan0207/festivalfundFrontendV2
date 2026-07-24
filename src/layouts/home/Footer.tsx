@@ -1,7 +1,5 @@
-import { FiFacebook } from "react-icons/fi";
-import { FaXTwitter } from "react-icons/fa6";
-import { FaInstagram } from "react-icons/fa";
-import { FiLinkedin } from "react-icons/fi";
+import { FiFacebook, FiLinkedin } from "react-icons/fi";
+import { FaXTwitter, FaInstagram } from "react-icons/fa6";
 import { Link } from "@tanstack/react-router";
 
 const Footer = () => {
@@ -11,15 +9,15 @@ const Footer = () => {
       links: [
         { label: "Features", href: "/features" },
         { label: "Pricing", href: "/pricing" },
-        { label: "How it Works", href: "/#how-it-works" },
+        { label: "App Overview", href: "/app" },
       ],
     },
     {
-      title: "Resources",
+      title: "Company",
       links: [
-        { label: "About", href: "/about" },
-        { label: "Contact", href: "/contact" },
-        { label: "Support", href: "/support" },
+        { label: "About Us", href: "/about" },
+        { label: "Contact Us", href: "/contact" },
+        { label: "Help & Support", href: "/support" },
       ],
     },
     {
@@ -33,41 +31,45 @@ const Footer = () => {
   ];
 
   const socialLinks = [
-    { icon: FiFacebook, href: "#" },
-    { icon: FaXTwitter, href: "#" },
-    { icon: FaInstagram, href: "#" },
-    { icon: FiLinkedin, href: "#" },
+    { icon: FiFacebook, href: "https://facebook.com", label: "Facebook" },
+    { icon: FaXTwitter, href: "https://x.com", label: "Twitter" },
+    { icon: FaInstagram, href: "https://instagram.com", label: "Instagram" },
+    { icon: FiLinkedin, href: "https://linkedin.com", label: "LinkedIn" },
   ];
-  return (
-    <footer>
-      <div className="container mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
-          {/* Brand */}
-          <div>
-            <div className="mb-4 flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-                <span className="text-lg text-primary-foreground">F</span>
-              </div>
-              <span className="text-xl font-semibold">FestivalFund</span>
-            </div>
 
-            <p className="text-sm text-muted-foreground">
-              Empowering Festivalfund across India with modern tools for festival
-              management, contribution tracking, and community organization.
+  return (
+    <footer className="border-t border-border/60 bg-card/60 backdrop-blur-sm mt-auto">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 max-w-7xl">
+        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-5">
+          {/* Brand Column */}
+          <div className="md:col-span-2 space-y-4">
+            <Link to="/" className="flex items-center gap-2.5 hover:opacity-85 transition-opacity w-fit">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-primary/80 text-primary-foreground font-bold text-lg shadow-md shadow-primary/20">
+                F
+              </div>
+              <span className="text-xl font-bold tracking-tight text-foreground">
+                FestivalFund
+              </span>
+            </Link>
+
+            <p className="text-sm text-muted-foreground leading-relaxed max-w-sm">
+              Empowering mandals, trusts, and committees across India with modern digital tools for festival finance management, contribution tracking, and community transparency.
             </p>
           </div>
 
           {/* Dynamic Footer Sections */}
           {footerSections.map((section) => (
-            <div key={section.title}>
-              <h4 className="mb-4 font-semibold">{section.title}</h4>
+            <div key={section.title} className="space-y-3">
+              <h4 className="text-sm font-semibold tracking-wider text-foreground uppercase">
+                {section.title}
+              </h4>
 
-              <ul className="space-y-2">
+              <ul className="space-y-2.5">
                 {section.links.map((link) => (
                   <li key={link.href}>
                     <Link
                       to={link.href}
-                      className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+                      className="text-sm text-muted-foreground transition-colors hover:text-primary font-medium"
                     >
                       {link.label}
                     </Link>
@@ -79,12 +81,12 @@ const Footer = () => {
         </div>
 
         {/* Bottom Footer */}
-        <div className="mt-8 flex flex-col items-center justify-between gap-4 border-t border-dashed pt-8 md:flex-row">
-          <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} FestivalFund. All rights reserved.
+        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-border/50 pt-8 sm:flex-row">
+          <p className="text-xs sm:text-sm text-muted-foreground">
+            © {new Date().getFullYear()} FestivalFund. All rights reserved. Built for Indian Festival Mandals & Committees.
           </p>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
             {socialLinks.map((social, index) => {
               const Icon = social.icon;
 
@@ -92,9 +94,12 @@ const Footer = () => {
                 <a
                   key={index}
                   href={social.href}
-                  className="text-muted-foreground transition-colors hover:text-foreground"
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label={social.label}
+                  className="flex h-9 w-9 items-center justify-center rounded-xl border border-border/60 bg-background text-muted-foreground transition-colors hover:border-primary/40 hover:text-primary"
                 >
-                  <Icon className="h-5 w-5" />
+                  <Icon className="h-4 w-4" />
                 </a>
               );
             })}

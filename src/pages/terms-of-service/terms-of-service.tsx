@@ -1,4 +1,4 @@
-import { AppBadge } from "@/components/common/AppBadge";
+import { AppPageHero } from "@/components/common";
 import { FileText, Star } from "lucide-react";
 
 const sections = [
@@ -47,25 +47,21 @@ const sections = [
 const TermsOfService = () => {
   return (
     <div className="bg-background">
-      <section className="relative overflow-hidden px-4 pb-20 pt-32 sm:px-6">
-        <div className="absolute left-1/2 top-0 h-[600px] w-[600px] -translate-x-1/2 rounded-full bg-gradient-to-br from-primary/10 via-chart-2/10 to-transparent blur-3xl" />
-        <div className="relative mx-auto max-w-3xl">
-          <div className="text-center">
-            <AppBadge icon={<Star className="h-4 w-4 text-primary" />} className="mb-5 mx-auto w-fit">
-              <span className="inline-flex items-center gap-2">
-                <FileText className="h-4 w-4" />
-                Terms of Service
-              </span>
-            </AppBadge>
-            <h1 className="text-4xl font-bold leading-[1.1] tracking-tight sm:text-5xl">
-              Terms of <span className="gradient-text">Service</span>
-            </h1>
-            <p className="mx-auto mt-5 max-w-2xl text-lg text-muted-foreground">
-              Last updated: January 1, 2025
-            </p>
-          </div>
-        </div>
-      </section>
+      <AppPageHero
+        badge={
+          <span className="inline-flex items-center gap-2">
+            <FileText className="h-4 w-4" />
+            Terms of Service
+          </span>
+        }
+        badgeIcon={<Star className="h-4 w-4 text-primary" />}
+        title={
+          <>
+            Terms of <span className="gradient-text">Service</span>
+          </>
+        }
+        description="Last updated: January 1, 2025"
+      />
 
       <section className="px-4 pb-20 sm:px-6">
         <div className="mx-auto max-w-3xl">
@@ -75,7 +71,7 @@ const TermsOfService = () => {
           <div className="mt-10 space-y-8">
             {sections.map((section, i) => (
               <div key={i}>
-                <h2 className="text-xl font-bold">
+                <h2 className="text-xl font-bold text-foreground">
                   <span className="gradient-text">{i + 1}.</span> {section.title}
                 </h2>
                 <p className="mt-2 leading-relaxed text-muted-foreground">{section.content}</p>

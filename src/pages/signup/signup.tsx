@@ -50,9 +50,21 @@ function Signup() {
   };
 
   const benefits = [
-    { icon: CreditCard, label: "Track Contributions", desc: "Record cash & digital donations" },
-    { icon: Wallet, label: "Manage Expenses", desc: "Organize vendor payments & budgets" },
-    { icon: TrendingUp, label: "Generate Reports", desc: "PDF statements & live analytics" },
+    {
+      icon: CreditCard,
+      label: "Track Contributions",
+      desc: "Record cash & digital donations",
+    },
+    {
+      icon: Wallet,
+      label: "Manage Expenses",
+      desc: "Organize vendor payments & budgets",
+    },
+    {
+      icon: TrendingUp,
+      label: "Generate Reports",
+      desc: "PDF statements & live analytics",
+    },
     { icon: Shield, label: "Secure Platform", desc: "Role-based access & data security" },
   ];
 
@@ -62,13 +74,9 @@ function Signup() {
     <div className="h-screen w-screen overflow-hidden bg-background flex flex-col justify-center">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl h-full flex items-center justify-center">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-14 items-center w-full">
-          
-          {/* Left Side Feature Showcase (Desktop / Tablet) */}
+          {/* Left Side Feature Showcase */}
           <div className="hidden md:block space-y-6 max-w-lg mx-auto lg:mx-0">
-            <AppBadge
-              icon={<Sparkles className="h-4 w-4 text-primary" />}
-              className="w-fit"
-            >
+            <AppBadge icon={<Sparkles className="h-4 w-4 text-primary" />}>
               <span className="inline-flex items-center gap-2">
                 <span className="inline-block h-2 w-2 animate-pulse rounded-full bg-emerald-500" />
                 Get Started Free
@@ -76,9 +84,8 @@ function Signup() {
             </AppBadge>
 
             <h1 className="text-3xl lg:text-4xl xl:text-5xl font-extrabold leading-[1.15] tracking-tight">
-              Create Your{" "}
-              <span className="gradient-text">Organization Account</span>{" "}
-              in Minutes
+              Create Your <span className="gradient-text">Organization Account</span> in
+              Minutes
             </h1>
 
             <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
@@ -100,8 +107,12 @@ function Signup() {
                       <Icon className="h-4 w-4" />
                     </div>
                     <div>
-                      <p className="font-semibold text-xs sm:text-sm text-foreground">{benefit.label}</p>
-                      <p className="text-[11px] text-muted-foreground mt-0.5">{benefit.desc}</p>
+                      <p className="font-semibold text-xs sm:text-sm text-foreground">
+                        {benefit.label}
+                      </p>
+                      <p className="text-[11px] text-muted-foreground mt-0.5">
+                        {benefit.desc}
+                      </p>
                     </div>
                   </div>
                 );
@@ -111,7 +122,7 @@ function Signup() {
 
           {/* Right Side Signup Form Card */}
           <div className="flex items-center justify-center w-full">
-            <AppCard className="w-full max-w-md p-5 sm:p-6 rounded-2xl border border-border/60 bg-card/95 backdrop-blur-md shadow-xl shadow-primary/5 relative overflow-hidden">
+            <AppCard className="w-full max-w-md p-5 sm:p-6 relative overflow-hidden">
               <div className="absolute -top-10 -right-10 w-36 h-36 bg-gradient-to-br from-primary/15 via-chart-2/10 to-transparent rounded-full blur-2xl pointer-events-none" />
 
               <div className="relative">
@@ -146,13 +157,15 @@ function Signup() {
                   {step === 2 && <StepTwo register={register} errors={errors} />}
                   {step === 3 && <StepThree register={register} errors={errors} />}
 
-                  <div className="flex items-center justify-between gap-3 pt-2">
+                  <div
+                    className={`flex items-center justify-between ${step > 1 ? "gap-3" : ""} pt-2`}
+                  >
                     {step > 1 ? (
                       <AppButton
                         type="button"
                         variant="outline"
                         onClick={prevStep}
-                        className="w-1/2 font-medium rounded-xl h-9.5 text-xs sm:text-sm"
+                        className="w-1/2 h-9.5 text-xs sm:text-sm"
                       >
                         <ArrowLeft className="mr-2 h-4 w-4" /> Previous
                       </AppButton>
@@ -164,7 +177,7 @@ function Signup() {
                       <AppButton
                         type="button"
                         onClick={nextStep}
-                        className={`${step === 1 ? "w-full" : "w-1/2"} font-medium rounded-xl h-9.5 text-xs sm:text-sm`}
+                        className={`${step === 1 ? "w-full" : "w-1/2"} h-9.5 text-xs sm:text-sm`}
                       >
                         Next <ArrowRight className="ml-2 h-4 w-4" />
                       </AppButton>
@@ -172,7 +185,7 @@ function Signup() {
                       <AppButton
                         type="submit"
                         loading={signupMutation.isPending}
-                        className="w-1/2 font-semibold rounded-xl h-9.5 shadow-md shadow-primary/20 text-xs sm:text-sm"
+                        className="w-1/2 h-9.5 text-xs sm:text-sm"
                       >
                         {signupMutation.isPending ? "Creating..." : "Create Account"}
                       </AppButton>
@@ -194,7 +207,6 @@ function Signup() {
               </div>
             </AppCard>
           </div>
-
         </div>
       </div>
     </div>

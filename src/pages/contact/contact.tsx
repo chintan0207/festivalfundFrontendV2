@@ -1,11 +1,6 @@
 import { useState } from "react";
-import { AppBadge } from "@/components/common/AppBadge";
-import { AppButton } from "@/components/common/AppButton";
-import { AppInput } from "@/components/common/AppInput";
-import { AppCard } from "@/components/common/AppCard";
-import { Card, CardContent } from "@/components/ui/card";
+import { AppBadge, AppButton, AppCard, AppPageHero, AppIconBadge } from "@/components/common";
 import { Star, Mail, Phone, MapPin, Clock, Send, ArrowRight } from "lucide-react";
-import { iconGradients } from "@/lib/data/landingPageData";
 
 const contactMethods = [
   { icon: Mail, label: "Email", value: "hello@festivalfund.com", description: "We respond within 24 hours" },
@@ -30,27 +25,22 @@ const Contact = () => {
   return (
     <div className="bg-background">
       {/* Hero */}
-      <section className="relative overflow-hidden px-4 pb-20 pt-32 sm:px-6">
-        <div className="absolute left-1/2 top-0 h-[600px] w-[600px] -translate-x-1/2 rounded-full bg-gradient-to-br from-primary/10 via-chart-2/10 to-transparent blur-3xl" />
-        <div className="relative mx-auto max-w-7xl">
-          <div className="mx-auto max-w-3xl text-center">
-            <AppBadge icon={<Star className="h-4 w-4 text-primary" />} className="mb-5 mx-auto w-fit">
-              <span className="inline-flex items-center gap-2">
-                <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-green-500" />
-                Get in Touch
-              </span>
-            </AppBadge>
-            <h1 className="text-4xl font-bold leading-[1.1] tracking-tight sm:text-5xl lg:text-6xl">
-              We'd love to hear
-              <br />
-              <span className="gradient-text">from you</span>
-            </h1>
-            <p className="mx-auto mt-5 max-w-2xl text-lg text-muted-foreground">
-              Have a question, feedback, or want to learn more? Reach out and our team will get back to you.
-            </p>
-          </div>
-        </div>
-      </section>
+      <AppPageHero
+        badge={
+          <span className="inline-flex items-center gap-2">
+            <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-500" />
+            Get in Touch
+          </span>
+        }
+        badgeIcon={<Star className="h-4 w-4 text-primary" />}
+        title={
+          <>
+            We'd love to hear{" "}
+            <span className="gradient-text">from you</span>
+          </>
+        }
+        description="Have a question, feedback, or need help setting up your festival mandal? Reach out and our support team will assist you."
+      />
 
       {/* Contact Grid */}
       <section className="px-4 pb-20 sm:px-6">
@@ -61,18 +51,16 @@ const Contact = () => {
               {contactMethods.map((method, i) => {
                 const Icon = method.icon;
                 return (
-                  <Card key={i} className="border-border/50 transition-all duration-300 hover:shadow-md">
-                    <CardContent className="flex items-start gap-4 p-4">
-                      <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-white ${iconGradients[i]}`}>
-                        <Icon className="h-5 w-5" />
-                      </div>
+                  <AppCard key={i} className="border-border/60 transition-all duration-300 hover:shadow-md bg-card/80 p-4">
+                    <div className="flex items-start gap-4">
+                      <AppIconBadge icon={<Icon className="h-5 w-5" />} colorIndex={i} size="md" />
                       <div>
-                        <p className="text-sm font-semibold">{method.label}</p>
-                        <p className="text-sm text-muted-foreground">{method.value}</p>
-                        <p className="text-xs text-muted-foreground">{method.description}</p>
+                        <p className="text-sm font-semibold text-foreground">{method.label}</p>
+                        <p className="text-sm text-foreground/90 font-medium">{method.value}</p>
+                        <p className="text-xs text-muted-foreground mt-0.5">{method.description}</p>
                       </div>
-                    </CardContent>
-                  </Card>
+                    </div>
+                  </AppCard>
                 );
               })}
             </div>
@@ -82,12 +70,10 @@ const Contact = () => {
               <AppCard title="Send us a message" subtitle="We'll get back to you within 24 hours.">
                 {submitted ? (
                   <div className="flex flex-col items-center justify-center py-10 text-center">
-                    <div className={`flex h-16 w-16 items-center justify-center rounded-2xl text-white ${iconGradients[0]}`}>
-                      <Send className="h-8 w-8" />
-                    </div>
-                    <h3 className="mt-4 text-lg font-semibold">Message Sent!</h3>
-                    <p className="mt-2 text-sm text-muted-foreground">
-                      Thank you for reaching out. Our team will respond within 24 hours.
+                    <AppIconBadge icon={<Send className="h-8 w-8" />} colorIndex={0} size="lg" className="h-16 w-16 shadow-lg mb-2" />
+                    <h3 className="mt-4 text-xl font-bold text-foreground">Message Sent!</h3>
+                    <p className="mt-2 text-sm text-muted-foreground max-w-sm">
+                      Thank you for reaching out. Our team will review your query and respond within 24 hours.
                     </p>
                     <AppButton className="mt-6" onClick={() => setSubmitted(false)}>
                       Send Another Message
@@ -96,23 +82,56 @@ const Contact = () => {
                 ) : (
                   <form onSubmit={handleSubmit} className="space-y-4">
                     <div className="grid gap-4 sm:grid-cols-2">
-                      <AppInput id="name" label="Your Name" placeholder="Enter your name" value={formData.name} onChange={handleChange} required />
-                      <AppInput id="email" label="Email" type="email" placeholder="name@example.com" value={formData.email} onChange={handleChange} required />
+                      <div className="space-y-2">
+                        <label htmlFor="name" className="text-sm font-medium text-foreground">Your Name</label>
+                        <input
+                          id="name"
+                          type="text"
+                          placeholder="Enter your name"
+                          value={formData.name}
+                          onChange={handleChange}
+                          required
+                          className="w-full rounded-xl border border-input bg-background px-3 py-2 text-sm shadow-sm transition-all focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/30"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label htmlFor="email" className="text-sm font-medium text-foreground">Email Address</label>
+                        <input
+                          id="email"
+                          type="email"
+                          placeholder="name@example.com"
+                          value={formData.email}
+                          onChange={handleChange}
+                          required
+                          className="w-full rounded-xl border border-input bg-background px-3 py-2 text-sm shadow-sm transition-all focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/30"
+                        />
+                      </div>
                     </div>
-                    <AppInput id="subject" label="Subject" placeholder="How can we help?" value={formData.subject} onChange={handleChange} required />
                     <div className="space-y-2">
-                      <label htmlFor="message" className="text-sm font-medium">Message</label>
+                      <label htmlFor="subject" className="text-sm font-medium text-foreground">Subject</label>
+                      <input
+                        id="subject"
+                        type="text"
+                        placeholder="How can we help?"
+                        value={formData.subject}
+                        onChange={handleChange}
+                        required
+                        className="w-full rounded-xl border border-input bg-background px-3 py-2 text-sm shadow-sm transition-all focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/30"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label htmlFor="message" className="text-sm font-medium text-foreground">Message</label>
                       <textarea
                         id="message"
-                        rows={5}
-                        className="h-9 min-h-[120px] w-full rounded-xl border border-border bg-background px-3 py-2 text-sm shadow-sm transition-all focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/30"
+                        rows={4}
+                        className="w-full rounded-xl border border-input bg-background px-3 py-2.5 text-sm shadow-sm transition-all focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/30"
                         placeholder="Tell us more about your query..."
                         value={formData.message}
                         onChange={handleChange}
                         required
                       />
                     </div>
-                    <AppButton type="submit" className="w-full" rightIcon={<ArrowRight className="h-4 w-4" />}>
+                    <AppButton type="submit" className="w-full h-10" rightIcon={<ArrowRight className="h-4 w-4" />}>
                       Send Message
                     </AppButton>
                   </form>

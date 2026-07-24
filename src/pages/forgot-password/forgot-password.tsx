@@ -12,6 +12,7 @@ import {
   type ForgotPasswordFormData,
 } from "../auth/schema/AuthSchema";
 import { useForgotPassword } from "@/api/hooks/useAuth";
+import { gradientColors } from "@/theme/colors";
 
 function ForgotPassword() {
   const [emailSent, setEmailSent] = useState(false);
@@ -51,7 +52,7 @@ function ForgotPassword() {
           
           {/* Left Side Info */}
           <div className="hidden md:block space-y-6 max-w-lg mx-auto lg:mx-0">
-            <AppBadge icon={<Star className="h-4 w-4 text-primary" />} className="w-fit">
+            <AppBadge icon={<Star className="h-4 w-4 text-primary" />}>
               <span className="inline-flex items-center gap-2">
                 <span className="inline-block h-2 w-2 animate-pulse rounded-full bg-emerald-500" />
                 {emailSent ? "Check Your Inbox" : "Forgot Password"}
@@ -78,7 +79,7 @@ function ForgotPassword() {
 
             <div className="space-y-3 pt-1">
               <div className="flex items-start gap-3.5 p-3 rounded-2xl border border-border/40 bg-card/50 backdrop-blur-sm">
-                <div className="flex h-9 w-9 items-center justify-center rounded-xl text-white shadow-md bg-gradient-to-r from-emerald-500 to-green-500 flex-shrink-0">
+                <div className={`flex h-9 w-9 items-center justify-center rounded-xl text-white shadow-md ${gradientColors[0]} flex-shrink-0`}>
                   <MailCheck className="h-4.5 w-4.5" />
                 </div>
                 <div>
@@ -90,7 +91,7 @@ function ForgotPassword() {
               </div>
 
               <div className="flex items-start gap-3.5 p-3 rounded-2xl border border-border/40 bg-card/50 backdrop-blur-sm">
-                <div className="flex h-9 w-9 items-center justify-center rounded-xl text-white shadow-md bg-gradient-to-r from-indigo-500 to-purple-500 flex-shrink-0">
+                <div className={`flex h-9 w-9 items-center justify-center rounded-xl text-white shadow-md ${gradientColors[1]} flex-shrink-0`}>
                   <Shield className="h-4.5 w-4.5" />
                 </div>
                 <div>
@@ -105,7 +106,7 @@ function ForgotPassword() {
 
           {/* Right Side Card */}
           <div className="flex items-center justify-center w-full">
-            <AppCard className="w-full max-w-md p-5 sm:p-6 rounded-2xl border border-border/60 bg-card/95 backdrop-blur-md shadow-xl shadow-primary/5 relative overflow-hidden">
+            <AppCard className="w-full max-w-md p-5 sm:p-6 relative overflow-hidden">
               <div className="absolute -top-10 -right-10 w-36 h-36 bg-gradient-to-br from-primary/15 via-chart-2/10 to-transparent rounded-full blur-2xl pointer-events-none" />
 
               <div className="relative">
@@ -142,7 +143,7 @@ function ForgotPassword() {
                     <div className="space-y-2.5 pt-1">
                       <AppButton
                         variant="outline"
-                        className="w-full font-medium rounded-xl h-9.5 text-xs sm:text-sm border-border/80"
+                        className="w-full h-9.5 text-xs sm:text-sm"
                         onClick={handleResend}
                         loading={forgotPasswordMutation.isPending}
                       >
@@ -152,7 +153,7 @@ function ForgotPassword() {
 
                       <AppButton
                         variant="ghost"
-                        className="w-full text-muted-foreground hover:text-foreground font-medium rounded-xl text-xs sm:text-sm"
+                        className="w-full text-muted-foreground hover:text-foreground h-9.5 text-xs sm:text-sm"
                         onClick={() => setEmailSent(false)}
                       >
                         Try a different email
@@ -192,7 +193,7 @@ function ForgotPassword() {
                       <AppButton
                         type="submit"
                         loading={forgotPasswordMutation.isPending}
-                        className="w-full font-semibold h-9.5 rounded-xl shadow-md shadow-primary/20"
+                        className="w-full h-9.5"
                       >
                         {forgotPasswordMutation.isPending ? "Sending..." : "Send Reset Link"}
                       </AppButton>

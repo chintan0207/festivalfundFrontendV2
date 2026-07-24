@@ -9,6 +9,7 @@ import { AppInput } from "@/components/common/AppInput";
 import { AppBadge } from "@/components/common/AppBadge";
 import { resetPasswordSchema, type ResetPasswordFormData } from "../auth/schema/AuthSchema";
 import { useResetPassword } from "@/api/hooks/useAuth";
+import { gradientColors } from "@/theme/colors";
 
 function ResetPassword() {
   const resetPasswordMutation = useResetPassword();
@@ -35,7 +36,7 @@ function ResetPassword() {
   if (!token) {
     return (
       <div className="h-screen w-screen overflow-hidden bg-background flex items-center justify-center p-4">
-        <AppCard className="w-full max-w-md p-5 sm:p-6 rounded-2xl border border-border/60 bg-card/95 backdrop-blur-md shadow-xl text-center">
+        <AppCard className="w-full max-w-md p-5 sm:p-6 text-center">
           <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-destructive/10 text-destructive mb-3 border border-destructive/20">
             <Shield className="h-7 w-7 text-destructive" />
           </div>
@@ -44,7 +45,7 @@ function ResetPassword() {
             This password reset link is invalid or has expired. Please request a new one to continue.
           </p>
           <Link to="/forgot-password">
-            <AppButton className="w-full font-semibold rounded-xl h-9.5 shadow-md shadow-primary/20 text-xs sm:text-sm">
+            <AppButton className="w-full h-9.5 text-xs sm:text-sm">
               Request New Reset Link
             </AppButton>
           </Link>
@@ -77,7 +78,7 @@ function ResetPassword() {
 
             <div className="space-y-3 pt-1">
               <div className="flex items-start gap-3.5 p-3 rounded-2xl border border-border/40 bg-card/50 backdrop-blur-sm">
-                <div className="flex h-9 w-9 items-center justify-center rounded-xl text-white shadow-md bg-gradient-to-r from-emerald-500 to-green-500 flex-shrink-0">
+                <div className={`flex h-9 w-9 items-center justify-center rounded-xl text-white shadow-md ${gradientColors[0]} flex-shrink-0`}>
                   <Lock className="h-4.5 w-4.5" />
                 </div>
                 <div>
@@ -89,7 +90,7 @@ function ResetPassword() {
               </div>
 
               <div className="flex items-start gap-3.5 p-3 rounded-2xl border border-border/40 bg-card/50 backdrop-blur-sm">
-                <div className="flex h-9 w-9 items-center justify-center rounded-xl text-white shadow-md bg-gradient-to-r from-indigo-500 to-purple-500 flex-shrink-0">
+                <div className={`flex h-9 w-9 items-center justify-center rounded-xl text-white shadow-md ${gradientColors[1]} flex-shrink-0`}>
                   <CheckCircle2 className="h-4.5 w-4.5" />
                 </div>
                 <div>
@@ -104,7 +105,7 @@ function ResetPassword() {
 
           {/* Right Side Reset Password Card */}
           <div className="flex items-center justify-center w-full">
-            <AppCard className="w-full max-w-md p-5 sm:p-6 rounded-2xl border border-border/60 bg-card/95 backdrop-blur-md shadow-xl shadow-primary/5 relative overflow-hidden">
+            <AppCard className="w-full max-w-md p-5 sm:p-6 relative overflow-hidden">
               <div className="absolute -top-10 -right-10 w-36 h-36 bg-gradient-to-br from-primary/15 via-chart-2/10 to-transparent rounded-full blur-2xl pointer-events-none" />
 
               <div className="relative">
@@ -180,7 +181,7 @@ function ResetPassword() {
                   <AppButton
                     type="submit"
                     loading={resetPasswordMutation.isPending}
-                    className="w-full font-semibold h-9.5 rounded-xl shadow-md shadow-primary/20"
+                    className="w-full h-9.5"
                   >
                     {resetPasswordMutation.isPending ? "Resetting..." : "Reset Password"}
                   </AppButton>

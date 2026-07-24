@@ -14,6 +14,7 @@ import { AppButton } from "@/components/common/AppButton";
 import { getDashboardRoute } from "@/lib/utils";
 import { useAuthStore } from "@/api/auth/auth.store";
 import { useLogout } from "@/api/hooks/useAuth";
+
 const Navbar = () => {
   const { isAuthenticated, user } = useAuthStore();
   const logout = useLogout();
@@ -21,50 +22,59 @@ const Navbar = () => {
 
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
+      setScrolled(window.scrollY > 40);
     };
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
   const navLinks = [
     { name: "Home", href: "/" },
-    { name: "Features", href: "/#features" },
-    { name: "Pricing", href: "/#pricing" },
-    { name: "Reviews", href: "/#reviews" },
+    { name: "Features", href: "/features" },
+    { name: "Pricing", href: "/pricing" },
+    { name: "About", href: "/about" },
+    { name: "Contact", href: "/contact" },
   ];
 
   return (
     <nav
       className={`sticky z-50 transition-all duration-500
     ${
-      scrolled
+        scrolled
         ? "top-3 mx-auto w-[90%] max-w-7xl rounded-full border border-border/50 bg-background/80 backdrop-blur-xl shadow-xl"
         : "top-0 w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
-    }`}
+      }`}
     >
       <div className="mx-auto flex h-16 max-w-7xl items-center px-4 md:px-6">
-        {/* ================= Left Section ================= */}
+        {/* Left Section: Logo */}
         <div className="flex flex-1 items-center">
-          <Link to="/" className="flex items-center gap-2">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-primary-foreground">
-              <AppButton>F</AppButton>
+          <Link to="/" className="flex items-center gap-2.5 hover:opacity-90 transition-opacity">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-primary/80 text-primary-foreground font-bold text-lg shadow-md shadow-primary/20">
+              F
             </div>
+            <span className="text-xl font-bold tracking-tight text-foreground">
+              FestivalFund
+            </span>
           </Link>
         </div>
 
-        {/* ================= Center Navigation ================= */}
+        {/* Center Section: Links */}
         <div className="hidden flex-1 justify-center md:flex">
-          <div className="flex items-center gap-2 rounded-full bg-background/60 px-2 py-1 backdrop-blur">
+          <div className="flex items-center gap-1 rounded-full  p-1">
             {navLinks.map((link) => (
-              <AppButton key={link.href} variant="ghost">
-                <Link to={link.href}>{link.name}</Link>
-              </AppButton>
+              <Link
+                key={link.href}
+                to={link.href}
+                className="px-4 py-1.5 rounded-full text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-card transition-colors"
+              >
+                {link.name}
+              </Link>
             ))}
           </div>
         </div>
 
-        {/* ================= Right Section ================= */}
+        {/* Right Section: Auth & Actions */}
         <div className="flex flex-1 items-center justify-end gap-3">
           <ThemeToggle />
 
@@ -74,22 +84,22 @@ const Navbar = () => {
                 <AppButton
                   variant="ghost"
                   size="icon"
-                  className="hidden rounded-full md:flex"
+                  className="hidden rounded-full md:flex border border-border/50"
                 >
-                  <User className="h-5 w-5" />
+                  <User className="h-4.5 w-4.5" />
                 </AppButton>
               </DropdownMenuTrigger>
 
-              <DropdownMenuContent align="end" className="w-60">
+              <DropdownMenuContent align="end" className="w-60 rounded-xl p-1.5 shadow-xl">
                 <div className="px-3 py-2">
-                  <p className="font-medium">{user?.name}</p>
-                  <p className="text-xs text-muted-foreground">{user?.email}</p>
+                  <p className="font-semibold text-sm text-foreground">{user?.name}</p>
+                  <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
                 </div>
 
                 <DropdownMenuSeparator />
 
-                <DropdownMenuItem asChild>
-                  <Link to={getDashboardRoute(user)} className="flex items-center">
+                <DropdownMenuItem asChild className="rounded-lg cursor-pointer">
+                  <Link to={getDashboardRoute(user)} className="flex items-center w-full">
                     <LayoutDashboard className="mr-2 h-4 w-4" />
                     Dashboard
                   </Link>
@@ -97,7 +107,10 @@ const Navbar = () => {
 
                 <DropdownMenuSeparator />
 
-                <DropdownMenuItem onClick={logout}>
+                <DropdownMenuItem
+                  onClick={logout}
+                  className="rounded-lg text-destructive focus:text-destructive cursor-pointer"
+                >
                   <LogOut className="mr-2 h-4 w-4" />
                   Logout
                 </DropdownMenuItem>
@@ -105,26 +118,35 @@ const Navbar = () => {
             </DropdownMenu>
           )}
 
-          {/* Desktop Buttons */}
+          {/* Desktop Auth CTA */}
           <div className="hidden items-center gap-2 md:flex">
             {isAuthenticated ? (
-              <AppButton>
-                <Link to={getDashboardRoute(user)}>Dashboard</Link>
-              </AppButton>
+              <Link
+                to={getDashboardRoute(user)}
+                className="inline-flex items-center justify-center rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-md shadow-primary/20 hover:opacity-90 transition-all"
+              >
+                Dashboard
+              </Link>
             ) : (
               <>
-                <AppButton variant="outline">
-                  <Link to="/login">Login</Link>
-                </AppButton>
+                <Link
+                  to="/login"
+                  className="inline-flex items-center justify-center rounded-xl border border-border/80 px-4 py-2 text-sm font-medium text-foreground hover:bg-muted/60 transition-all"
+                >
+                  Login
+                </Link>
 
-                <AppButton>
-                  <Link to="/signup">Get Started</Link>
-                </AppButton>
+                <Link
+                  to="/signup"
+                  className="inline-flex items-center justify-center rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-md shadow-primary/20 hover:opacity-90 transition-all"
+                >
+                  Get Started
+                </Link>
               </>
             )}
           </div>
 
-          {/* ================= Mobile Menu ================= */}
+          {/* Mobile Sheet Menu */}
           <Sheet>
             <SheetTrigger asChild>
               <AppButton variant="ghost" size="icon" className="md:hidden">
@@ -132,46 +154,55 @@ const Navbar = () => {
               </AppButton>
             </SheetTrigger>
 
-            <SheetContent side="right" className="w-[300px] sm:w-[360px] p-6">
-              <SheetTitle>Navigation</SheetTitle>
+            <SheetContent side="right" className="w-[300px] sm:w-[340px] p-6">
+              <SheetTitle className="text-left text-lg font-bold">Navigation</SheetTitle>
 
-              <div className="mt-8 flex flex-col gap-2">
+              <div className="mt-6 flex flex-col gap-2">
                 {navLinks.map((link) => (
                   <Link
                     key={link.href}
                     to={link.href}
-                    className="rounded-lg px-4 py-3 text-sm font-medium transition hover:bg-muted"
+                    className="rounded-xl px-4 py-2.5 text-sm font-medium transition hover:bg-muted text-foreground"
                   >
                     {link.name}
                   </Link>
                 ))}
 
-                <div className="my-4 border-t" />
+                <div className="my-3 border-t border-border/60" />
 
                 {isAuthenticated ? (
                   <>
-                    <div className="rounded-lg border p-4">
-                      <p className="font-medium">{user?.name}</p>
-                      <p className="text-sm text-muted-foreground">{user?.email}</p>
+                    <div className="rounded-xl border border-border p-3.5 bg-muted/40 mb-2">
+                      <p className="font-semibold text-sm text-foreground">{user?.name}</p>
+                      <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
                     </div>
 
-                    <AppButton className="w-full">
-                      <Link to={getDashboardRoute(user)}>Dashboard</Link>
-                    </AppButton>
+                    <Link
+                      to={getDashboardRoute(user)}
+                      className="flex w-full items-center justify-center rounded-xl bg-primary py-2.5 text-sm font-semibold text-primary-foreground shadow-md"
+                    >
+                      Dashboard
+                    </Link>
 
-                    <AppButton variant="outline" className="w-full" onClick={logout}>
+                    <AppButton variant="outline" className="w-full rounded-xl" onClick={logout}>
                       Logout
                     </AppButton>
                   </>
                 ) : (
                   <>
-                    <AppButton variant="outline" className="w-full">
-                      <Link to="/login">Login</Link>
-                    </AppButton>
+                    <Link
+                      to="/login"
+                      className="flex w-full items-center justify-center rounded-xl border border-border py-2.5 text-sm font-medium text-foreground hover:bg-muted"
+                    >
+                      Login
+                    </Link>
 
-                    <AppButton className="w-full">
-                      <Link to="/signup">Get Started</Link>
-                    </AppButton>
+                    <Link
+                      to="/signup"
+                      className="flex w-full items-center justify-center rounded-xl bg-primary py-2.5 text-sm font-semibold text-primary-foreground shadow-md"
+                    >
+                      Get Started
+                    </Link>
                   </>
                 )}
               </div>

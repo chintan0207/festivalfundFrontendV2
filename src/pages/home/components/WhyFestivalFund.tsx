@@ -1,58 +1,46 @@
-import { AppBadge } from "@/components/common/AppBadge";
-import { Card } from "@/components/ui/card";
-import { reasons, festivalSummary, iconGradients } from "@/lib/data/landingPageData";
+import { AppSectionHeader, AppCard, AppIconBadge } from "@/components/common";
+import { reasons, festivalSummary } from "@/lib/data/landingPageData";
 import { Check, TrendingUp, TrendingDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const WhyFestivalFund = () => {
   return (
-    <section className="bg-muted/30 px-4 py-20 sm:px-6">
+    <section className="bg-muted/30 px-4 py-16 sm:px-6">
       <div className="mx-auto max-w-7xl">
-        <div className="mx-auto max-w-2xl text-center">
-          <AppBadge className="mb-3 mx-auto w-fit">Why FestivalFund</AppBadge>
-          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
-            Built for trust, designed for scale
-          </h2>
-          <p className="mt-3 text-lg text-muted-foreground">
-            Organizations across India trust FestivalFund to manage contributions, track
-            expenses, and generate transparent reports — all from one platform.
-          </p>
-        </div>
+        <AppSectionHeader
+          badge="Why FestivalFund"
+          title="Built for trust, designed for scale"
+          subtitle="Organizations across India trust FestivalFund to manage contributions, track expenses, and generate transparent reports — all from one platform."
+        />
         <div className="mt-12 grid items-center gap-8 md:grid-cols-2">
           <div className="space-y-5">
             {reasons.map((r, i) => (
               <div key={i} className="flex gap-4">
-                <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-white ${iconGradients[i]}`}>
-                  <Check className="h-5 w-5" />
-                </div>
+                <AppIconBadge icon={<Check className="h-5 w-5" />} colorIndex={i} size="md" />
                 <div>
-                  <h4 className="text-base font-semibold">{r.title}</h4>
-                  <p className="mt-1 text-sm text-muted-foreground">{r.description}</p>
+                  <h4 className="text-base font-semibold text-foreground">{r.title}</h4>
+                  <p className="mt-1 text-xs sm:text-sm text-muted-foreground leading-relaxed">{r.description}</p>
                 </div>
               </div>
             ))}
           </div>
-          <Card className="p-5">
-            <p className="mb-4 text-sm font-semibold">Today&apos;s Financial Summary</p>
+          <AppCard className="p-5 border-border/60 bg-card/90">
+            <p className="mb-4 text-sm font-bold text-foreground">Today&apos;s Financial Summary</p>
             <div className="grid grid-cols-2 gap-3">
               {festivalSummary.map((m, i) => (
                 <div
                   key={m.label}
-                  className="rounded-xl border border-border bg-muted/30 p-3"
+                  className="rounded-xl border border-border/50 bg-muted/30 p-3"
                 >
                   <div className="flex items-center justify-between">
-                    <div
-                      className={`flex h-8 w-8 items-center justify-center rounded-lg text-white ${iconGradients[i]}`}
-                    >
-                      <m.icon className="h-4 w-4" />
-                    </div>
+                    <AppIconBadge icon={<m.icon className="h-4 w-4" />} colorIndex={i} size="sm" />
                     {m.trend && (
                       <span
                         className={cn(
-                          "flex items-center gap-0.5 text-2xs font-medium",
+                          "flex items-center gap-0.5 text-[11px] font-semibold",
                           m.trendUp
-                            ? "text-green-600 dark:text-green-400"
-                            : "text-red-500",
+                            ? "text-emerald-600 dark:text-emerald-400"
+                            : "text-rose-500",
                         )}
                       >
                         {m.trendUp ? (
@@ -64,12 +52,12 @@ const WhyFestivalFund = () => {
                       </span>
                     )}
                   </div>
-                  <p className="mt-2 text-lg font-bold">{m.value}</p>
-                  <p className="text-2xs text-muted-foreground">{m.label}</p>
+                  <p className="mt-2 text-lg font-bold text-foreground">{m.value}</p>
+                  <p className="text-[11px] text-muted-foreground font-medium">{m.label}</p>
                 </div>
               ))}
             </div>
-          </Card>
+          </AppCard>
         </div>
       </div>
     </section>
