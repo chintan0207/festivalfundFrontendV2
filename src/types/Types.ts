@@ -70,12 +70,15 @@ export type ResetPasswordPayload = {
   newPassword?: string;
 };
 
+export type FestivalStatus = "UPCOMING" | "ACTIVE" | "COMPLETED" | "ARCHIVED";
+
 export type FestivalStats = {
   openingBalance: number;
   totalCollected: number;
   pendingAmount: number;
   totalExpenses: number;
   currentBalance: number;
+  contributorsCount?: number;
 };
 
 export type Festival = {
@@ -83,6 +86,12 @@ export type Festival = {
   organizationId: string;
   name: string;
   year: number;
+  status: FestivalStatus;
+  targetAmount?: number;
+  category?: string;
+  location?: string;
+  description?: string;
+  bannerUrl?: string;
   stats: FestivalStats;
   startDate?: string;
   endDate?: string;
@@ -98,6 +107,14 @@ export type CreateFestivalPayload = {
   year: number;
   openingBalance?: number;
   organizationId?: string;
+  status?: FestivalStatus;
+  targetAmount?: number;
+  category?: string;
+  location?: string;
+  description?: string;
+  bannerUrl?: string;
+  startDate?: string | Date;
+  endDate?: string | Date;
 };
 
 export type UpdateFestivalPayload = {
@@ -105,7 +122,16 @@ export type UpdateFestivalPayload = {
   year?: number;
   openingBalance?: number;
   organizationId?: string;
+  status?: FestivalStatus;
+  targetAmount?: number;
+  category?: string;
+  location?: string;
+  description?: string;
+  bannerUrl?: string;
+  startDate?: string | Date;
+  endDate?: string | Date;
 };
+
 
 // Contributor Types
 export type ContributorCategory = "PARENT" | "BOY" | "GIRL" | string;
