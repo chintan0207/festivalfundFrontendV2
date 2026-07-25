@@ -2,6 +2,7 @@ import { createRootRouteWithContext, Outlet } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/router-devtools";
 import { ThemeProvider } from "@/theme/theme-provider";
 import { Providers } from "@/api/providers";
+import { AppToaster } from "@/components/ui/sonner";
 import type { QueryClient } from "@tanstack/react-query";
 import { lazy } from "react";
 
@@ -21,6 +22,7 @@ function RootLayout() {
     <ThemeProvider>
       <Providers>
         <Outlet />
+        <AppToaster />
         <TanStackRouterDevtools />
       </Providers>
     </ThemeProvider>

@@ -107,9 +107,18 @@ export const useResetPassword = () => {
 export const useLogout = () => {
   const clearAuth = useAuthStore((s) => s.clearAuth);
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
-  return () => {
-    clearAuth();
-    queryClient.clear();
+  return async () => {
+    try {
+      await AuthService.logout();
+    } catch (err) {
+      console.error("Logout error on backend:", err);
+    } finally {
+      clearAuth();
+      queryClient.clear();
+      toast.success("Logged out successfully");
+      navigate({ to: "/login", replace: true });
+    }
   };
 };

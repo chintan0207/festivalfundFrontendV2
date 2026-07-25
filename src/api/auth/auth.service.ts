@@ -53,4 +53,10 @@ export const AuthService = {
     });
     return response.data;
   },
+
+  logout: async () => {
+    const refreshToken = localStorage.getItem("refreshToken");
+    const response = await ApiClient.post<ApiMessageResponse>("/auth/logout", { refreshToken });
+    return response.data;
+  },
 };
