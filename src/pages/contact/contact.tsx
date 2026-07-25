@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useState } from "react";
 import { AppButton, AppCard, AppPageHero, AppIconBadge } from "@/components/common";
-import { Star, Mail, Phone, MapPin, Clock, Send, ArrowRight } from "lucide-react";
+import { Star, Mail, Phone, Clock, Send, ArrowRight } from "lucide-react";
 
 const contactMethods = [
   {

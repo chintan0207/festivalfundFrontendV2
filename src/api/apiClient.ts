@@ -40,7 +40,7 @@ ApiClient.interceptors.response.use(
             withCredentials: true,
           },
         );
-
+        console.log("Token refreshed successfully:", response.data);
         const { accessToken, refreshToken } = response.data.data;
 
         // store latest tokens

@@ -1,5 +1,4 @@
 import { Badge } from "@/components/ui/badge";
-import { ThemeToggle } from "@/theme/ThemeToggle";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { gradientColors } from "@/theme/colors";
@@ -91,15 +90,15 @@ const ThemePage = () => {
               <Badge variant="secondary">Secondary</Badge>
               <Badge variant="outline">Outline</Badge>
               <Badge variant="destructive">Destructive</Badge>
-              <Badge variant="cancelled">
+              <Badge variant="outline" className="flex items-center gap-1 text-destructive">
                 <MdCancel />
                 Cancelled
               </Badge>
-              <Badge variant="deposited">
+              <Badge variant="outline" className="flex items-center gap-1 text-emerald-500">
                 <FaCheckCircle />
                 Deposited
               </Badge>
-              <Badge variant="pending">
+              <Badge variant="outline" className="flex items-center gap-1 text-amber-500">
                 <FaClock />
                 Pending
               </Badge>
@@ -108,79 +107,29 @@ const ThemePage = () => {
 
           {/* Inputs & Focus */}
           <section>
-            <h3 className="mb-3 font-semibold">Inputs & Focus Ring</h3>
-            <div className="max-w-sm space-y-3">
-              <Input placeholder="Focus me to see ring color" />
-              <p className="text-sm text-muted-foreground">
-                Focus ring uses <code>--ring</code> token
-              </p>
+            <h3 className="mb-3 font-semibold">Form Controls</h3>
+            <div className="max-w-xs space-y-3">
+              <Input placeholder="Default Input" />
+              <Input placeholder="Disabled Input" disabled />
             </div>
           </section>
 
           {/* Alerts */}
           <section>
             <h3 className="mb-3 font-semibold">Alerts</h3>
-            <div className="grid gap-3 max-w-xl">
+            <div className="space-y-3">
               <Alert>
-                <AlertTitle>Info</AlertTitle>
+                <AlertTitle font-semibold>Heads up!</AlertTitle>
                 <AlertDescription>
-                  Uses background, border and foreground tokens.
+                  You can add components to your app using the cli.
                 </AlertDescription>
               </Alert>
-
               <Alert variant="destructive">
-                <AlertTitle>Error</AlertTitle>
-                <AlertDescription>Uses destructive color tokens.</AlertDescription>
+                <AlertTitle font-semibold>Error</AlertTitle>
+                <AlertDescription>
+                  Your session has expired. Please log in again.
+                </AlertDescription>
               </Alert>
-            </div>
-          </section>
-
-          {/* Text & Foreground */}
-          <section>
-            <h3 className="mb-3 font-semibold">Text & Foreground</h3>
-            <div className="space-y-2">
-              <p className="text-foreground">Primary foreground text</p>
-              <p className="text-muted-foreground">
-                Muted foreground (descriptions, hints)
-              </p>
-              <p className="text-primary font-medium">Primary colored text</p>
-              <p className="text-destructive font-medium">Destructive / error text</p>
-            </div>
-          </section>
-
-          {/* Border & Ring */}
-          <section>
-            <h3 className="mb-3 font-semibold">Border & Ring</h3>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <ColorBlock name="Border" className="border-4 border-border" recommended />
-              <ColorBlock name="Input" className="bg-input" />
-              <ColorBlock name="Ring" className="ring-4 ring-ring" recommended />
-            </div>
-          </section>
-
-          {/* Sidebar */}
-          <section>
-            <h3 className="mb-3 font-semibold">Sidebar Tokens</h3>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <ColorBlock name="Sidebar" className="bg-sidebar" />
-              <ColorBlock
-                name="Sidebar Primary"
-                className="bg-sidebar-primary"
-                recommended
-              />
-              <ColorBlock name="Sidebar Accent" className="bg-sidebar-accent" />
-            </div>
-          </section>
-
-          {/* Charts */}
-          <section>
-            <h3 className="mb-3 font-semibold">Charts</h3>
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-              <ColorBlock name="Chart 1" className="bg-[color:var(--chart-1)]" />
-              <ColorBlock name="Chart 2" className="bg-[color:var(--chart-2)]" />
-              <ColorBlock name="Chart 3" className="bg-[color:var(--chart-3)]" />
-              <ColorBlock name="Chart 4" className="bg-[color:var(--chart-4)]" />
-              <ColorBlock name="Chart 5" className="bg-[color:var(--chart-5)]" />
             </div>
           </section>
         </CardContent>

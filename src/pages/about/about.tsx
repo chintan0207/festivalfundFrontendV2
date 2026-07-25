@@ -8,7 +8,7 @@ import {
   AppCTASection,
   AppIconBadge,
 } from "@/components/common";
-import { Star, Heart, Shield, Users, Target, Eye, ArrowRight } from "lucide-react";
+import { Star, Heart, Shield, Target, Eye, ArrowRight } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 
 const stats = [

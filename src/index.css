@@ -94,3 +94,30 @@
 @utility shadow-glow {
   box-shadow: 0 0 20px color-mix(in srgb, var(--primary) 30%, transparent);
 }
+
+@utility surface-base {
+  background-color: var(--background);
+}
+
+@utility surface-surface {
+  background-color: var(--card);
+}
+
+@utility surface-elevated {
+  background-color: var(--card);
+}
+
+@utility surface-muted {
+  background-color: var(--muted);
+}
+
+@utility surface-hover {
+  background-color: var(--accent);
+}
+
+@utility glass {
+  background-color: color-mix(in srgb, var(--card) 80%, transparent);
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
+}
+
