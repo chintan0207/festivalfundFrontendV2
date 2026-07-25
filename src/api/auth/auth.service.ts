@@ -59,4 +59,10 @@ export const AuthService = {
     const response = await ApiClient.post<ApiMessageResponse>("/auth/logout", { refreshToken });
     return response.data;
   },
+
+  googleAuth: async (payload: { credential?: string; accessToken?: string } | string) => {
+    const body = typeof payload === "string" ? { credential: payload } : payload;
+    const response = await ApiClient.post<ApiResponse<AuthResponse>>("/auth/google-auth", body);
+    return response.data;
+  },
 };

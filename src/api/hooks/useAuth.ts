@@ -122,3 +122,27 @@ export const useLogout = () => {
     }
   };
 };
+
+export const useGoogleAuth = () => {
+  const setAuth = useAuthStore((s) => s.setAuth);
+  const navigate = useNavigate();
+
+  return useMutation({
+    mutationFn: (payload: { credential?: string; accessToken?: string } | string) =>
+      AuthService.googleAuth(payload),
+    onSuccess: (res) => {
+      const data = res.data;
+      if (!data) {
+        toast.error("Invalid response from Google auth");
+        return;
+      }
+      const { accessToken, refreshToken, loggedInUser, organization } = data;
+      setAuth({ user: loggedInUser, organization, accessToken, refreshToken });
+      toast.success(res.message || "Logged in with Google successfully");
+      navigate({ to: "/dashboard", replace: true });
+    },
+    onError: (error: any) => {
+      toast.error(error?.response?.data?.message || "Google login failed");
+    },
+  });
+};
