@@ -69,3 +69,141 @@ export type ResetPasswordPayload = {
   password: string;
   newPassword?: string;
 };
+
+export type FestivalStats = {
+  openingBalance: number;
+  totalCollected: number;
+  pendingAmount: number;
+  totalExpenses: number;
+  currentBalance: number;
+};
+
+export type Festival = {
+  _id: string;
+  organizationId: string;
+  name: string;
+  year: number;
+  stats: FestivalStats;
+  startDate?: string;
+  endDate?: string;
+  isActive: boolean;
+  isDeleted: boolean;
+  deletedBy?: string;
+  createdAt?: string;
+  updatedAt?: string;
+};
+
+export type CreateFestivalPayload = {
+  name: string;
+  year: number;
+  openingBalance?: number;
+  organizationId?: string;
+};
+
+export type UpdateFestivalPayload = {
+  name?: string;
+  year?: number;
+  openingBalance?: number;
+  organizationId?: string;
+};
+
+// Contributor Types
+export type ContributorCategory = "PARENT" | "BOY" | "GIRL" | string;
+
+export type Contributor = {
+  _id: string;
+  organizationId: string;
+  globalContributorKey?: string;
+  contributorCode: string;
+  name: string;
+  phoneNumber?: string | null;
+  email?: string | null;
+  address?: string | null;
+  category: ContributorCategory;
+  isActive: boolean;
+  notes?: string | null;
+  createdAt?: string;
+  updatedAt?: string;
+};
+
+export type CreateContributorPayload = {
+  name: string;
+  phoneNumber?: string | null;
+  email?: string | null;
+  address?: string | null;
+  category?: ContributorCategory;
+  notes?: string | null;
+};
+
+export type UpdateContributorPayload = {
+  name?: string;
+  phoneNumber?: string | null;
+  email?: string | null;
+  address?: string | null;
+  category?: ContributorCategory;
+  notes?: string | null;
+};
+
+// Contribution Types
+export type ContributionType = "CASH" | "ITEM";
+export type ContributionStatus = "PENDING" | "DEPOSITED" | "CANCELLED";
+export type PaymentMode = "CASH" | "UPI" | "BANK_TRANSFER" | "OTHER" | string;
+
+export type Contribution = {
+  _id: string;
+  organizationId: string;
+  contributorId: Contributor | string;
+  festivalId: Festival | string;
+  type: ContributionType;
+  status: ContributionStatus;
+  date: string;
+  amount?: number;
+  itemName?: string;
+  quantity?: number;
+  estimatedValue?: number;
+  slipPath?: string;
+  recordedBy?: User | string;
+  contributionCode: string;
+  paymentMode: PaymentMode;
+  isBalanceApplied: boolean;
+  isDeleted: boolean;
+  deletedAt?: string;
+  createdAt?: string;
+  updatedAt?: string;
+};
+
+export type CreateContributionPayload = {
+  contributorId?: string;
+  name?: string;
+  phoneNumber?: string | null;
+  email?: string | null;
+  address?: string | null;
+  category?: ContributorCategory;
+  festivalId: string;
+  type: ContributionType;
+  status?: ContributionStatus;
+  date?: string | Date;
+  amount?: number;
+  itemName?: string;
+  quantity?: number;
+  estimatedValue?: number;
+  slipPath?: string;
+  recordedBy?: string;
+  paymentMode?: PaymentMode;
+  isBalanceApplied?: boolean;
+};
+
+export type UpdateContributionPayload = {
+  type?: ContributionType;
+  status?: ContributionStatus;
+  date?: string | Date;
+  amount?: number;
+  itemName?: string;
+  quantity?: number;
+  estimatedValue?: number;
+  slipPath?: string;
+  paymentMode?: PaymentMode;
+  isBalanceApplied?: boolean;
+};
+
+
