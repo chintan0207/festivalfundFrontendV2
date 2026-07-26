@@ -79,16 +79,17 @@ export const useSoftDeleteFestival = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({
-      festivalId,
-      organizationId,
-    }: {
-      festivalId: string;
-      organizationId?: string;
-    }) => FestivalService.softDeleteFestival(festivalId, organizationId),
-    onSuccess: (res, { festivalId }) => {
+    mutationFn: (param: string | { festivalId: string; organizationId?: string }) => {
+      const festivalId = typeof param === "string" ? param : param.festivalId;
+      const organizationId = typeof param === "string" ? undefined : param.organizationId;
+      return FestivalService.softDeleteFestival(festivalId, organizationId);
+    },
+    onSuccess: (res, param) => {
+      const festivalId = typeof param === "string" ? param : param.festivalId;
       queryClient.invalidateQueries({ queryKey: FESTIVAL_QUERY_KEYS.all });
-      queryClient.invalidateQueries({ queryKey: FESTIVAL_QUERY_KEYS.detail(festivalId) });
+      if (festivalId) {
+        queryClient.invalidateQueries({ queryKey: FESTIVAL_QUERY_KEYS.detail(festivalId) });
+      }
       toast.success(res.message || "Festival deleted successfully");
     },
     onError: (error: any) => {
@@ -101,16 +102,17 @@ export const useRestoreFestival = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({
-      festivalId,
-      organizationId,
-    }: {
-      festivalId: string;
-      organizationId?: string;
-    }) => FestivalService.restoreFestival(festivalId, organizationId),
-    onSuccess: (res, { festivalId }) => {
+    mutationFn: (param: string | { festivalId: string; organizationId?: string }) => {
+      const festivalId = typeof param === "string" ? param : param.festivalId;
+      const organizationId = typeof param === "string" ? undefined : param.organizationId;
+      return FestivalService.restoreFestival(festivalId, organizationId);
+    },
+    onSuccess: (res, param) => {
+      const festivalId = typeof param === "string" ? param : param.festivalId;
       queryClient.invalidateQueries({ queryKey: FESTIVAL_QUERY_KEYS.all });
-      queryClient.invalidateQueries({ queryKey: FESTIVAL_QUERY_KEYS.detail(festivalId) });
+      if (festivalId) {
+        queryClient.invalidateQueries({ queryKey: FESTIVAL_QUERY_KEYS.detail(festivalId) });
+      }
       toast.success(res.message || "Festival restored successfully");
     },
     onError: (error: any) => {
@@ -123,16 +125,17 @@ export const useHardDeleteFestival = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({
-      festivalId,
-      organizationId,
-    }: {
-      festivalId: string;
-      organizationId?: string;
-    }) => FestivalService.hardDeleteFestival(festivalId, organizationId),
-    onSuccess: (res, { festivalId }) => {
+    mutationFn: (param: string | { festivalId: string; organizationId?: string }) => {
+      const festivalId = typeof param === "string" ? param : param.festivalId;
+      const organizationId = typeof param === "string" ? undefined : param.organizationId;
+      return FestivalService.hardDeleteFestival(festivalId, organizationId);
+    },
+    onSuccess: (res, param) => {
+      const festivalId = typeof param === "string" ? param : param.festivalId;
       queryClient.invalidateQueries({ queryKey: FESTIVAL_QUERY_KEYS.all });
-      queryClient.invalidateQueries({ queryKey: FESTIVAL_QUERY_KEYS.detail(festivalId) });
+      if (festivalId) {
+        queryClient.invalidateQueries({ queryKey: FESTIVAL_QUERY_KEYS.detail(festivalId) });
+      }
       toast.success(res.message || "Festival permanently deleted");
     },
     onError: (error: any) => {
@@ -140,3 +143,4 @@ export const useHardDeleteFestival = () => {
     },
   });
 };
+

@@ -1,5 +1,5 @@
 import { AppButton } from "@/components/common/AppButton";
-import { badgeColors, gradientColors, moduleGradientColors } from "@/theme/colors";
+import { badgeColors, gradientColors, moduleGradientColors, moduleBadgeColors } from "@/theme/colors";
 import {
   ArrowRight,
   CheckCircle,
@@ -14,6 +14,8 @@ import {
   Users,
   Volume2,
   Wallet,
+  Tag,
+  ShieldAlert,
 } from "lucide-react";
 import { AppBadge } from "@/components/common/AppBadge";
 import { AppCard } from "@/components/common/AppCard";
@@ -28,6 +30,7 @@ const AppComponentsPage = () => {
         </p>
       </div>
 
+      {/* BUTTONS SECTION */}
       <div className="p-6 border border-border/60 rounded-2xl bg-card/60 space-y-6">
         <h2 className="text-xl font-bold">App Buttons & Gradient Palette</h2>
 
@@ -85,39 +88,103 @@ const AppComponentsPage = () => {
         </div>
       </div>
 
-      <div className="p-6 rounded-2xl border border-border/60 bg-card/60 space-y-4">
-        <h2 className="text-xl font-bold">App Badges</h2>
+      {/* BADGES SECTION */}
+      <div className="p-6 rounded-2xl border border-border/60 bg-card/60 space-y-6">
+        <h2 className="text-xl font-bold">App Badges Showcase</h2>
 
-        <div className="flex flex-wrap gap-3">
-          <AppBadge icon={<Users className="h-4 w-4" />} className={badgeColors.boys}>
-            Boys
-          </AppBadge>
-          <AppBadge icon={<Users className="h-4 w-4" />} className={badgeColors.girls}>
-            Girls
-          </AppBadge>
-          <AppBadge icon={<UserCheck className="h-4 w-4" />} className={badgeColors.parents}>
-            Parents
-          </AppBadge>
+        {/* Sizes Showcase */}
+        <div className="space-y-3">
+          <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+            Badge Sizes (xs, sm, md, lg)
+          </h3>
+          <div className="flex flex-wrap items-center gap-3">
+            <AppBadge size="xs" icon={<Tag />}>
+              Extra Small (xs)
+            </AppBadge>
+            <AppBadge size="sm" icon={<Tag />}>
+              Small (sm) - Default
+            </AppBadge>
+            <AppBadge size="md" icon={<Tag />}>
+              Medium (md)
+            </AppBadge>
+            <AppBadge size="lg" icon={<Tag />}>
+              Large (lg)
+            </AppBadge>
+          </div>
+        </div>
 
-          <AppBadge icon={<Clock className="h-4 w-4" />} className={badgeColors.pending}>
-            Pending Deposit
-          </AppBadge>
-          <AppBadge icon={<CheckCircle className="h-4 w-4" />} className={badgeColors.deposited}>
-            Deposited
-          </AppBadge>
+        {/* Variants & Dots Showcase */}
+        <div className="space-y-3 pt-4 border-t border-border/40">
+          <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+            Shadcn Badge Variants & Pulsing Dots
+          </h3>
+          <div className="flex flex-wrap items-center gap-3">
+            <AppBadge variant="default" dot dotColor="bg-emerald-400">
+              Active Context
+            </AppBadge>
+            <AppBadge variant="secondary" dot dotColor="bg-amber-400">
+              Pending Approval
+            </AppBadge>
+            <AppBadge variant="outline" dot dotColor="bg-blue-500">
+              In Progress
+            </AppBadge>
+            <AppBadge variant="destructive" icon={<ShieldAlert />}>
+              Critical Alert
+            </AppBadge>
+          </div>
+        </div>
 
-          <AppBadge icon={<Flower className="h-4 w-4" />} className={badgeColors.decoration}>
-            Decoration
-          </AppBadge>
-          <AppBadge icon={<Tent className="h-4 w-4" />} className={badgeColors.mandap}>
-            Mandap
-          </AppBadge>
-          <AppBadge icon={<Volume2 className="h-4 w-4" />} className={badgeColors.sound}>
-            Sound
-          </AppBadge>
+        {/* Module Theme Badges */}
+        <div className="space-y-3 pt-4 border-t border-border/40">
+          <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+            Module-Wise Theme Badges
+          </h3>
+          <div className="flex flex-wrap items-center gap-3">
+            {Object.entries(moduleBadgeColors).map(([moduleName, badgeStyle]) => (
+              <AppBadge key={moduleName} className={badgeStyle} size="sm">
+                {moduleName.charAt(0).toUpperCase() + moduleName.slice(1)}
+              </AppBadge>
+            ))}
+          </div>
+        </div>
+
+        {/* Category Badges */}
+        <div className="space-y-3 pt-4 border-t border-border/40">
+          <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+            Category & Status Badges
+          </h3>
+          <div className="flex flex-wrap gap-3">
+            <AppBadge icon={<Users className="h-4 w-4" />} className={badgeColors.boys}>
+              Boys
+            </AppBadge>
+            <AppBadge icon={<Users className="h-4 w-4" />} className={badgeColors.girls}>
+              Girls
+            </AppBadge>
+            <AppBadge icon={<UserCheck className="h-4 w-4" />} className={badgeColors.parents}>
+              Parents
+            </AppBadge>
+
+            <AppBadge icon={<Clock className="h-4 w-4" />} className={badgeColors.pending}>
+              Pending Deposit
+            </AppBadge>
+            <AppBadge icon={<CheckCircle className="h-4 w-4" />} className={badgeColors.deposited}>
+              Deposited
+            </AppBadge>
+
+            <AppBadge icon={<Flower className="h-4 w-4" />} className={badgeColors.decoration}>
+              Decoration
+            </AppBadge>
+            <AppBadge icon={<Tent className="h-4 w-4" />} className={badgeColors.mandap}>
+              Mandap
+            </AppBadge>
+            <AppBadge icon={<Volume2 className="h-4 w-4" />} className={badgeColors.sound}>
+              Sound
+            </AppBadge>
+          </div>
         </div>
       </div>
 
+      {/* CARDS SECTION */}
       <div className="p-6 rounded-2xl border border-border/60 bg-card/60 space-y-6">
         <h2 className="text-xl font-bold">App Card Showcase</h2>
 

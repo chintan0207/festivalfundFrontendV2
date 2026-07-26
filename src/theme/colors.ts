@@ -104,3 +104,26 @@ export const badgeColors = {
   mandap: "bg-gradient-to-r from-orange-500/20 to-amber-500/20 text-orange-500",
   sound: "bg-gradient-to-r from-red-500/20 to-pink-500/20 text-red-500",
 };
+
+export interface ModuleTheme {
+  gradient: string;
+  iconColor: string;
+  fillColor: string;
+  badgeColor: string;
+}
+
+/**
+ * Utility function to retrieve all theme properties for a given module as a single object.
+ * Returns gradient, iconColor, fillColor, and badgeColor for the requested module.
+ */
+export function getModuleTheme(moduleName: string = "default"): ModuleTheme {
+  const key = moduleName.toLowerCase();
+  return {
+    gradient: moduleGradientColors[key] || moduleGradientColors.default,
+    iconColor: moduleIconColors[key] || moduleIconColors.default,
+    fillColor: moduleFillColors[key] || moduleFillColors.default,
+    badgeColor: moduleBadgeColors[key] || moduleBadgeColors.default,
+  };
+}
+
+export const getModuleColors = getModuleTheme;
