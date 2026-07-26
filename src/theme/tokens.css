@@ -33,8 +33,9 @@
   --chart-3: oklch(0.65 0.24 15); /* Red/Pink – Sound */
   --chart-4: oklch(0.62 0.23 295); /* Purple – Other */
   --chart-5: oklch(0.38 0 0); /* Dark Gray – Total */
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.141 0.005 285.823);
+  --sidebar: var(--card);
+  --sidebar-foreground: var(--card-foreground);
+
   --sidebar-primary: oklch(0.546 0.245 262.881);
   --sidebar-primary-foreground: oklch(0.97 0.014 254.604);
   --sidebar-accent: oklch(0.967 0.001 286.375);

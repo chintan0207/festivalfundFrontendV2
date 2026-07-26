@@ -5,6 +5,10 @@ import { useFestivalStore } from "@/store/festivalStore";
 import { AppButton } from "@/components/common/AppButton";
 import { AppLogo } from "@/components/common/AppLogo";
 import {
+  moduleIconColors,
+  moduleBadgeColors,
+} from "@/theme/colors";
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -53,32 +57,38 @@ export const Sidebar = () => {
           title: "Festivals",
           icon: CalendarDays,
           href: "/dashboard/festivals",
+          module: "festivals",
           badge: festivals.filter((f) => f.status === "ACTIVE").length || undefined,
         },
         {
           title: "Dashboard",
           icon: LayoutDashboard,
           href: "/dashboard",
+          module: "dashboard",
         },
         {
           title: "Contributors",
           icon: Users,
           href: "/dashboard/contributors",
+          module: "contributors",
         },
         {
           title: "Contributions",
           icon: Wallet,
           href: "/dashboard/contributions",
+          module: "contributions",
         },
         {
           title: "Expenses",
           icon: Receipt,
           href: "/dashboard/expenses",
+          module: "expenses",
         },
         {
           title: "Reports & Analytics",
           icon: BarChart3,
           href: "/dashboard/reports",
+          module: "reports",
         },
       ],
     },
@@ -89,13 +99,14 @@ export const Sidebar = () => {
           title: "Settings",
           icon: Settings,
           href: "/dashboard/settings",
+          module: "settings",
         },
       ],
     },
   ];
 
   return (
-    <SidebarRoot collapsible="icon" className="border-r border-border bg-card">
+    <SidebarRoot collapsible="icon" className="border-r border-border bg-card text-card-foreground">
       {/* BRAND HEADER */}
       <SidebarHeader className="h-14 px-3 border-b border-border/80 flex items-center group-data-[collapsible=icon]:justify-center">
         <AppLogo size="md" />
@@ -115,7 +126,14 @@ export const Sidebar = () => {
               <SidebarMenu className="group-data-[collapsible=icon]:items-center">
                 {sec.items.map((item) => {
                   const Icon = item.icon;
-                  const active = location.pathname === item.href;
+                  const active =
+                    item.href === "/dashboard"
+                      ? location.pathname === "/dashboard"
+                      : location.pathname.startsWith(item.href);
+                  const iconColorClass =
+                    moduleIconColors[item.module] || moduleIconColors.default;
+                  const badgeColorClass =
+                    moduleBadgeColors[item.module] || moduleBadgeColors.default;
 
                   return (
                     <SidebarMenuItem
@@ -126,25 +144,28 @@ export const Sidebar = () => {
                         asChild
                         isActive={active}
                         tooltip={item.title}
-                        className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl font-medium text-xs transition-all duration-150
-                        group-data-[collapsible=icon]:w-9 group-data-[collapsible=icon]:h-9 group-data-[collapsible=icon]:p-0 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:mx-auto ${
-                          active
-                            ? "bg-primary text-primary-foreground font-semibold shadow-xs"
-                            : "text-foreground/80 hover:bg-muted hover:text-foreground"
-                        }`}
+                        className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl font-medium text-xs transition-all duration-200 overflow-hidden
+                        group-data-[collapsible=icon]:w-9 group-data-[collapsible=icon]:h-9 group-data-[collapsible=icon]:p-0 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:mx-auto`}
                       >
-                        <Link to={item.href} className="flex items-center justify-center">
-                          <Icon className="h-4 w-4 shrink-0" />
+                        <Link
+                          to={item.href}
+                          className="flex items-center gap-3 w-full justify-center"
+                        >
+                          <span
+                            className={`w-7 h-7 rounded-lg flex items-center justify-center text-xs shrink-0 transition-all duration-200 ${iconColorClass}
+                            }`}
+                          >
+                            <Icon className="h-4 w-4" />
+                          </span>
                           <span className="flex-1 truncate group-data-[collapsible=icon]:hidden">
                             {item.title}
                           </span>
                           {item.badge !== undefined && (
                             <Badge
-                              variant={active ? "outline" : "secondary"}
-                              className={`ml-auto text-2xs px-1.5 py-0.2 group-data-[collapsible=icon]:hidden ${
+                              className={`ml-auto text-2xs px-2 py-0.5 rounded-full font-bold group-data-[collapsible=icon]:hidden ${
                                 active
-                                  ? "border-primary-foreground/40 text-primary-foreground"
-                                  : ""
+                                  ? badgeColorClass
+                                  : "bg-muted text-muted-foreground"
                               }`}
                             >
                               {item.badge}

@@ -1,5 +1,5 @@
 import { AppButton } from "@/components/common/AppButton";
-import { badgeColors, gradientColors } from "@/theme/colors";
+import { badgeColors, gradientColors, moduleGradientColors } from "@/theme/colors";
 import {
   ArrowRight,
   CheckCircle,
@@ -29,35 +29,59 @@ const AppComponentsPage = () => {
       </div>
 
       <div className="p-6 border border-border/60 rounded-2xl bg-card/60 space-y-6">
-        <h2 className="text-xl font-bold">App Buttons</h2>
+        <h2 className="text-xl font-bold">App Buttons & Gradient Palette</h2>
 
-        <div className="flex flex-wrap gap-3">
-          <AppButton className={gradientColors[0]}>Dashboard</AppButton>
-          <AppButton className={gradientColors[1]}>Contributions</AppButton>
-          <AppButton className={gradientColors[2]}>Reports</AppButton>
-          <AppButton className={gradientColors[3]}>Settings</AppButton>
-          <AppButton className={gradientColors[4]}>Export</AppButton>
-          <AppButton className={gradientColors[5]}>Delete</AppButton>
+        <div className="space-y-3">
+          <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+            Gradient Color Options ({gradientColors.length} Options)
+          </h3>
+          <div className="flex flex-wrap gap-3">
+            {gradientColors.map((gradient, index) => (
+              <AppButton key={index} className={`${gradient} text-white shadow-sm hover:shadow-md transition-all`}>
+                Gradient {index + 1}
+              </AppButton>
+            ))}
+          </div>
+        </div>
 
-          <AppButton>Primary</AppButton>
-          <AppButton variant="secondary">Secondary</AppButton>
-          <AppButton variant="outline">Outline</AppButton>
-          <AppButton variant="ghost">Ghost</AppButton>
-          <AppButton variant="destructive">Destructive</AppButton>
+        <div className="space-y-3 pt-4 border-t border-border/40">
+          <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+            Module-Wise Theme Buttons
+          </h3>
+          <div className="flex flex-wrap gap-3">
+            {Object.entries(moduleGradientColors).map(([moduleName, bgClass]) => (
+              <AppButton key={moduleName} className={bgClass}>
+                {moduleName.charAt(0).toUpperCase() + moduleName.slice(1)}
+              </AppButton>
+            ))}
+          </div>
+        </div>
 
-          <AppButton size="sm">Small</AppButton>
-          <AppButton size="lg">Large</AppButton>
+        <div className="space-y-3 pt-4 border-t border-border/40">
+          <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+            Standard Button Variants & Sizes
+          </h3>
+          <div className="flex flex-wrap gap-3">
+            <AppButton>Primary</AppButton>
+            <AppButton variant="secondary">Secondary</AppButton>
+            <AppButton variant="outline">Outline</AppButton>
+            <AppButton variant="ghost">Ghost</AppButton>
+            <AppButton variant="destructive">Destructive</AppButton>
 
-          <AppButton leftIcon={<Plus className="h-4 w-4" />}>Add Contributor</AppButton>
-          <AppButton rightIcon={<ArrowRight className="h-4 w-4" />}>Next</AppButton>
-          <AppButton variant="outline" size="icon">
-            <Settings className="h-4 w-4" />
-          </AppButton>
-          <AppButton variant="destructive" leftIcon={<Trash className="h-4 w-4" />}>
-            Delete Item
-          </AppButton>
+            <AppButton size="sm">Small</AppButton>
+            <AppButton size="lg">Large</AppButton>
 
-          <AppButton loading>Saving</AppButton>
+            <AppButton leftIcon={<Plus className="h-4 w-4" />}>Add Contributor</AppButton>
+            <AppButton rightIcon={<ArrowRight className="h-4 w-4" />}>Next</AppButton>
+            <AppButton variant="outline" size="icon">
+              <Settings className="h-4 w-4" />
+            </AppButton>
+            <AppButton variant="destructive" leftIcon={<Trash className="h-4 w-4" />}>
+              Delete Item
+            </AppButton>
+
+            <AppButton loading>Saving</AppButton>
+          </div>
         </div>
       </div>
 

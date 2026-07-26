@@ -24,8 +24,9 @@ const Topbar = () => {
   const activeFest = festivals.find((f) => f.id === activeFestivalId);
 
   return (
-    <header className="sticky top-0 z-40 bg-card/80 backdrop-blur-md border-b border-border h-14 flex items-center px-4 justify-between gap-3">
+    <header className="sticky top-0 z-40 bg-card border-b border-border h-14 flex items-center px-4 justify-between gap-3">
       <div className="flex items-center gap-3">
+
         {/* Sidebar Trigger (Always visible to expand/collapse sidebar) */}
         <SidebarTrigger className="hover:bg-muted text-muted-foreground" />
 

@@ -1,7 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { gradientColors } from "@/theme/colors";
+import { gradientColors, moduleGradientColors } from "@/theme/colors";
 import { MdCancel } from "react-icons/md";
 import { FaCheckCircle, FaClock } from "react-icons/fa";
 import { Input } from "@/components/ui/input";
@@ -71,14 +71,29 @@ const ThemePage = () => {
             </div>
           </section>
           <section>
-            <h3 className="mb-3 font-semibold">Buttons (Recommended Usage)</h3>
+            <h3 className="mb-3 font-semibold">Module-Wise Theme Buttons</h3>
             <div className="flex flex-wrap gap-3">
-              <Button className={gradientColors[0]}>Dashboard</Button>
-              <Button className={gradientColors[1]}>Contributions</Button>
-              <Button className={gradientColors[2]}>Reports</Button>
-              <Button className={gradientColors[3]}>Settings</Button>
-              <Button className={gradientColors[4]}>Settings</Button>
-              <Button className={gradientColors[5]}>Settings</Button>
+              <Button className={moduleGradientColors.dashboard}>Dashboard</Button>
+              <Button className={moduleGradientColors.festivals}>Festivals</Button>
+              <Button className={moduleGradientColors.contributors}>Contributors</Button>
+              <Button className={moduleGradientColors.contributions}>Contributions</Button>
+              <Button className={moduleGradientColors.expenses}>Expenses</Button>
+              <Button className={moduleGradientColors.billing}>Billing</Button>
+              <Button className={moduleGradientColors.reports}>Reports</Button>
+              <Button className={moduleGradientColors.settings}>Settings</Button>
+              <Button className={moduleGradientColors["super-admin"]}>Super Admin</Button>
+              <Button className={moduleGradientColors["public-lookup"]}>Public Lookup</Button>
+            </div>
+          </section>
+
+          <section>
+            <h3 className="mb-3 font-semibold">All Palette Gradient Buttons</h3>
+            <div className="flex flex-wrap gap-3">
+              {gradientColors.map((gradient, idx) => (
+                <Button key={idx} className={`${gradient} text-white shadow-md hover:shadow-lg transition-all`}>
+                  Gradient {idx + 1}
+                </Button>
+              ))}
             </div>
           </section>
 
