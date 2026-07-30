@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { Plus } from "lucide-react";
+import { Outlet, useNavigate, useMatches } from "@tanstack/react-router";
 import { useContributorApiStore } from "@/api/contributor/contributor.store";
 import {
   useContributors,
@@ -40,7 +41,6 @@ export default function ContributorsPage() {
   const setSortOrder = useContributorApiStore((s) => s.setSortOrder);
   const setCategory = useContributorApiStore((s) => s.setCategory);
   const setIsActive = useContributorApiStore((s) => s.setIsActive);
-  const setSelectedContributor = useContributorApiStore((s) => s.setSelectedContributor);
   const resetFilters = useContributorApiStore((s) => s.resetFilters);
 
   // Local UI
@@ -56,6 +56,13 @@ export default function ContributorsPage() {
   useEffect(() => {
     setSearch(debouncedSearch);
   }, [debouncedSearch, setSearch]);
+
+  const navigate = useNavigate();
+  const matches = useMatches();
+
+  const handleRowClick = useCallback((contributor: Contributor) => {
+    navigate({ to: "/dashboard/contributors/$contributorId", params: { contributorId: contributor._id } });
+  }, [navigate]);
 
   // Handle reset: clear both store and local state synchronously
   const handleResetAll = useCallback(() => {
@@ -154,8 +161,12 @@ export default function ContributorsPage() {
     });
   }
 
+  if (matches.some((m) => m.routeId === "/dashboard/contributors/$contributorId")) {
+    return <Outlet />;
+  }
+
   return (
-    <div className="space-y-5 pb-28 md:pb-10 max-w-[1400px] mx-auto px-1 sm:px-0">
+    <div className="space-y-5 pb-28 md:pb-12 max-w-[1400px] mx-auto px-1 sm:px-0">
       <PageHeader
         module="contributors"
         title="Contributors"
@@ -231,7 +242,7 @@ export default function ContributorsPage() {
           setDeleteId(id);
           setIsDeleteOpen(true);
         }}
-        onRowClick={setSelectedContributor}
+        onRowClick={handleRowClick}
       />
 
       {/* Desktop table */}
@@ -247,7 +258,7 @@ export default function ContributorsPage() {
             setDeleteId(id);
             setIsDeleteOpen(true);
           }}
-          onRowClick={setSelectedContributor}
+          onRowClick={handleRowClick}
         />
       </div>
 

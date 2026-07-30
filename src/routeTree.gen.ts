@@ -35,6 +35,7 @@ import { Route as AuthSignupRouteImport } from './routes/_auth/signup'
 import { Route as AuthResetPasswordRouteImport } from './routes/_auth/reset-password'
 import { Route as AuthLoginRouteImport } from './routes/_auth/login'
 import { Route as AuthForgotPasswordRouteImport } from './routes/_auth/forgot-password'
+import { Route as DashboardContributorsContributorIdRouteImport } from './routes/dashboard/contributors.$contributorId'
 
 const DashboardRouteRoute = DashboardRouteRouteImport.update({
   id: '/dashboard',
@@ -164,6 +165,12 @@ const AuthForgotPasswordRoute = AuthForgotPasswordRouteImport.update({
   path: '/forgot-password',
   getParentRoute: () => AuthRouteRoute,
 } as any)
+const DashboardContributorsContributorIdRoute =
+  DashboardContributorsContributorIdRouteImport.update({
+    id: '/$contributorId',
+    path: '/$contributorId',
+    getParentRoute: () => DashboardContributorsRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof MarketingIndexRoute
@@ -184,12 +191,13 @@ export interface FileRoutesByFullPath {
   '/terms-of-service': typeof MarketingTermsOfServiceRoute
   '/theme': typeof MarketingThemeRoute
   '/dashboard/contributions': typeof DashboardContributionsRoute
-  '/dashboard/contributors': typeof DashboardContributorsRoute
+  '/dashboard/contributors': typeof DashboardContributorsRouteWithChildren
   '/dashboard/expenses': typeof DashboardExpensesRoute
   '/dashboard/festivals': typeof DashboardFestivalsRoute
   '/dashboard/reports': typeof DashboardReportsRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
   '/dashboard/': typeof DashboardIndexRoute
+  '/dashboard/contributors/$contributorId': typeof DashboardContributorsContributorIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof MarketingIndexRoute
@@ -209,12 +217,13 @@ export interface FileRoutesByTo {
   '/terms-of-service': typeof MarketingTermsOfServiceRoute
   '/theme': typeof MarketingThemeRoute
   '/dashboard/contributions': typeof DashboardContributionsRoute
-  '/dashboard/contributors': typeof DashboardContributorsRoute
+  '/dashboard/contributors': typeof DashboardContributorsRouteWithChildren
   '/dashboard/expenses': typeof DashboardExpensesRoute
   '/dashboard/festivals': typeof DashboardFestivalsRoute
   '/dashboard/reports': typeof DashboardReportsRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
   '/dashboard': typeof DashboardIndexRoute
+  '/dashboard/contributors/$contributorId': typeof DashboardContributorsContributorIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -237,13 +246,14 @@ export interface FileRoutesById {
   '/_marketing/terms-of-service': typeof MarketingTermsOfServiceRoute
   '/_marketing/theme': typeof MarketingThemeRoute
   '/dashboard/contributions': typeof DashboardContributionsRoute
-  '/dashboard/contributors': typeof DashboardContributorsRoute
+  '/dashboard/contributors': typeof DashboardContributorsRouteWithChildren
   '/dashboard/expenses': typeof DashboardExpensesRoute
   '/dashboard/festivals': typeof DashboardFestivalsRoute
   '/dashboard/reports': typeof DashboardReportsRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
   '/_marketing/': typeof MarketingIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
+  '/dashboard/contributors/$contributorId': typeof DashboardContributorsContributorIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -272,6 +282,7 @@ export interface FileRouteTypes {
     | '/dashboard/reports'
     | '/dashboard/settings'
     | '/dashboard/'
+    | '/dashboard/contributors/$contributorId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -297,6 +308,7 @@ export interface FileRouteTypes {
     | '/dashboard/reports'
     | '/dashboard/settings'
     | '/dashboard'
+    | '/dashboard/contributors/$contributorId'
   id:
     | '__root__'
     | '/_auth'
@@ -325,6 +337,7 @@ export interface FileRouteTypes {
     | '/dashboard/settings'
     | '/_marketing/'
     | '/dashboard/'
+    | '/dashboard/contributors/$contributorId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -517,6 +530,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthForgotPasswordRouteImport
       parentRoute: typeof AuthRouteRoute
     }
+    '/dashboard/contributors/$contributorId': {
+      id: '/dashboard/contributors/$contributorId'
+      path: '/$contributorId'
+      fullPath: '/dashboard/contributors/$contributorId'
+      preLoaderRoute: typeof DashboardContributorsContributorIdRouteImport
+      parentRoute: typeof DashboardContributorsRoute
+    }
   }
 }
 
@@ -572,9 +592,23 @@ const MarketingRouteRouteWithChildren = MarketingRouteRoute._addFileChildren(
   MarketingRouteRouteChildren,
 )
 
+interface DashboardContributorsRouteChildren {
+  DashboardContributorsContributorIdRoute: typeof DashboardContributorsContributorIdRoute
+}
+
+const DashboardContributorsRouteChildren: DashboardContributorsRouteChildren = {
+  DashboardContributorsContributorIdRoute:
+    DashboardContributorsContributorIdRoute,
+}
+
+const DashboardContributorsRouteWithChildren =
+  DashboardContributorsRoute._addFileChildren(
+    DashboardContributorsRouteChildren,
+  )
+
 interface DashboardRouteRouteChildren {
   DashboardContributionsRoute: typeof DashboardContributionsRoute
-  DashboardContributorsRoute: typeof DashboardContributorsRoute
+  DashboardContributorsRoute: typeof DashboardContributorsRouteWithChildren
   DashboardExpensesRoute: typeof DashboardExpensesRoute
   DashboardFestivalsRoute: typeof DashboardFestivalsRoute
   DashboardReportsRoute: typeof DashboardReportsRoute
@@ -584,7 +618,7 @@ interface DashboardRouteRouteChildren {
 
 const DashboardRouteRouteChildren: DashboardRouteRouteChildren = {
   DashboardContributionsRoute: DashboardContributionsRoute,
-  DashboardContributorsRoute: DashboardContributorsRoute,
+  DashboardContributorsRoute: DashboardContributorsRouteWithChildren,
   DashboardExpensesRoute: DashboardExpensesRoute,
   DashboardFestivalsRoute: DashboardFestivalsRoute,
   DashboardReportsRoute: DashboardReportsRoute,
