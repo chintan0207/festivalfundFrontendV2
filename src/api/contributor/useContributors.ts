@@ -9,7 +9,7 @@ import { useContributorApiStore } from "./contributor.store";
 import type { CreateContributorPayload, UpdateContributorPayload } from "@/types/Types";
 
 export const CONTRIBUTOR_QUERY_KEYS = {
-  all: (params?: ContributorQueryParams) => ["contributors", params] as const,
+  all: (params?: ContributorQueryParams) => params ? ["contributors", params] as const : ["contributors"] as const,
   detail: (id: string) => ["contributor", id] as const,
 };
 
@@ -32,7 +32,7 @@ export const useContributors = (params?: ContributorQueryParams) => {
       }
       return res.data;
     },
-    staleTime: 5 * 60 * 1000,
+    staleTime: 0,
   });
 };
 

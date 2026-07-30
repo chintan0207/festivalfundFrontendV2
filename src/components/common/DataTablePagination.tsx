@@ -13,6 +13,18 @@ export interface DataTablePaginationProps {
   module?: string;
 }
 
+function getPageNumbers(current: number, total: number, siblings: number): (number | "...")[] {
+  const pages: (number | "...")[] = [];
+  const rangeStart = Math.max(2, current - siblings);
+  const rangeEnd = Math.min(total - 1, current + siblings);
+  pages.push(1);
+  if (rangeStart > 2) pages.push("...");
+  for (let i = rangeStart; i <= rangeEnd; i++) pages.push(i);
+  if (rangeEnd < total - 1) pages.push("...");
+  if (total > 1) pages.push(total);
+  return pages;
+}
+
 export function DataTablePagination({
   page,
   totalPages,
@@ -23,91 +35,116 @@ export function DataTablePagination({
   module = "default",
 }: DataTablePaginationProps) {
   const theme = getModuleTheme(module);
+  const pages = getPageNumbers(page, totalPages, 1);
+  const isFirst = page <= 1;
+  const isLast = page >= totalPages;
 
-  const getPageNumbers = () => {
-    const pages: number[] = [];
-    const maxVisible = 5;
-    const start = Math.max(1, page - Math.floor(maxVisible / 2));
-    const end = Math.min(totalPages, start + maxVisible - 1);
-    for (let i = start; i <= end; i++) pages.push(i);
-    return pages;
-  };
+  const from = total === 0 ? 0 : (page - 1) * limit + 1;
+  const to = Math.min(page * limit, total);
 
-  const btnBase =
-    "flex items-center justify-center h-8 w-8 rounded-lg text-xs font-semibold transition-colors select-none";
+  const pageBtnBase =
+    "flex items-center justify-center h-8 w-8 rounded-full text-xs font-semibold transition-all duration-200 select-none";
+
+  const navBtnBase =
+    "flex items-center gap-1 h-8 rounded-full text-xs font-semibold transition-all duration-200 select-none px-3 text-muted-foreground hover:bg-muted/60 hover:text-foreground hover:scale-105 active:scale-95 disabled:opacity-25 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:scale-100";
+
+  const iconBtnBase =
+    "flex items-center justify-center h-8 w-8 rounded-full text-xs font-semibold transition-all duration-200 select-none text-muted-foreground hover:bg-muted/60 hover:text-foreground hover:scale-105 active:scale-95 disabled:opacity-25 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:scale-100";
 
   return (
-    <div className="flex items-center justify-center sm:justify-between gap-3 flex-wrap">
-      {/* "Show X of Y results" + limit selector */}
-      <div className="flex items-center gap-2 text-xs text-muted-foreground">
-        <span>Show</span>
-        <AppSelect
-          value={String(limit)}
-          onChange={(val) => onLimitChange(Number(val))}
-          options={[
-            { value: "2", label: "2" },
-            { value: "5", label: "5" },
-            { value: "10", label: "10" },
-            { value: "20", label: "20" },
-            { value: "50", label: "50" },
-          ]}
-          className="h-8 text-xs py-0"
-        />
-        <span>of {total}</span>
-      </div>
+    <div className="rounded-full bg-card border border-border/80 shadow-sm px-3 sm:px-4 py-1.5">
+      <div className="flex items-center justify-between gap-3 sm:gap-4">
+        {/* Left: Range + total */}
+        <div className="flex items-center gap-1.5 text-[11px] sm:text-xs text-muted-foreground whitespace-nowrap shrink-0">
+          <AppSelect
+            value={String(limit)}
+            onChange={(val) => onLimitChange(Number(val))}
+            options={[
+              { value: "10", label: "10" },
+              { value: "1", label: "1" },
+              { value: "2", label: "2" },
 
-      {/* Page navigation */}
-      <div className="flex items-center gap-1">
-        <button
-          type="button"
-          disabled={page <= 1}
-          onClick={() => onPageChange(page - 1)}
-          className={cn(
-            btnBase,
-            page <= 1
-              ? "text-muted-foreground/30 cursor-not-allowed"
-              : "text-muted-foreground hover:bg-muted/60 hover:text-foreground cursor-pointer",
-          )}
-        >
-          <ChevronLeft className="h-4 w-4" />
-        </button>
-
-        {getPageNumbers().map((pageNum) => (
-          <button
-            key={pageNum}
-            type="button"
-            onClick={() => onPageChange(pageNum)}
-            className={cn(
-              btnBase,
-              "cursor-pointer",
-              page === pageNum
-                ? cn("text-white", theme.gradient)
-                : "text-muted-foreground hover:bg-muted/60 hover:text-foreground",
-            )}
-          >
-            {pageNum}
-          </button>
-        ))}
-
-        {totalPages > 5 && page + 2 < totalPages && (
-          <span className="flex items-center justify-center h-8 w-8 text-xs text-muted-foreground">
-            ...
+              { value: "5", label: "5" },
+              { value: "20", label: "20" },
+            ]}
+            className="h-7 text-[11px] rounded-full px-2.5 min-w-[52px]"
+          />
+          <span>
+            {from}–{to} of {total}
           </span>
-        )}
+        </div>
 
-        <button
-          type="button"
-          disabled={page >= totalPages}
-          onClick={() => onPageChange(page + 1)}
-          className={cn(
-            btnBase,
-            page >= totalPages
-              ? "text-muted-foreground/30 cursor-not-allowed"
-              : "text-muted-foreground hover:bg-muted/60 hover:text-foreground cursor-pointer",
+        {/* Right: Navigation */}
+        <div className="flex items-center gap-0.5 sm:gap-1">
+          {/* Previous */}
+          <button
+            type="button"
+            disabled={isFirst}
+            onClick={() => onPageChange(page - 1)}
+            className={cn(navBtnBase, "hidden sm:flex")}
+          >
+            <ChevronLeft className="h-3.5 w-3.5" />
+            <span>Prev</span>
+          </button>
+          <button
+            type="button"
+            disabled={isFirst}
+            onClick={() => onPageChange(page - 1)}
+            className={cn(iconBtnBase, "sm:hidden")}
+          >
+            <ChevronLeft className="h-3.5 w-3.5" />
+          </button>
+
+          {/* Page numbers */}
+          {pages.map((p, i) =>
+            p === "..." ? (
+              <span
+                key={`e-${i}`}
+                className="flex items-center justify-center h-8 w-5 text-xs text-muted-foreground/30 select-none"
+              >
+                ...
+              </span>
+            ) : (
+              <button
+                key={p}
+                type="button"
+                onClick={() => onPageChange(p)}
+                className={cn(
+                  pageBtnBase,
+                  "cursor-pointer active:scale-90",
+                  p === page
+                    ? cn("text-white shadow-sm scale-110", theme.gradient)
+                    : "text-muted-foreground hover:bg-muted/60 hover:text-foreground hover:scale-105",
+                  Math.abs(p - page) > 2 &&
+                    p !== 1 &&
+                    p !== totalPages &&
+                    "hidden sm:flex",
+                )}
+              >
+                {p}
+              </button>
+            ),
           )}
-        >
-          <ChevronRight className="h-4 w-4" />
-        </button>
+
+          {/* Next */}
+          <button
+            type="button"
+            disabled={isLast}
+            onClick={() => onPageChange(page + 1)}
+            className={cn(navBtnBase, "hidden sm:flex")}
+          >
+            <span>Next</span>
+            <ChevronRight className="h-3.5 w-3.5" />
+          </button>
+          <button
+            type="button"
+            disabled={isLast}
+            onClick={() => onPageChange(page + 1)}
+            className={cn(iconBtnBase, "sm:hidden")}
+          >
+            <ChevronRight className="h-3.5 w-3.5" />
+          </button>
+        </div>
       </div>
     </div>
   );

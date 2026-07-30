@@ -495,7 +495,7 @@ export function PageFilterToolbar({
       )}
 
       {/* THIRD ROW: ACTIVE FILTER DISMISSIBLE TAGS */}
-      {activeFilters.length > 0 && (
+      {(searchQuery || activeFilters.length > 0) && (
         <div className="flex items-center gap-2 flex-wrap pt-2 border-t border-border/40">
           <span className="text-[11px] font-semibold text-muted-foreground">Active:</span>
           {searchQuery && (

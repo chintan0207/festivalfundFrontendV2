@@ -22,7 +22,6 @@ import type { Contributor } from "@/types/Types";
 
 export default function ContributorsPage() {
   const theme = getModuleTheme("contributors");
-
   // Store
   const page = useContributorApiStore((s) => s.page);
   const limit = useContributorApiStore((s) => s.limit);
@@ -57,6 +56,12 @@ export default function ContributorsPage() {
   useEffect(() => {
     setSearch(debouncedSearch);
   }, [debouncedSearch, setSearch]);
+
+  // Handle reset: clear both store and local state synchronously
+  const handleResetAll = useCallback(() => {
+    resetFilters();
+    setLocalSearch("");
+  }, [resetFilters]);
 
   // Query
   const queryParams = {
@@ -184,7 +189,7 @@ export default function ContributorsPage() {
             label: "Category",
             value: category || "ALL",
             options: [
-              { value: "ALL", label: "All" },
+              { value: "ALL", label: "All", count: total },
               { value: "PARENT", label: "Parents", count: contributors.filter((c) => c.category === "PARENT").length },
               { value: "BOY", label: "Boys", count: contributors.filter((c) => c.category === "BOY").length },
               { value: "GIRL", label: "Girls", count: contributors.filter((c) => c.category === "GIRL").length },
@@ -192,18 +197,18 @@ export default function ContributorsPage() {
             onChange: (val) => setCategory(val === "ALL" ? "" : val),
             variant: "module",
           },
-          {
-            id: "status",
-            label: "Status",
-            value: isActive,
-            options: [
-              { value: "true", label: "Active" },
-              { value: "false", label: "Inactive" },
-              { value: "", label: "All" },
-            ],
-            onChange: (val) => setIsActive(val),
-            variant: "module",
-          },
+          // {
+          //   id: "status",
+          //   label: "Status",
+          //   value: isActive,
+          //   options: [
+          //     { value: "true", label: "Active" },
+          //     { value: "false", label: "Inactive" },
+          //     { value: "", label: "All" },
+          //   ],
+          //   onChange: (val) => setIsActive(val),
+          //   variant: "module",
+          // },
         ]}
         sortOptions={[
           { id: "createdAt", label: "Created" },
@@ -214,7 +219,7 @@ export default function ContributorsPage() {
         sortDirection={sortOrder}
         onSortChange={handleSort}
         activeFilters={activeFilters}
-        onResetAll={resetFilters}
+        onResetAll={handleResetAll}
       />
 
       {/* Mobile cards */}

@@ -60,7 +60,7 @@ export function AppSelect({
             id={id}
             disabled={disabled}
             className={cn(
-              "flex items-center justify-between w-full h-10 sm:h-10.5 rounded-2xl border border-input bg-background/90 px-3.5 text-xs sm:text-sm shadow-sm transition-all cursor-pointer",
+              "flex items-center justify-between w-full h-7 sm:h-8 rounded-2xl border border-input bg-background/90 px-3.5 text-xs sm:text-sm shadow-sm transition-all cursor-pointer",
               "focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:border-primary focus:outline-none",
               "disabled:cursor-not-allowed disabled:opacity-50",
               open && "ring-2 ring-primary/30 border-primary",
