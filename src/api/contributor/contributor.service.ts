@@ -12,9 +12,29 @@ export type ApiResponse<T> = {
   data: T;
 };
 
+export type ContributorQueryParams = {
+  page?: number;
+  limit?: number;
+  search?: string;
+  sortOrder?: "asc" | "desc";
+  sortField?: string;
+  category?: string;
+  isActive?: string;
+};
+
+export type ContributorListData = {
+  contributors: Contributor[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+};
+
 export const ContributorService = {
-  getAllContributors: async () => {
-    const response = await ApiClient.get<ApiResponse<Contributor[]>>("/contributors");
+  getAllContributors: async (params?: ContributorQueryParams) => {
+    const response = await ApiClient.get<ApiResponse<ContributorListData>>("/contributors", {
+      params,
+    });
     return response.data;
   },
 

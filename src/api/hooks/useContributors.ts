@@ -1,24 +1,34 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { ContributorService } from "../contributor/contributor.service";
+import {
+  ContributorService,
+  type ContributorQueryParams,
+} from "../contributor/contributor.service";
 import { useContributorApiStore } from "../contributor/contributor.store";
 import type { CreateContributorPayload, UpdateContributorPayload } from "@/types/Types";
 
 export const CONTRIBUTOR_QUERY_KEYS = {
-  all: ["contributors"] as const,
+  all: (params?: ContributorQueryParams) => ["contributors", params] as const,
   detail: (id: string) => ["contributor", id] as const,
 };
 
-export const useContributors = () => {
+export const useContributors = (params?: ContributorQueryParams) => {
   const setContributors = useContributorApiStore((s) => s.setContributors);
+  const setPaginationMeta = useContributorApiStore((s) => s.setPaginationMeta);
 
   return useQuery({
-    queryKey: CONTRIBUTOR_QUERY_KEYS.all,
+    queryKey: CONTRIBUTOR_QUERY_KEYS.all(params),
     queryFn: async () => {
-      const res = await ContributorService.getAllContributors();
+      const res = await ContributorService.getAllContributors(params);
       if (res.data) {
-        setContributors(res.data);
+        setContributors(res.data.contributors);
+        setPaginationMeta({
+          total: res.data.total,
+          page: res.data.page,
+          limit: res.data.limit,
+          totalPages: res.data.totalPages,
+        });
       }
       return res.data;
     },
