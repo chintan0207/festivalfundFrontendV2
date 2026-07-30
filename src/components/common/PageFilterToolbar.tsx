@@ -6,6 +6,9 @@ import {
   Check,
   RotateCcw,
   SlidersHorizontal,
+  Filter,
+  ArrowUp,
+  ArrowDown,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { AppBadge } from "./AppBadge";
@@ -45,6 +48,27 @@ export interface QuickFilterGroup {
   onChange: (value: string) => void;
 }
 
+export interface InlinePillOption {
+  value: string;
+  label: string;
+  count?: number;
+}
+
+export interface InlinePillGroup {
+  id: string;
+  label: string;
+  icon?: ReactNode;
+  value: string;
+  options: InlinePillOption[];
+  onChange: (value: string) => void;
+  variant?: "module" | "emerald" | "purple" | "blue" | "amber" | "rose";
+}
+
+export interface SortOption {
+  id: string;
+  label: string;
+}
+
 export interface ActiveFilterItem {
   id: string;
   label: string;
@@ -59,13 +83,22 @@ export interface PageFilterToolbarProps {
   onSearchChange?: (query: string) => void;
   searchPlaceholder?: string;
 
-  // Tabs
+  // Legacy Tabs (auto-converted to Pill Group if pillGroups not supplied)
   tabs?: FilterTab[];
   activeTab?: string;
   onTabChange?: (tabId: string) => void;
 
+  // Inline Pill Groups (Status: [All] [Active], Category: [All] [Religious], etc.)
+  pillGroups?: InlinePillGroup[];
+
   // Quick Select & Dropdown Filters
   quickFilters?: QuickFilterGroup[];
+
+  // Sort Options (Matches exact reference screenshot layout)
+  sortOptions?: SortOption[];
+  activeSort?: string;
+  sortDirection?: "asc" | "desc";
+  onSortChange?: (sortId: string) => void;
 
   // Active Filter Pills & Reset
   activeFilters?: ActiveFilterItem[];
@@ -84,7 +117,12 @@ export function PageFilterToolbar({
   tabs,
   activeTab,
   onTabChange,
+  pillGroups,
   quickFilters = [],
+  sortOptions,
+  activeSort,
+  sortDirection = "asc",
+  onSortChange,
   activeFilters = [],
   onResetAll,
   extraActions,
@@ -92,9 +130,28 @@ export function PageFilterToolbar({
 }: PageFilterToolbarProps) {
   const theme = getModuleTheme(module);
 
-  // First filter group is displayed directly outside as primary quick filter
+  // Auto convert tabs to standard Status pill group if pillGroups not explicitly supplied
+  const effectivePillGroups: InlinePillGroup[] = pillGroups
+    ? pillGroups
+    : tabs && onTabChange
+      ? [
+          {
+            id: "status_tabs",
+            label: "Status",
+            icon: <Filter className="h-3.5 w-3.5 text-muted-foreground" />,
+            value: activeTab || (tabs[0]?.id ?? "ALL"),
+            options: tabs.map((t) => ({
+              value: t.id,
+              label: t.label,
+              count: t.count,
+            })),
+            onChange: onTabChange,
+            variant: "module",
+          },
+        ]
+      : [];
+
   const primaryFilter = quickFilters.length > 0 ? quickFilters[0] : null;
-  // All filter groups (including Category, Year, Location, etc.) are available inside the "More" popover panel
   const popoverFilters = quickFilters;
 
   const hasActiveFilters =
@@ -107,9 +164,39 @@ export function PageFilterToolbar({
         )
     );
 
+  const getPillVariantStyles = (
+    variant: InlinePillGroup["variant"] = "module",
+    isSelected: boolean
+  ) => {
+    if (!isSelected) {
+      return "border border-border/80 bg-background/60 text-muted-foreground hover:text-foreground hover:bg-muted/60";
+    }
+
+    switch (variant) {
+      case "emerald":
+        return "bg-emerald-500 text-white font-bold shadow-xs border border-emerald-500/20";
+      case "purple":
+        return "bg-purple-600 text-white font-bold shadow-xs border border-purple-600/20";
+      case "blue":
+        return "bg-blue-600 text-white font-bold shadow-xs border border-blue-600/20";
+      case "amber":
+        return "bg-amber-500 text-white font-bold shadow-xs border border-amber-500/20";
+      case "rose":
+        return "bg-rose-500 text-white font-bold shadow-xs border border-rose-500/20";
+      case "module":
+      default:
+        return cn(theme.gradient, "text-white font-bold shadow-xs border-0");
+    }
+  };
+
   return (
-    <div className={cn("space-y-3 pb-2", className)}>
-      {/* TOP ROW: Search Bar -> Primary Dropdown -> "More" Popover */}
+    <div
+      className={cn(
+        "rounded-2xl border border-border/80 bg-card/90 backdrop-blur-md p-3.5 sm:p-4 shadow-2xs space-y-3.5",
+        className
+      )}
+    >
+      {/* TOP ROW: Search Bar -> Primary Dropdown -> "More" Popover -> Sort & Reset */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 flex-wrap">
         {/* Left Side: Search Bar & Primary Filter */}
         <div className="flex items-center gap-2 flex-wrap flex-1 min-w-0">
@@ -121,7 +208,7 @@ export function PageFilterToolbar({
                 placeholder={searchPlaceholder}
                 value={searchQuery}
                 onChange={(e) => onSearchChange(e.target.value)}
-                className="pl-8 pr-7 h-9 text-xs rounded-full bg-muted/40 hover:bg-muted/60 focus:bg-background border-border/80 shadow-2xs focus-visible:ring-1 focus-visible:ring-muted-foreground/30 transition-colors"
+                className="pl-8 pr-7 h-9 text-xs rounded-full bg-muted/30 hover:bg-muted/50 focus:bg-background border-border/80 shadow-2xs focus-visible:ring-1 focus-visible:ring-muted-foreground/30 transition-colors"
               />
               {searchQuery && (
                 <button
@@ -136,7 +223,7 @@ export function PageFilterToolbar({
             </div>
           )}
 
-          {/* Primary Quick Select Dropdown (Outside More) */}
+          {/* Primary Quick Select Dropdown */}
           {primaryFilter && (
             <DropdownMenu key={primaryFilter.id}>
               <DropdownMenuTrigger asChild>
@@ -148,7 +235,7 @@ export function PageFilterToolbar({
                       primaryFilter.value !== "ALL" &&
                       primaryFilter.value !== ""
                       ? cn(theme.badgeColor, "font-bold shadow-xs")
-                      : "border-border/80 bg-muted/40 hover:bg-muted/70 text-foreground"
+                      : "border-border/80 bg-muted/30 hover:bg-muted/60 text-foreground"
                   )}
                 >
                   {primaryFilter.icon}
@@ -193,7 +280,7 @@ export function PageFilterToolbar({
             </DropdownMenu>
           )}
 
-          {/* MORE FILTERS POPOVER (Includes all filter groups: Category, Year, Location, etc.) */}
+          {/* MORE FILTERS POPOVER */}
           {popoverFilters.length > 0 && (
             <Popover>
               <PopoverTrigger asChild>
@@ -214,7 +301,6 @@ export function PageFilterToolbar({
                 align="end"
                 className="w-80 p-3.5 rounded-2xl border border-border/80 bg-popover/95 backdrop-blur-md shadow-2xl space-y-3"
               >
-                {/* Popover Header */}
                 <div className="flex items-center justify-between pb-2 border-b border-border/60">
                   <h4 className="text-xs font-bold text-foreground tracking-tight">Filters</h4>
                   {onResetAll && (
@@ -228,7 +314,6 @@ export function PageFilterToolbar({
                   )}
                 </div>
 
-                {/* All Filter Dropdowns inside More Popover */}
                 <div className="space-y-3 max-h-80 overflow-y-auto no-scrollbar pr-0.5">
                   {popoverFilters.map((group) => {
                     const selectedOpt = group.options.find(
@@ -252,7 +337,7 @@ export function PageFilterToolbar({
                                 "w-full h-9 px-3 rounded-xl border text-xs font-semibold flex items-center justify-between transition-all cursor-pointer shadow-2xs",
                                 group.value && group.value !== "ALL"
                                   ? cn(theme.badgeColor, "font-bold")
-                                  : "border-border/80 bg-muted/40 hover:bg-muted/70 text-foreground"
+                                  : "border-border/80 bg-muted/30 hover:bg-muted/60 text-foreground"
                               )}
                             >
                               <div className="flex items-center gap-2 truncate">
@@ -302,15 +387,117 @@ export function PageFilterToolbar({
           )}
         </div>
 
-        {/* Right Side: Extra Actions */}
-        {extraActions && (
-          <div className="flex items-center gap-2 shrink-0">{extraActions}</div>
-        )}
+        {/* Right Side: Sort Selector & Clear Button */}
+        <div className="flex items-center gap-2 shrink-0 flex-wrap">
+          {/* SORT BY SELECTOR (Matches exact reference screenshot layout) */}
+          {sortOptions && sortOptions.length > 0 && onSortChange && (
+            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+              <span className="font-semibold text-muted-foreground hidden sm:inline">Sort by:</span>
+              <div className="flex items-center gap-1 bg-muted/30 p-0.5 rounded-full border border-border/60 overflow-x-auto no-scrollbar">
+                {sortOptions.map((s) => {
+                  const isSelected = activeSort === s.id;
+                  return (
+                    <button
+                      key={s.id}
+                      type="button"
+                      onClick={() => onSortChange(s.id)}
+                      className={cn(
+                        "px-2.5 py-1 rounded-full text-xs font-semibold transition-all cursor-pointer flex items-center gap-1 whitespace-nowrap",
+                        isSelected
+                          ? cn("text-white font-bold shadow-2xs", theme.gradient)
+                          : "text-muted-foreground hover:text-foreground border border-border/60 bg-background/50"
+                      )}
+                    >
+                      <span>{s.label}</span>
+                      {isSelected &&
+                        (sortDirection === "asc" ? (
+                          <ArrowUp className="h-3 w-3 text-white" />
+                        ) : (
+                          <ArrowDown className="h-3 w-3 text-white" />
+                        ))}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* Reset / Clear Button */}
+          {hasActiveFilters && onResetAll && (
+            <button
+              type="button"
+              onClick={onResetAll}
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold text-white bg-rose-600 hover:bg-rose-700 transition-all cursor-pointer shadow-xs active:scale-95"
+              title="Clear all active filters"
+            >
+              <RotateCcw className="h-3 w-3 text-white" />
+              <span>Clear</span>
+            </button>
+          )}
+
+          {extraActions}
+        </div>
       </div>
 
-      {/* ACTIVE FILTER PILLS & RESET BUTTON ROW WITH MODULE THEME */}
-      {hasActiveFilters && (
-        <div className="flex items-center gap-2 flex-wrap pt-1 animate-in fade-in-50 duration-200">
+      {/* SECOND ROW: INLINE PILL FILTER GROUPS (Status: [All] [Deposited], Category: [All] [Parents]...) */}
+      {effectivePillGroups.length > 0 && (
+        <div className="pt-2.5 border-t border-border/50 space-y-2.5">
+          {effectivePillGroups.map((group) => (
+            <div
+              key={group.id}
+              className="flex items-center gap-2 sm:gap-3 flex-wrap text-xs"
+            >
+              {/* Group Title with Funnel Icon */}
+              <div className="flex items-center gap-1.5 text-muted-foreground font-semibold shrink-0 min-w-[75px]">
+                {group.icon || <Filter className="h-3.5 w-3.5 text-muted-foreground" />}
+                <span>{group.label}:</span>
+              </div>
+
+              {/* Horizontal Pill Track */}
+              <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5 flex-wrap">
+                {group.options.map((opt) => {
+                  const isSelected = group.value === opt.value;
+                  const variantClass = getPillVariantStyles(
+                    group.variant,
+                    isSelected
+                  );
+
+                  return (
+                    <button
+                      key={opt.value}
+                      type="button"
+                      onClick={() => group.onChange(opt.value)}
+                      className={cn(
+                        "h-7 px-3 rounded-full text-xs font-semibold transition-all duration-200 cursor-pointer flex items-center gap-1 whitespace-nowrap active:scale-95",
+                        variantClass
+                      )}
+                    >
+                      <span>{opt.label}</span>
+                      {opt.count !== undefined && (
+                        <span
+                          className={cn(
+                            "text-[10px] px-1.5 py-0.2 rounded-full font-bold ml-0.5",
+                            isSelected
+                              ? "bg-white/20 text-white"
+                              : "bg-muted text-muted-foreground"
+                          )}
+                        >
+                          {opt.count}
+                        </span>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* THIRD ROW: ACTIVE FILTER DISMISSIBLE TAGS */}
+      {activeFilters.length > 0 && (
+        <div className="flex items-center gap-2 flex-wrap pt-2 border-t border-border/40">
+          <span className="text-[11px] font-semibold text-muted-foreground">Active:</span>
           {searchQuery && (
             <AppBadge
               size="sm"
@@ -347,65 +534,6 @@ export function PageFilterToolbar({
               </button>
             </AppBadge>
           ))}
-
-          {onResetAll && (
-            <button
-              type="button"
-              onClick={onResetAll}
-              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold text-rose-600 dark:text-rose-400 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 transition-all cursor-pointer shadow-2xs"
-            >
-              <RotateCcw className="h-3 w-3" />
-              <span>Reset filter</span>
-            </button>
-          )}
-        </div>
-      )}
-
-      {/* STATUS NAVIGATION TABS ROW WITH MODULE THEME ACCENT */}
-      {tabs && tabs.length > 0 && (
-        <div className="border-b border-border/60 pb-1.5 pt-1">
-          <div className="flex items-center gap-6 overflow-x-auto no-scrollbar">
-            {tabs.map((tab) => {
-              const isActive = activeTab === tab.id;
-              return (
-                <button
-                  key={tab.id}
-                  type="button"
-                  onClick={() => onTabChange?.(tab.id)}
-                  className={cn(
-                    "relative pb-2 text-xs font-semibold transition-all whitespace-nowrap focus:outline-none flex items-center gap-1.5 cursor-pointer",
-                    isActive
-                      ? cn("font-bold text-foreground", theme.iconColor)
-                      : "text-muted-foreground hover:text-foreground"
-                  )}
-                >
-                  <span>{tab.label}</span>
-                  {tab.count !== undefined && (
-                    <span
-                      className={cn(
-                        "px-1.5 py-0.2 rounded-full text-[10px] font-bold transition-colors",
-                        isActive
-                          ? cn(theme.badgeColor)
-                          : "bg-muted text-muted-foreground"
-                      )}
-                    >
-                      ({tab.count})
-                    </span>
-                  )}
-
-                  {/* Active Tab Underline Indicator in Module Theme Gradient */}
-                  {isActive && (
-                    <span
-                      className={cn(
-                        "absolute bottom-0 left-0 right-0 h-0.5 rounded-full animate-in fade-in-50 duration-200",
-                        theme.gradient
-                      )}
-                    />
-                  )}
-                </button>
-              );
-            })}
-          </div>
         </div>
       )}
     </div>

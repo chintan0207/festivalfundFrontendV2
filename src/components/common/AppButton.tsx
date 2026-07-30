@@ -25,7 +25,7 @@ export function AppButton({
     <Button
       variant={gradient ? undefined : variant}
       className={cn(
-        "flex items-center justify-center gap-2 font-semibold rounded-xl transition-all duration-200 cursor-pointer active:scale-[0.98]",
+        "flex items-center justify-center gap-2 font-semibold rounded-2xl transition-all duration-200 cursor-pointer active:scale-[0.98]",
         gradient
           ? cn("text-white border-0 shadow-sm hover:opacity-95 active:opacity-90", gradient)
           : variant === "outline"

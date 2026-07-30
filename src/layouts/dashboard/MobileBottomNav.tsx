@@ -14,7 +14,7 @@ const MobileBottomNav = () => {
   const location = useLocation();
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-40 bg-card/95 backdrop-blur-lg border-t border-border px-2 py-1.5 flex justify-around md:hidden shadow-lg safe-bottom">
+    <nav className="fixed bottom-0 left-0 right-0 z-40 bg-card/95 backdrop-blur-lg border-t border-border px-2 py-1.5 flex justify-around md:hidden shadow-lg">
       {navItems.map((item) => {
         const Icon = item.icon;
         const active =

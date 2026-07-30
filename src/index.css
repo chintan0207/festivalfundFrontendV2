@@ -125,3 +125,11 @@
   -webkit-backdrop-filter: blur(12px) saturate(180%);
 }
 
+/* Prevent injected inline padding-bottom from creating extra space on layouts */
+[data-slot="sidebar-inset"] {
+  padding-bottom: 0 !important;
+}
+main.flex-1 {
+  padding-bottom: 0 !important;
+}
+

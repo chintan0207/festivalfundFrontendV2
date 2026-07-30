@@ -82,7 +82,10 @@ const Navbar = () => {
                 </AppButton>
               </DropdownMenuTrigger>
 
-              <DropdownMenuContent align="end" className="w-60 rounded-xl p-1.5 shadow-xl">
+              <DropdownMenuContent
+                align="end"
+                className="w-60 rounded-xl p-1.5 shadow-xl"
+              >
                 <div className="px-3 py-2">
                   <p className="font-semibold text-sm text-foreground">{user?.name}</p>
                   <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
@@ -147,7 +150,9 @@ const Navbar = () => {
             </SheetTrigger>
 
             <SheetContent side="right" className="w-[300px] sm:w-[340px] p-6">
-              <SheetTitle className="text-left text-lg font-bold"><AppLogo/></SheetTitle>
+              <SheetTitle className="text-left text-lg font-bold">
+                <AppLogo />
+              </SheetTitle>
 
               <div className="mt-6 flex flex-col gap-2">
                 {navLinks.map((link) => (
@@ -165,18 +170,25 @@ const Navbar = () => {
                 {isAuthenticated ? (
                   <>
                     <div className="rounded-xl border border-border p-3.5 bg-muted/40 mb-2">
-                      <p className="font-semibold text-sm text-foreground">{user?.name}</p>
-                      <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
+                      <p className="font-semibold text-sm text-foreground">
+                        {user?.name}
+                      </p>
+                      <p className="text-xs text-muted-foreground truncate">
+                        {user?.email}
+                      </p>
                     </div>
 
-                    <Link
-                      to={getDashboardRoute(user)}
-                      className="flex w-full items-center justify-center rounded-xl bg-primary py-2.5 text-sm font-semibold text-primary-foreground shadow-md"
-                    >
-                      Dashboard
+                    <Link to={getDashboardRoute(user)}>
+                      <AppButton variant="ghost" className="w-full">
+                        Dashboard
+                      </AppButton>
                     </Link>
 
-                    <AppButton variant="outline" className="w-full rounded-xl" onClick={logout}>
+                    <AppButton
+                      variant="outline"
+                      className="w-full rounded-xl"
+                      onClick={logout}
+                    >
                       Logout
                     </AppButton>
                   </>
