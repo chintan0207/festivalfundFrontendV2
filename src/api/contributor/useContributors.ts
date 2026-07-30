@@ -4,8 +4,8 @@ import { toast } from "sonner";
 import {
   ContributorService,
   type ContributorQueryParams,
-} from "../contributor/contributor.service";
-import { useContributorApiStore } from "../contributor/contributor.store";
+} from "./contributor.service";
+import { useContributorApiStore } from "./contributor.store";
 import type { CreateContributorPayload, UpdateContributorPayload } from "@/types/Types";
 
 export const CONTRIBUTOR_QUERY_KEYS = {
@@ -55,7 +55,7 @@ export const useCreateContributor = () => {
     mutationFn: (payload: CreateContributorPayload) =>
       ContributorService.createContributor(payload),
     onSuccess: (res) => {
-      queryClient.invalidateQueries({ queryKey: CONTRIBUTOR_QUERY_KEYS.all });
+      queryClient.invalidateQueries({ queryKey: CONTRIBUTOR_QUERY_KEYS.all() });
       toast.success(res.message || "Contributor added successfully");
     },
     onError: (error: any) => {
@@ -76,7 +76,7 @@ export const useUpdateContributor = () => {
       payload: UpdateContributorPayload;
     }) => ContributorService.updateContributor(contributorId, payload),
     onSuccess: (res, { contributorId }) => {
-      queryClient.invalidateQueries({ queryKey: CONTRIBUTOR_QUERY_KEYS.all });
+      queryClient.invalidateQueries({ queryKey: CONTRIBUTOR_QUERY_KEYS.all() });
       queryClient.invalidateQueries({ queryKey: CONTRIBUTOR_QUERY_KEYS.detail(contributorId) });
       toast.success(res.message || "Contributor updated successfully");
     },
@@ -92,7 +92,7 @@ export const useSoftDeleteContributor = () => {
   return useMutation({
     mutationFn: (contributorId: string) => ContributorService.softDeleteContributor(contributorId),
     onSuccess: (res, contributorId) => {
-      queryClient.invalidateQueries({ queryKey: CONTRIBUTOR_QUERY_KEYS.all });
+      queryClient.invalidateQueries({ queryKey: CONTRIBUTOR_QUERY_KEYS.all() });
       queryClient.invalidateQueries({ queryKey: CONTRIBUTOR_QUERY_KEYS.detail(contributorId) });
       toast.success(res.message || "Contributor deleted successfully");
     },

@@ -6,7 +6,7 @@ import {
   useCreateContributor,
   useUpdateContributor,
   useSoftDeleteContributor,
-} from "@/api/hooks/useContributors";
+} from "@/api/contributor/useContributors";
 import { useDebounce } from "@/hooks/useDebounce";
 import { getModuleTheme } from "@/theme/colors";
 import { PageHeader } from "@/components/common/PageHeader";
@@ -17,16 +17,8 @@ import { AppBadge } from "@/components/common/AppBadge";
 import { ContributorKPIs } from "./components/ContributorKPIs";
 import { ContributorTable } from "./components/ContributorTable";
 import { ContributorMobileCards } from "./components/ContributorMobileCards";
-import { ContributorDialogs, type ContributorFormData } from "./components/ContributorDialogs";
+import { ContributorDialogs, type ContributorFormValues } from "./components/ContributorDialogs";
 import type { Contributor } from "@/types/Types";
-
-const defaultForm: ContributorFormData = {
-  name: "",
-  phoneNumber: "",
-  email: "",
-  address: "",
-  category: "PARENT",
-};
 
 export default function ContributorsPage() {
   const theme = getModuleTheme("contributors");
@@ -55,8 +47,8 @@ export default function ContributorsPage() {
   // Local UI
   const [localSearch, setLocalSearch] = useState(search);
   const debouncedSearch = useDebounce(localSearch, 400);
-  const [form, setForm] = useState<ContributorFormData>(defaultForm);
   const [editId, setEditId] = useState<string | null>(null);
+  const [editInitialValues, setEditInitialValues] = useState<ContributorFormValues | undefined>();
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
@@ -95,18 +87,17 @@ export default function ContributorsPage() {
     [sortField, sortOrder, setSortField, setSortOrder],
   );
 
-  const handleCreate = useCallback(() => {
-    createMutation.mutate(form, {
+  const handleCreate = useCallback((values: ContributorFormValues) => {
+    createMutation.mutate(values, {
       onSuccess: () => {
         setIsAddOpen(false);
-        setForm(defaultForm);
       },
     });
-  }, [createMutation, form]);
+  }, [createMutation]);
 
   const handleEdit = useCallback((contributor: Contributor) => {
     setEditId(contributor._id);
-    setForm({
+    setEditInitialValues({
       name: contributor.name,
       phoneNumber: contributor.phoneNumber || "",
       email: contributor.email || "",
@@ -116,19 +107,19 @@ export default function ContributorsPage() {
     setIsEditOpen(true);
   }, []);
 
-  const handleUpdate = useCallback(() => {
+  const handleUpdate = useCallback((values: ContributorFormValues) => {
     if (!editId) return;
     updateMutation.mutate(
-      { contributorId: editId, payload: form },
+      { contributorId: editId, payload: values },
       {
         onSuccess: () => {
           setIsEditOpen(false);
           setEditId(null);
-          setForm(defaultForm);
+          setEditInitialValues(undefined);
         },
       },
     );
-  }, [editId, form, updateMutation]);
+  }, [editId, updateMutation]);
 
   const handleDeleteConfirm = useCallback(() => {
     if (!deleteId) return;
@@ -171,10 +162,7 @@ export default function ContributorsPage() {
         badge={<AppBadge className={theme.badgeColor}>{total} total</AppBadge>}
         actions={
           <AppButton
-            onClick={() => {
-              setForm(defaultForm);
-              setIsAddOpen(true);
-            }}
+            onClick={() => setIsAddOpen(true)}
             leftIcon={<Plus className="h-4 w-4" />}
             gradient={theme.gradient}
           >
@@ -272,23 +260,22 @@ export default function ContributorsPage() {
         isAddOpen={isAddOpen}
         isEditOpen={isEditOpen}
         isDeleteOpen={isDeleteOpen}
-        form={form}
-        isCreating={createMutation.isPending}
-        isUpdating={updateMutation.isPending}
+        editInitialValues={editInitialValues}
+        isPending={createMutation.isPending || updateMutation.isPending}
         isDeleting={deleteMutation.isPending}
         themeGradient={theme.gradient}
         onAddClose={() => setIsAddOpen(false)}
         onEditClose={() => {
           setIsEditOpen(false);
           setEditId(null);
+          setEditInitialValues(undefined);
         }}
         onDeleteClose={() => {
           setIsDeleteOpen(false);
           setDeleteId(null);
         }}
-        onFormChange={(field, value) => setForm((prev) => ({ ...prev, [field]: value }))}
-        onCreate={handleCreate}
-        onUpdate={handleUpdate}
+        onAddSubmit={handleCreate}
+        onEditSubmit={handleUpdate}
         onDeleteConfirm={handleDeleteConfirm}
       />
     </div>
