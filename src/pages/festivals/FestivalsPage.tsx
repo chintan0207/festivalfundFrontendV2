@@ -13,8 +13,6 @@ import {
   AppButton,
   AppBadge,
   PageHeader,
-  KPIGrid,
-  KPICard,
   PageFilterToolbar,
 } from "@/components/common";
 import {
@@ -22,9 +20,7 @@ import {
   type FestivalFormValues,
 } from "./components/FestivalFormModal";
 import {
-  CalendarDays,
   Plus,
-  DollarSign,
   Edit,
   Eye,
   Trash2,
@@ -32,6 +28,7 @@ import {
   Check,
   Tag,
   MapPin,
+  Filter,
 } from "lucide-react";
 
 const formatCurrencyShort = (amount: number = 0) => {
@@ -124,6 +121,13 @@ export const FestivalsPage = () => {
   const [selectedCategory, setSelectedCategory] = useState("ALL");
   const [selectedYear, setSelectedYear] = useState("ALL");
   const [selectedLocation, setSelectedLocation] = useState("ALL");
+
+  // Sorting State
+  const [activeSort, setActiveSort] = useState<
+    "name" | "targetAmount" | "totalCollected" | "startDate"
+  >("name");
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingFest, setEditingFest] = useState<any | null>(null);
 
@@ -185,6 +189,15 @@ export const FestivalsPage = () => {
     }
   };
 
+  const handleSortChange = (sortId: string) => {
+    if (activeSort === sortId) {
+      setSortDirection((prev) => (prev === "asc" ? "desc" : "asc"));
+    } else {
+      setActiveSort(sortId as any);
+      setSortDirection("asc");
+    }
+  };
+
   const filteredFestivals = festivals.filter((f) => {
     const matchesTab =
       filterTab === "ALL"
@@ -220,24 +233,31 @@ export const FestivalsPage = () => {
     );
   });
 
+  // Apply sorting
+  const sortedFestivals = [...filteredFestivals].sort((a, b) => {
+    let valA = a[activeSort as keyof typeof a];
+    let valB = b[activeSort as keyof typeof b];
+
+    if (activeSort === "totalCollected") {
+      valA = a.stats?.totalCollected || 0;
+      valB = b.stats?.totalCollected || 0;
+    }
+
+    if (typeof valA === "string") {
+      return sortDirection === "asc"
+        ? valA.localeCompare(valB as string)
+        : (valB as string).localeCompare(valA);
+    }
+    return sortDirection === "asc"
+      ? (valA as number) - (valB as number)
+      : (valB as number) - (valA as number);
+  });
+
   const activeCount = festivals.filter((f) => f.status === "ACTIVE").length;
   const upcomingCount = festivals.filter((f) => f.status === "UPCOMING").length;
   const archivedCount = festivals.filter(
     (f) => f.status === "COMPLETED" || f.status === "ARCHIVED"
   ).length;
-
-  const totalTargetBudget = festivals.reduce(
-    (sum, f) => sum + (f.targetAmount || 0),
-    0
-  );
-  const totalCollected = festivals.reduce(
-    (sum, f) => sum + (f.stats?.totalCollected || 0),
-    0
-  );
-  const totalSpent = festivals.reduce(
-    (sum, f) => sum + (f.stats?.totalExpenses || 0),
-    0
-  );
 
   const activeFilterPills = [];
   if (selectedCategory !== "ALL") {
@@ -285,60 +305,13 @@ export const FestivalsPage = () => {
         }
       />
 
-      {/* COMPACT KPI OVERVIEW GRID */}
-      <KPIGrid columns={4}>
-        <KPICard
-          label="Active Festivals"
-          value={activeCount}
-          accent="emerald"
-          icon={<CalendarDays className="h-4 w-4" />}
-          subtext="Currently running events"
-        />
-        <KPICard
-          label="Total Budget"
-          value={formatCurrencyShort(totalTargetBudget)}
-          accent="blue"
-          icon={<DollarSign className="h-4 w-4" />}
-          subtext="Target across all festivals"
-        />
-        <KPICard
-          label="Collected"
-          value={formatCurrencyShort(totalCollected)}
-          change="+12% vs last month"
-          changeType="positive"
-          accent="cyan"
-          sparkData={[30, 35, 40, 45, 50, 55, 62]}
-        />
-        <KPICard
-          label="Spent"
-          value={formatCurrencyShort(totalSpent)}
-          change="-5% vs last month"
-          changeType="negative"
-          accent="amber"
-          sparkData={[40, 38, 35, 30, 28, 25, 28]}
-        />
-      </KPIGrid>
-
-      {/* FILTER TOOLBAR IN MODULE THEME */}
+      {/* CARD-BASED FILTER TOOLBAR WITH INLINE PILL TRACKS & SORTING */}
       <PageFilterToolbar
         module="festivals"
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
         searchPlaceholder="Search festivals by title, location..."
         quickFilters={[
-          {
-            id: "category",
-            label: "All Categories",
-            icon: <Tag className="h-3.5 w-3.5 text-muted-foreground" />,
-            value: selectedCategory,
-            options: [
-              { value: "ALL", label: "All Categories" },
-              { value: "Religious & Cultural", label: "Religious & Cultural" },
-              { value: "Social & Community", label: "Social & Community" },
-              { value: "Youth & Sports", label: "Youth & Sports" },
-            ],
-            onChange: (val) => setSelectedCategory(val),
-          },
           {
             id: "year",
             label: "All Years",
@@ -366,6 +339,45 @@ export const FestivalsPage = () => {
             onChange: (val) => setSelectedLocation(val),
           },
         ]}
+        pillGroups={[
+          {
+            id: "status",
+            label: "Status",
+            icon: <Filter className="h-3.5 w-3.5 text-muted-foreground" />,
+            value: filterTab,
+            options: [
+              { value: "ACTIVE", label: "Active", count: activeCount },
+              { value: "UPCOMING", label: "Upcoming", count: upcomingCount },
+              { value: "ARCHIVED", label: "Archived", count: archivedCount },
+              { value: "ALL", label: "All", count: festivals.length },
+            ],
+            onChange: (val) => setFilterTab(val as any),
+            variant: "module",
+          },
+          {
+            id: "category",
+            label: "Category",
+            icon: <Tag className="h-3.5 w-3.5 text-muted-foreground" />,
+            value: selectedCategory,
+            options: [
+              { value: "ALL", label: "All" },
+              { value: "Religious & Cultural", label: "Religious & Cultural" },
+              { value: "Social & Community", label: "Social & Community" },
+              { value: "Youth & Sports", label: "Youth & Sports" },
+            ],
+            onChange: (val) => setSelectedCategory(val),
+            variant: "emerald",
+          },
+        ]}
+        sortOptions={[
+          { id: "name", label: "Name" },
+          { id: "targetAmount", label: "Budget" },
+          { id: "totalCollected", label: "Collected" },
+          { id: "startDate", label: "Date" },
+        ]}
+        activeSort={activeSort}
+        sortDirection={sortDirection}
+        onSortChange={handleSortChange}
         activeFilters={activeFilterPills}
         onResetAll={() => {
           setSearchQuery("");
@@ -373,15 +385,9 @@ export const FestivalsPage = () => {
           setSelectedYear("ALL");
           setSelectedLocation("ALL");
           setFilterTab("ACTIVE");
+          setActiveSort("name");
+          setSortDirection("asc");
         }}
-        tabs={[
-          { id: "ACTIVE", label: "Active", count: activeCount },
-          { id: "UPCOMING", label: "Upcoming", count: upcomingCount },
-          { id: "ARCHIVED", label: "Archived", count: archivedCount },
-          { id: "ALL", label: "All", count: festivals.length },
-        ]}
-        activeTab={filterTab}
-        onTabChange={(tabId) => setFilterTab(tabId as any)}
       />
 
       {/* FESTIVAL CARDS GRID */}
@@ -389,7 +395,7 @@ export const FestivalsPage = () => {
         <div className="py-12 text-center text-xs text-muted-foreground animate-pulse">
           Loading festivals...
         </div>
-      ) : filteredFestivals.length === 0 ? (
+      ) : sortedFestivals.length === 0 ? (
         <div className="py-14 px-4 text-center rounded-2xl bg-card border border-border/80 space-y-3 flex flex-col items-center justify-center">
           <div className="w-10 h-10 rounded-xl bg-muted/60 flex items-center justify-center text-muted-foreground">
             <Calendar className="h-5 w-5" />
@@ -416,7 +422,7 @@ export const FestivalsPage = () => {
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
-          {filteredFestivals.map((fest: any, index: number) => {
+          {sortedFestivals.map((fest: any, index: number) => {
             const cardGradient = gradientColors[index % gradientColors.length];
             const isSelected = activeFestivalId === fest.id;
             const collected = fest.stats?.totalCollected || 0;

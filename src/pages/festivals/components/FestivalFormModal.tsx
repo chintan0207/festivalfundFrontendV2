@@ -13,6 +13,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { AppSelect } from "@/components/common/AppSelect";
 import { Label } from "@/components/ui/label";
 import { AppButton } from "@/components/common/AppButton";
 
@@ -51,6 +52,8 @@ export function FestivalFormModal({
     register,
     handleSubmit,
     reset,
+    watch,
+    setValue,
     formState: { errors },
   } = useForm<FestivalFormValues>({
     resolver: zodResolver(festivalSchema) as any,
@@ -174,22 +177,19 @@ export function FestivalFormModal({
 
             {/* Status & Category */}
             <div className="grid grid-cols-2 gap-3">
-              <div className="grid gap-1.5">
-                <Label htmlFor="status" className="font-semibold text-foreground">Status</Label>
-                <select
-                  id="status"
-                  {...register("status")}
-                  className="h-9 px-3 rounded-md border border-input bg-background text-xs font-medium text-foreground focus:ring-1 focus:ring-primary focus:outline-none"
-                >
-                  <option value="ACTIVE">ACTIVE</option>
-                  <option value="UPCOMING">UPCOMING</option>
-                  <option value="COMPLETED">COMPLETED</option>
-                  <option value="ARCHIVED">ARCHIVED</option>
-                </select>
-                {errors.status && (
-                  <p className="text-[11px] text-rose-500 font-medium">{errors.status.message}</p>
-                )}
-              </div>
+              <AppSelect
+                id="status"
+                label="Status"
+                value={watch("status")}
+                onChange={(val) => setValue("status", val as any, { shouldValidate: true })}
+                options={[
+                  { value: "ACTIVE", label: "ACTIVE" },
+                  { value: "UPCOMING", label: "UPCOMING" },
+                  { value: "COMPLETED", label: "COMPLETED" },
+                  { value: "ARCHIVED", label: "ARCHIVED" },
+                ]}
+                error={errors.status?.message}
+              />
 
               <div className="grid gap-1.5">
                 <Label htmlFor="category" className="font-semibold text-foreground">Category</Label>

@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useFestivalStore } from "@/store/festivalStore";
 import { AppButton } from "@/components/common/AppButton";
+import { AppSelect } from "@/components/common/AppSelect";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Building,
   Sliders,
@@ -97,21 +97,19 @@ export const SettingsPage = () => {
           </div>
 
           <div className="space-y-3 text-xs">
-            <div className="grid gap-1.5 max-w-md">
-              <Label htmlFor="activeSelect">Select Default Active Festival</Label>
-              <select
-                id="activeSelect"
-                value={activeFestivalId}
-                onChange={(e) => setActiveFestival(e.target.value)}
-                className="h-10 w-full rounded-xl border border-input bg-card px-3 text-xs outline-none focus:ring-1 focus:ring-primary"
-              >
-                <option value="ALL">All Festivals (Combined Overview)</option>
-                {festivals.map((f) => (
-                  <option key={f.id} value={f.id}>
-                    {f.name} ({f.year}) — {f.status}
-                  </option>
-                ))}
-              </select>
+            <AppSelect
+              id="activeSelect"
+              label="Select Default Active Festival"
+              value={activeFestivalId}
+              onChange={(val) => setActiveFestival(val)}
+              options={[
+                { value: "ALL", label: "All Festivals (Combined Overview)" },
+                ...festivals.map((f) => ({
+                  value: f.id,
+                  label: `${f.name} (${f.year}) — ${f.status}`,
+                })),
+              ]}
+            />
             </div>
             <p className="text-2xs text-muted-foreground">
               This setting updates the active festival context across the entire application workspace.

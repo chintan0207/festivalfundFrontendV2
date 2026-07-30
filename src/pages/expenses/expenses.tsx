@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useFestivalStore } from "@/store/festivalStore";
 import { AppButton } from "@/components/common/AppButton";
+import { AppSelect } from "@/components/common/AppSelect";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -135,21 +136,13 @@ export const ExpensesPage = () => {
               </DialogHeader>
 
               <div className="grid gap-4 py-4 text-xs">
-                <div className="grid gap-1.5">
-                  <Label htmlFor="festTarget">Select Festival</Label>
-                  <select
-                    id="festTarget"
-                    value={targetFestId}
-                    onChange={(e) => setTargetFestId(e.target.value)}
-                    className="h-9 w-full rounded-xl border border-input bg-card px-3 text-xs outline-none"
-                  >
-                    {festivals.map((f) => (
-                      <option key={f.id} value={f.id}>
-                        {f.name} ({f.year})
-                      </option>
-                    ))}
-                  </select>
-                </div>
+                <AppSelect
+                  id="festTarget"
+                  label="Select Festival"
+                  value={targetFestId}
+                  onChange={(val) => setTargetFestId(val)}
+                  options={festivals.map((f) => ({ value: f.id, label: `${f.name} (${f.year})` }))}
+                />
 
                 <div className="grid gap-1.5">
                   <Label htmlFor="title">Expense Description / Title</Label>
@@ -163,21 +156,19 @@ export const ExpensesPage = () => {
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
-                  <div className="grid gap-1.5">
-                    <Label htmlFor="cat">Category</Label>
-                    <select
-                      id="cat"
-                      value={category}
-                      onChange={(e) => setCategory(e.target.value as any)}
-                      className="h-9 w-full rounded-xl border border-input bg-card px-3 text-xs outline-none"
-                    >
-                      <option value="MAHAPRASAD">Mahaprasad</option>
-                      <option value="DECORATION">Decoration</option>
-                      <option value="MANDAP">Mandap</option>
-                      <option value="SOUND">Sound</option>
-                      <option value="OTHER">Other</option>
-                    </select>
-                  </div>
+                  <AppSelect
+                    id="cat"
+                    label="Category"
+                    value={category}
+                    onChange={(val) => setCategory(val as any)}
+                    options={[
+                      { value: "MAHAPRASAD", label: "Mahaprasad" },
+                      { value: "DECORATION", label: "Decoration" },
+                      { value: "MANDAP", label: "Mandap" },
+                      { value: "SOUND", label: "Sound" },
+                      { value: "OTHER", label: "Other" },
+                    ]}
+                  />
 
                   <div className="grid gap-1.5">
                     <Label htmlFor="amt">Amount (₹)</Label>
@@ -202,18 +193,16 @@ export const ExpensesPage = () => {
                     />
                   </div>
 
-                  <div className="grid gap-1.5">
-                    <Label htmlFor="pMode">Payment Mode</Label>
-                    <select
-                      id="pMode"
-                      value={paymentMode}
-                      onChange={(e) => setPaymentMode(e.target.value as any)}
-                      className="h-9 w-full rounded-xl border border-input bg-card px-3 text-xs outline-none"
-                    >
-                      <option value="UPI">UPI</option>
-                      <option value="CASH">Cash</option>
-                    </select>
-                  </div>
+                  <AppSelect
+                    id="pMode"
+                    label="Payment Mode"
+                    value={paymentMode}
+                    onChange={(val) => setPaymentMode(val as any)}
+                    options={[
+                      { value: "UPI", label: "UPI" },
+                      { value: "CASH", label: "Cash" },
+                    ]}
+                  />
                 </div>
 
                 <div className="grid gap-1.5">
