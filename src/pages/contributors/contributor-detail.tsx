@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Pencil, Trash2 } from "lucide-react";
 import { useParams, useRouter } from "@tanstack/react-router";
 import { useContributor, useUpdateContributor, useSoftDeleteContributor } from "@/api/contributor/useContributors";
-import { useContributions } from "@/api/hooks/useContributions";
+import { useContributions } from "@/api/contribution/useContributions";
 import { getModuleTheme } from "@/theme/colors";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AppButton } from "@/components/common/AppButton";

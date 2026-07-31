@@ -12,7 +12,7 @@ import {
   forgotPasswordSchema,
   type ForgotPasswordFormData,
 } from "../auth/schema/AuthSchema";
-import { useForgotPassword } from "@/api/hooks/useAuth";
+import { useForgotPassword } from "@/api/auth/useAuth";
 import { gradientColors } from "@/theme/colors";
 
 function ForgotPassword() {

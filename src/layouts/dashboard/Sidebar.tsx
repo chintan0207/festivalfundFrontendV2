@@ -1,6 +1,6 @@
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { useAuthStore } from "@/api/auth/auth.store";
-import { useLogout } from "@/api/hooks/useAuth";
+import { useLogout } from "@/api/auth/useAuth";
 import { useFestivalStore } from "@/store/festivalStore";
 import { AppButton } from "@/components/common/AppButton";
 import { AppLogo } from "@/components/common/AppLogo";

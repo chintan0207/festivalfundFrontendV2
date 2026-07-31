@@ -5,7 +5,7 @@ import {
   useCreateFestival,
   useUpdateFestival,
   useSoftDeleteFestival,
-} from "@/api/hooks/useFestivals";
+} from "@/api/festival/useFestivals";
 import { useFestivalApiStore } from "@/api/festival/festival.store";
 import { useFestivalStore as useMockFestivalStore } from "@/store/festivalStore";
 import { gradientColors, getModuleTheme } from "@/theme/colors";

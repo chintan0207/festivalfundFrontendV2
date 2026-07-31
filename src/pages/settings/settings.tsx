@@ -4,6 +4,7 @@ import { AppButton } from "@/components/common/AppButton";
 import { AppSelect } from "@/components/common/AppSelect";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Building,
   Sliders,
@@ -115,7 +116,6 @@ export const SettingsPage = () => {
               This setting updates the active festival context across the entire application workspace.
             </p>
           </div>
-        </div>
 
         {/* RECEIPT NUMBERING PREFIXES */}
         <div className="p-5 rounded-2xl bg-card border border-border shadow-sm space-y-4">

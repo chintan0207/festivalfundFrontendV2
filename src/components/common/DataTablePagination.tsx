@@ -67,7 +67,7 @@ export function DataTablePagination({
               { value: "5", label: "5" },
               { value: "20", label: "20" },
             ]}
-            className="h-7 text-[11px] rounded-full px-2.5 min-w-[52px]"
+            className="!h-7 sm:!h-7 text-[11px] rounded-full px-2.5 min-w-[52px]"
           />
           <span>
             {from}–{to} of {total}

@@ -13,7 +13,7 @@ import { ThemeToggle } from "@/theme/ThemeToggle";
 import { AppButton, AppLogo } from "@/components/common";
 import { getDashboardRoute } from "@/lib/utils";
 import { useAuthStore } from "@/api/auth/auth.store";
-import { useLogout } from "@/api/hooks/useAuth";
+import { useLogout } from "@/api/auth/useAuth";
 
 const Navbar = () => {
   const { isAuthenticated, user } = useAuthStore();

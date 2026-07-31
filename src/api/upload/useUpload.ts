@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { UploadService } from "../upload/upload.service";
+import { UploadService } from "./upload.service";
 
 export const useUploadSingle = () => {
   return useMutation({

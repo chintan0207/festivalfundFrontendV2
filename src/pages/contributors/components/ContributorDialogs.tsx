@@ -306,7 +306,6 @@ function ContributorFormFields({
             { value: "GIRL", label: "Girls" },
           ]}
           error={errors.category?.message}
-          className="h-10.5"
         />
       </div>
 

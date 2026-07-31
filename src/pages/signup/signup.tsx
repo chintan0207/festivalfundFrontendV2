@@ -19,7 +19,7 @@ import { registerSchema, type RegisterFormData } from "../auth/schema/AuthSchema
 import { stepContent, StepOne, StepTwo, StepThree } from "./components/SignupSteps";
 import SignupStepper from "./components/SignupStepper";
 import { useGoogleLogin } from "@react-oauth/google";
-import { useSignup, useGoogleAuth } from "@/api/hooks/useAuth";
+import { useSignup, useGoogleAuth } from "@/api/auth/useAuth";
 import { toast } from "sonner";
 import { gradientColors } from "@/theme/colors";
 

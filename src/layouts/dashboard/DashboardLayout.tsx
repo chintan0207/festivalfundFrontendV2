@@ -1,5 +1,5 @@
 import { Outlet } from "@tanstack/react-router";
-import { useCurrentUser } from "@/api/hooks/useAuth";
+import { useCurrentUser } from "@/api/auth/useAuth";
 import Sidebar from "./Sidebar";
 import Topbar from "./Topbar";
 import MobileBottomNav from "./MobileBottomNav";

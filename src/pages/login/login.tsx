@@ -11,7 +11,7 @@ import { AppBadge } from "@/components/common/AppBadge";
 import { AppLogo } from "@/components/common";
 import { loginSchema } from "../auth/schema/AuthSchema";
 import { useGoogleLogin } from "@react-oauth/google";
-import { useLogin, useGoogleAuth } from "@/api/hooks/useAuth";
+import { useLogin, useGoogleAuth } from "@/api/auth/useAuth";
 import { toast } from "sonner";
 import { gradientColors } from "@/theme/colors";
 

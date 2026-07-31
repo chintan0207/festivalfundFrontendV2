@@ -1,4 +1,4 @@
-import { useCurrentUser } from "@/api/hooks/useAuth";
+import { useCurrentUser } from "@/api/auth/useAuth";
 import HeroSection from "./components/HeroSection";
 import FeaturesSection from "./components/FeaturesSection";
 import WhyFestivalFund from "./components/WhyFestivalFund";

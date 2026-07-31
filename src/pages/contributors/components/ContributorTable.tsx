@@ -1,7 +1,7 @@
 import { Phone, Pencil, Trash2 } from "lucide-react";
 import { DataTable, type Column } from "@/components/common/DataTable";
 import { cn, formatDate } from "@/lib/utils";
-import { badgeColors } from "@/theme/colors";
+import { badgeColors, getModuleTheme } from "@/theme/colors";
 import type { Contributor } from "@/types/Types";
 
 const categoryStyles: Record<string, string> = {
@@ -37,12 +37,14 @@ export function ContributorTable({
   onDelete,
   onRowClick,
 }: ContributorTableProps) {
+  const theme = getModuleTheme("contributors");
+
   const columns: Column<Contributor>[] = [
     {
       id: "contributorCode",
       label: "Code",
       sortable: true,
-      className: "font-mono font-bold text-indigo-600",
+      className: `font-mono font-bold ${theme.iconColor}`,
       render: (c) => c.contributorCode,
     },
     {

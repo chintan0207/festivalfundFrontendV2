@@ -9,7 +9,7 @@ import { AppInput } from "@/components/common/AppInput";
 import { AppBadge } from "@/components/common/AppBadge";
 import { AppLogo } from "@/components/common";
 import { resetPasswordSchema, type ResetPasswordFormData } from "../auth/schema/AuthSchema";
-import { useResetPassword } from "@/api/hooks/useAuth";
+import { useResetPassword } from "@/api/auth/useAuth";
 import { gradientColors } from "@/theme/colors";
 
 function ResetPassword() {

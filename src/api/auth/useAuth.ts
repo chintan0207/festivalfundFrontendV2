@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
-import { useAuthStore } from "../auth/auth.store";
-import { AuthService } from "../auth/auth.service";
+import { useAuthStore } from "./auth.store";
+import { AuthService } from "./auth.service";
 import { toast } from "sonner";
 import type {
   SignupPayload,

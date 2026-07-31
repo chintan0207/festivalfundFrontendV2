@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { ContributionService, type ContributionQueryParams } from "../contribution/contribution.service";
-import { useContributionApiStore } from "../contribution/contribution.store";
+import { ContributionService, type ContributionQueryParams } from "./contribution.service";
+import { useContributionApiStore } from "./contribution.store";
 import type { CreateContributionPayload, UpdateContributionPayload } from "@/types/Types";
 
 export const CONTRIBUTION_QUERY_KEYS = {

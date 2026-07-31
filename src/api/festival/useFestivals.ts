@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { FestivalService } from "../festival/festival.service";
-import { useFestivalApiStore } from "../festival/festival.store";
+import { FestivalService } from "./festival.service";
+import { useFestivalApiStore } from "./festival.store";
 import type { CreateFestivalPayload, UpdateFestivalPayload } from "@/types/Types";
 
 export const FESTIVAL_QUERY_KEYS = {
