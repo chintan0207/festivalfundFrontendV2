@@ -51,7 +51,7 @@ export const AppInput = React.forwardRef<HTMLInputElement, AppInputProps>(
             ref={ref}
             className={cn(
               // base style
-              "h-10 sm:h-10.5 w-full rounded-2xl border border-input bg-background/90 px-3.5 text-xs sm:text-sm shadow-sm transition-all",
+              "h-9 sm:h-10.5 w-full rounded-2xl border border-input bg-background/90 px-3.5 text-sm shadow-sm transition-all",
 
               // focus style
               "focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:border-primary",

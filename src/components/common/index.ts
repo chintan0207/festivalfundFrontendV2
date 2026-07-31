@@ -14,3 +14,5 @@ export * from "./DataTable";
 export * from "./DataTablePagination";
 export * from "./EmptyState";
 export * from "./AppSelect";
+export * from "./ConfirmDialog";
+export * from "./FormDialog";

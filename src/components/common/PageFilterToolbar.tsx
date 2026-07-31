@@ -208,7 +208,7 @@ export function PageFilterToolbar({
                 placeholder={searchPlaceholder}
                 value={searchQuery}
                 onChange={(e) => onSearchChange(e.target.value)}
-                className="pl-8 pr-7 h-9 text-xs rounded-full bg-muted/30 hover:bg-muted/50 focus:bg-background border-border/80 shadow-2xs focus-visible:ring-1 focus-visible:ring-muted-foreground/30 transition-colors"
+                className="pl-8 pr-7 h-9 text-sm rounded-full bg-muted/30 hover:bg-muted/50 focus:bg-background border-border/80 shadow-2xs focus-visible:ring-1 focus-visible:ring-muted-foreground/30 transition-colors"
               />
               {searchQuery && (
                 <button
