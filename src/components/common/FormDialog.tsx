@@ -42,8 +42,6 @@ export function FormDialog({
       <DialogContent
         className={cn(
           "sm:max-w-md rounded-2xl p-0 overflow-hidden max-h-[85dvh] flex flex-col gap-0",
-          "max-sm:inset-x-0 max-sm:top-auto max-sm:bottom-0 max-sm:translate-x-0 max-sm:translate-y-0 max-sm:max-w-none max-sm:rounded-b-none max-sm:rounded-t-2xl max-sm:max-h-[90dvh] max-sm:pb-[env(safe-area-inset-bottom)]",
-          "max-sm:data-[state=open]:slide-in-from-bottom-full max-sm:data-[state=open]:zoom-in-100 max-sm:data-[state=closed]:slide-out-to-bottom-full max-sm:data-[state=closed]:zoom-out-100",
           contentClassName,
         )}
       >
@@ -68,7 +66,6 @@ export function FormDialog({
                 )}
               </div>
             </div>
-            <div aria-hidden className="mx-auto mt-3 h-1 w-10 rounded-full bg-border/70 sm:hidden" />
           </div>
 
           {/* Body */}

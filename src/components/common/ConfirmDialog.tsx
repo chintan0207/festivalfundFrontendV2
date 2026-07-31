@@ -37,13 +37,7 @@ export function ConfirmDialog({
 
   return (
     <Dialog open={open} onOpenChange={onCancel}>
-      <DialogContent
-        className={cn(
-          "sm:max-w-sm rounded-2xl p-0 overflow-hidden max-h-[85dvh] flex flex-col gap-0",
-          "max-sm:inset-x-0 max-sm:top-auto max-sm:bottom-0 max-sm:translate-x-0 max-sm:translate-y-0 max-sm:max-w-none max-sm:rounded-b-none max-sm:rounded-t-2xl max-sm:max-h-[90dvh] max-sm:pb-[env(safe-area-inset-bottom)]",
-          "max-sm:data-[state=open]:slide-in-from-bottom-full max-sm:data-[state=open]:zoom-in-100 max-sm:data-[state=closed]:slide-out-to-bottom-full max-sm:data-[state=closed]:zoom-out-100",
-        )}
-      >
+      <DialogContent className="sm:max-w-sm rounded-2xl p-0 overflow-hidden max-h-[85dvh] flex flex-col gap-0">
         {/* Header */}
         <div className="relative overflow-hidden border-b border-border/60 px-4 pt-4 pb-3 sm:px-6 sm:pt-6 sm:pb-4 shrink-0">
           <div
@@ -71,7 +65,6 @@ export function ConfirmDialog({
               </DialogTitle>
             </div>
           </div>
-          <div aria-hidden className="mx-auto mt-3 h-1 w-10 rounded-full bg-border/70 sm:hidden" />
         </div>
 
         {/* Body */}
