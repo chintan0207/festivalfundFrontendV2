@@ -1,4 +1,4 @@
-import { Phone, Pencil, Trash2, Search } from "lucide-react";
+import { MapPin, Phone, Pencil, Trash2, Search } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { cn, initials, formatDate } from "@/lib/utils";
@@ -11,6 +11,7 @@ import type { Contributor } from "@/types/Types";
 interface ContributorMobileCardsProps {
   contributors: Contributor[];
   isLoading: boolean;
+  minimal?: boolean;
   onEdit: (contributor: Contributor) => void;
   onDelete: (id: string) => void;
   onRowClick: (contributor: Contributor) => void;
@@ -18,18 +19,23 @@ interface ContributorMobileCardsProps {
 
 function ContributorCard({
   contributor,
+  minimal,
   onEdit,
   onDelete,
   onRowClick,
 }: {
   contributor: Contributor;
+  minimal?: boolean;
   onEdit: (c: Contributor) => void;
   onDelete: (id: string) => void;
   onRowClick: (c: Contributor) => void;
 }) {
   return (
     <div
-      className="p-4 rounded-2xl bg-card border border-border/80 shadow-xs space-y-3 cursor-pointer active:scale-[0.99] transition-transform"
+      className={cn(
+        "rounded-2xl bg-card border border-border/80 shadow-xs cursor-pointer active:scale-[0.99] transition-transform",
+        minimal ? "p-3" : "p-4 space-y-3"
+      )}
       onClick={() => onRowClick(contributor)}
     >
       <div className="flex items-center gap-3">
@@ -47,42 +53,49 @@ function ContributorCard({
         </AppBadge>
       </div>
 
-      <div className="grid grid-cols-2 gap-2 text-xs">
-        {contributor.phoneNumber && (
-          <div className="flex items-center gap-1.5 p-2 rounded-lg bg-muted/30 text-muted-foreground">
-            <Phone className="h-3 w-3 text-indigo-500" />
-            <span>{contributor.phoneNumber}</span>
+      {!minimal && (
+        <>
+          <div className="grid grid-cols-2 gap-2 text-xs">
+            {contributor.phoneNumber && (
+              <div className="flex items-center gap-1.5 p-2 rounded-lg bg-muted/30 text-muted-foreground">
+                <Phone className="h-3 w-3 text-indigo-500" />
+                <span>{contributor.phoneNumber}</span>
+              </div>
+            )}
+            {contributor.createdAt && (
+              <div className="flex items-center gap-1.5 p-2 rounded-lg bg-muted/30 text-muted-foreground">
+                <span className="text-[10px]">{formatDate(contributor.createdAt)}</span>
+              </div>
+            )}
           </div>
-        )}
-        {contributor.createdAt && (
-          <div className="flex items-center gap-1.5 p-2 rounded-lg bg-muted/30 text-muted-foreground">
-            <span className="text-[10px]">{formatDate(contributor.createdAt)}</span>
-          </div>
-        )}
-      </div>
 
-      {contributor.address && (
-        <p className="text-[11px] text-muted-foreground truncate">{contributor.address}</p>
+          {contributor.address && (
+            <div className="flex items-start gap-1.5 pl-2 text-[11px] text-muted-foreground">
+              <MapPin className="h-3 w-3 mt-0.5 shrink-0 text-indigo-500" />
+              <span className="truncate">{contributor.address}</span>
+            </div>
+          )}
+
+          <div className="flex gap-2 pt-1" onClick={(e) => e.stopPropagation()}>
+            <AppButton
+              variant="outline"
+              className="flex-1 h-9 rounded-xl text-xs text-muted-foreground hover:bg-muted/60 hover:text-foreground"
+              onClick={() => onEdit(contributor)}
+              leftIcon={<Pencil className="h-3.5 w-3.5" />}
+            >
+              Edit
+            </AppButton>
+            <AppButton
+              variant="outline"
+              className="flex-1 h-9 rounded-xl text-xs text-rose-500 hover:bg-rose-500/10"
+              onClick={() => onDelete(contributor._id)}
+              leftIcon={<Trash2 className="h-3.5 w-3.5" />}
+            >
+              Delete
+            </AppButton>
+          </div>
+        </>
       )}
-
-      <div className="flex gap-2 pt-1" onClick={(e) => e.stopPropagation()}>
-        <AppButton
-          variant="outline"
-          className="flex-1 h-9 rounded-xl text-xs text-muted-foreground hover:bg-muted/60 hover:text-foreground"
-          onClick={() => onEdit(contributor)}
-          leftIcon={<Pencil className="h-3.5 w-3.5" />}
-        >
-          Edit
-        </AppButton>
-        <AppButton
-          variant="outline"
-          className="flex-1 h-9 rounded-xl text-xs text-rose-500 hover:bg-rose-500/10"
-          onClick={() => onDelete(contributor._id)}
-          leftIcon={<Trash2 className="h-3.5 w-3.5" />}
-        >
-          Delete
-        </AppButton>
-      </div>
     </div>
   );
 }
@@ -113,6 +126,7 @@ function MobileCardSkeleton() {
 export function ContributorMobileCards({
   contributors,
   isLoading,
+  minimal,
   onEdit,
   onDelete,
   onRowClick,
@@ -145,6 +159,7 @@ export function ContributorMobileCards({
         <ContributorCard
           key={c._id}
           contributor={c}
+          minimal={minimal}
           onEdit={onEdit}
           onDelete={onDelete}
           onRowClick={onRowClick}

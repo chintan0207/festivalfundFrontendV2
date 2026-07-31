@@ -82,6 +82,8 @@ export interface PageFilterToolbarProps {
   searchQuery?: string;
   onSearchChange?: (query: string) => void;
   searchPlaceholder?: string;
+  searchRightActions?: ReactNode;
+  minimal?: boolean;
 
   // Legacy Tabs (auto-converted to Pill Group if pillGroups not supplied)
   tabs?: FilterTab[];
@@ -114,6 +116,8 @@ export function PageFilterToolbar({
   searchQuery = "",
   onSearchChange,
   searchPlaceholder = "Search...",
+  searchRightActions,
+  minimal = false,
   tabs,
   activeTab,
   onTabChange,
@@ -202,7 +206,7 @@ export function PageFilterToolbar({
         <div className="flex items-center gap-2 flex-wrap flex-1 min-w-0">
           {/* Search Input */}
           {onSearchChange && (
-            <div className="relative flex-1 min-w-[220px] sm:max-w-xs">
+            <div className="relative flex-1 min-w-0 sm:min-w-[220px] sm:max-w-xs">
               <Search className="absolute left-3 top-2.5 h-3.5 w-3.5 text-muted-foreground" />
               <Input
                 placeholder={searchPlaceholder}
@@ -223,8 +227,10 @@ export function PageFilterToolbar({
             </div>
           )}
 
+          {searchRightActions}
+
           {/* Primary Quick Select Dropdown */}
-          {primaryFilter && (
+          {!minimal && primaryFilter && (
             <DropdownMenu key={primaryFilter.id}>
               <DropdownMenuTrigger asChild>
                 <button
@@ -281,7 +287,7 @@ export function PageFilterToolbar({
           )}
 
           {/* MORE FILTERS POPOVER */}
-          {popoverFilters.length > 0 && (
+          {!minimal && popoverFilters.length > 0 && (
             <Popover>
               <PopoverTrigger asChild>
                 <button
@@ -388,12 +394,13 @@ export function PageFilterToolbar({
         </div>
 
         {/* Right Side: Sort Selector & Clear Button */}
-        <div className="flex items-center gap-2 shrink-0 flex-wrap">
+        {!minimal && (
+          <div className="flex items-center gap-2 shrink-0 flex-wrap">
           {/* SORT BY SELECTOR (Matches exact reference screenshot layout) */}
           {sortOptions && sortOptions.length > 0 && onSortChange && (
             <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
               <span className="font-semibold text-muted-foreground hidden sm:inline">Sort by:</span>
-              <div className="flex items-center gap-1 bg-muted/30 p-0.5 rounded-full border border-border/60 overflow-x-auto no-scrollbar">
+              <div className="flex items-center gap-1 overflow-x-auto no-scrollbar">
                 {sortOptions.map((s) => {
                   const isSelected = activeSort === s.id;
                   return (
@@ -437,10 +444,11 @@ export function PageFilterToolbar({
 
           {extraActions}
         </div>
+        )}
       </div>
 
       {/* SECOND ROW: INLINE PILL FILTER GROUPS (Status: [All] [Deposited], Category: [All] [Parents]...) */}
-      {effectivePillGroups.length > 0 && (
+      {!minimal && effectivePillGroups.length > 0 && (
         <div className="pt-2.5 border-t border-border/50 space-y-2.5">
           {effectivePillGroups.map((group) => (
             <div
@@ -495,7 +503,7 @@ export function PageFilterToolbar({
       )}
 
       {/* THIRD ROW: ACTIVE FILTER DISMISSIBLE TAGS */}
-      {(searchQuery || activeFilters.length > 0) && (
+      {!minimal && (searchQuery || activeFilters.length > 0) && (
         <div className="flex items-center gap-2 flex-wrap pt-2 border-t border-border/40">
           <span className="text-[11px] font-semibold text-muted-foreground">Active:</span>
           {searchQuery && (

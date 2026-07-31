@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useFestivalStore } from "@/store/festivalStore";
 import { AppButton } from "@/components/common/AppButton";
 import { AppSelect } from "@/components/common/AppSelect";
@@ -31,6 +31,13 @@ export const ExpensesPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState<string>("ALL");
   const [isAddOpen, setIsAddOpen] = useState(false);
+
+  // Open the add dialog from the mobile FAB
+  useEffect(() => {
+    const handler = () => setIsAddOpen(true);
+    window.addEventListener("ff:open-add-expenses", handler);
+    return () => window.removeEventListener("ff:open-add-expenses", handler);
+  }, []);
 
   // Form state
   const [targetFestId, setTargetFestId] = useState(
@@ -105,7 +112,7 @@ export const ExpensesPage = () => {
   return (
     <div className="space-y-6 pb-12">
       {/* HEADER */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div data-fab-observe className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-foreground">
             Expenses

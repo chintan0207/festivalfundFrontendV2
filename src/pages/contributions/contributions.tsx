@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useFestivalStore } from "@/store/festivalStore";
 import { AppButton } from "@/components/common/AppButton";
 import { AppSelect } from "@/components/common/AppSelect";
@@ -30,6 +30,13 @@ export const ContributionsPage = () => {
   const [sortBy, setSortBy] = useState<"name" | "amount" | "none">("none");
   const [minimalView, setMinimalView] = useState(false);
   const [isAddOpen, setIsAddOpen] = useState(false);
+
+  // Open the add dialog from the mobile FAB
+  useEffect(() => {
+    const handler = () => setIsAddOpen(true);
+    window.addEventListener("ff:open-add-contributions", handler);
+    return () => window.removeEventListener("ff:open-add-contributions", handler);
+  }, []);
 
   // Form state
   const [targetFestId, setTargetFestId] = useState(
@@ -104,7 +111,7 @@ export const ContributionsPage = () => {
   return (
     <div className="space-y-6 pb-12">
       {/* HEADER */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div data-fab-observe className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-foreground">
             Contributions

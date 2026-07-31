@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   useFestivals,
   useCreateFestival,
@@ -135,6 +135,16 @@ export const FestivalsPage = () => {
     setEditingFest(null);
     setIsModalOpen(true);
   };
+
+  // Open the create modal from the mobile FAB
+  useEffect(() => {
+    const handler = () => {
+      setEditingFest(null);
+      setIsModalOpen(true);
+    };
+    window.addEventListener("ff:open-add-festivals", handler);
+    return () => window.removeEventListener("ff:open-add-festivals", handler);
+  }, []);
 
   const handleOpenEdit = (fest: any) => {
     setEditingFest(fest);
