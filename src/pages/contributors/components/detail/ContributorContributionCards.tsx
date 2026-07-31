@@ -1,55 +1,37 @@
 import { Banknote, Package, Calendar, Search } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn, formatDate } from "@/lib/utils";
+import { AppBadge } from "@/components/common/AppBadge";
+import { EmptyState } from "@/components/common/EmptyState";
+import {
+  contributionFestivalLabel,
+  contributionStatusBadge,
+  contributionTypeStyles,
+  formatContributionAmount,
+} from "@/lib/contributionFormat";
 import type { Contribution } from "@/types/Types";
 
-const statusStyles: Record<string, string> = {
-  DEPOSITED: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400",
-  PENDING: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400",
-  CANCELLED: "bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400",
-};
-
-const typeStyles: Record<string, string> = {
-  CASH: "text-emerald-600 dark:text-emerald-400",
-  ITEM: "text-indigo-600 dark:text-indigo-400",
-};
-
 function ContributionCard({ c }: { c: Contribution }) {
-  const fest = typeof c.festivalId === "object" ? c.festivalId : null;
-  const amount =
-    c.type === "CASH" && c.amount
-      ? `₹${c.amount.toLocaleString("en-IN")}`
-      : c.type === "ITEM" && c.estimatedValue
-        ? `₹${c.estimatedValue.toLocaleString("en-IN")}`
-        : "—";
-
   return (
     <div className="p-3.5 rounded-2xl bg-card border border-border/80 shadow-xs space-y-2.5">
       <div className="flex items-center justify-between">
         <span className="font-mono font-bold text-indigo-600 text-[11px]">{c.contributionCode}</span>
-        <span
-          className={cn(
-            "inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold",
-            statusStyles[c.status] || "bg-muted text-muted-foreground",
-          )}
-        >
+        <AppBadge size="xs" className={contributionStatusBadge(c.status)}>
           {c.status}
-        </span>
+        </AppBadge>
       </div>
 
       <div className="flex items-center gap-2 text-sm">
         <Calendar className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-        <span className="font-medium text-foreground">
-          {fest ? `${fest.name} ${fest.year || ""}` : "—"}
-        </span>
+        <span className="font-medium text-foreground">{contributionFestivalLabel(c)}</span>
       </div>
 
       <div className="flex items-center justify-between text-xs">
-        <span className={cn("inline-flex items-center gap-1 font-semibold", typeStyles[c.type])}>
+        <span className={cn("inline-flex items-center gap-1 font-semibold", contributionTypeStyles[c.type])}>
           {c.type === "CASH" ? <Banknote className="h-3.5 w-3.5" /> : <Package className="h-3.5 w-3.5" />}
           {c.type}
         </span>
-        <span className="font-bold text-foreground">{amount}</span>
+        <span className="font-bold text-foreground">{formatContributionAmount(c)}</span>
       </div>
 
       {c.date && (
@@ -95,11 +77,11 @@ export function ContributorContributionCards({
 
   if (contributions.length === 0) {
     return (
-      <div className="px-4 py-12 text-center">
-        <Search className="h-10 w-10 mx-auto mb-3 text-muted-foreground/40" />
-        <p className="text-sm font-medium text-foreground">No contributions yet</p>
-        <p className="text-xs text-muted-foreground mt-1">Contributions made by this donor will appear here.</p>
-      </div>
+      <EmptyState
+        icon={Search}
+        title="No contributions yet"
+        description="Contributions made by this donor will appear here."
+      />
     );
   }
 

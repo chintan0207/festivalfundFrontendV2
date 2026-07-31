@@ -2,26 +2,11 @@ import { Phone, Pencil, Trash2, Search } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { cn, initials, formatDate } from "@/lib/utils";
-import { badgeColors, gradientColors } from "@/theme/colors";
+import { AppBadge } from "@/components/common/AppBadge";
+import { AppButton } from "@/components/common/AppButton";
+import { EmptyState } from "@/components/common/EmptyState";
+import { contributorCategoryBadge, contributorCategoryLabel, contributorAvatarGradient } from "../../lib/contributorMeta";
 import type { Contributor } from "@/types/Types";
-
-const categoryStyles: Record<string, string> = {
-  PARENT: badgeColors.parents,
-  BOY: badgeColors.boys,
-  GIRL: badgeColors.girls,
-};
-
-const avatarGradient: Record<string, string> = {
-  PARENT: gradientColors[2],
-  BOY: gradientColors[1],
-  GIRL: gradientColors[0],
-};
-
-const categoryLabels: Record<string, string> = {
-  PARENT: "Parents",
-  BOY: "Boys",
-  GIRL: "Girls",
-};
 
 interface ContributorMobileCardsProps {
   contributors: Contributor[];
@@ -49,7 +34,7 @@ function ContributorCard({
     >
       <div className="flex items-center gap-3">
         <Avatar>
-          <AvatarFallback className={cn("text-xs font-bold text-white", avatarGradient[contributor.category] || gradientColors[5])}>
+          <AvatarFallback className={cn("text-xs font-bold text-white", contributorAvatarGradient(contributor.category))}>
             {initials(contributor.name)}
           </AvatarFallback>
         </Avatar>
@@ -57,14 +42,9 @@ function ContributorCard({
           <p className="text-sm font-bold text-foreground truncate">{contributor.name}</p>
           <p className="text-[11px] text-muted-foreground">{contributor.contributorCode}</p>
         </div>
-        <span
-          className={cn(
-            "inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold shrink-0",
-            categoryStyles[contributor.category] || "bg-muted text-muted-foreground",
-          )}
-        >
-          {categoryLabels[contributor.category] || contributor.category}
-        </span>
+        <AppBadge size="xs" className={contributorCategoryBadge(contributor.category)}>
+          {contributorCategoryLabel(contributor.category)}
+        </AppBadge>
       </div>
 
       <div className="grid grid-cols-2 gap-2 text-xs">
@@ -86,20 +66,22 @@ function ContributorCard({
       )}
 
       <div className="flex gap-2 pt-1" onClick={(e) => e.stopPropagation()}>
-        <button
+        <AppButton
+          variant="outline"
+          className="flex-1 h-9 rounded-xl text-xs text-muted-foreground hover:bg-muted/60 hover:text-foreground"
           onClick={() => onEdit(contributor)}
-          className="flex-1 py-2 rounded-xl text-xs font-semibold border border-border/80 text-muted-foreground hover:bg-muted/60 hover:text-foreground transition-colors flex items-center justify-center gap-1.5"
+          leftIcon={<Pencil className="h-3.5 w-3.5" />}
         >
-          <Pencil className="h-3.5 w-3.5" />
           Edit
-        </button>
-        <button
+        </AppButton>
+        <AppButton
+          variant="outline"
+          className="flex-1 h-9 rounded-xl text-xs text-rose-500 hover:bg-rose-500/10"
           onClick={() => onDelete(contributor._id)}
-          className="flex-1 py-2 rounded-xl text-xs font-semibold border border-border/80 text-rose-500 hover:bg-rose-500/10 transition-colors flex items-center justify-center gap-1.5"
+          leftIcon={<Trash2 className="h-3.5 w-3.5" />}
         >
-          <Trash2 className="h-3.5 w-3.5" />
           Delete
-        </button>
+        </AppButton>
       </div>
     </div>
   );
@@ -147,10 +129,12 @@ export function ContributorMobileCards({
 
   if (contributors.length === 0) {
     return (
-      <div className="md:hidden px-4 py-12 text-center">
-        <Search className="h-10 w-10 mx-auto mb-3 text-muted-foreground/40" />
-        <p className="text-sm font-medium text-foreground">No contributors found</p>
-        <p className="text-xs text-muted-foreground mt-1">Try adjusting your search or filters</p>
+      <div className="md:hidden">
+        <EmptyState
+          icon={Search}
+          title="No contributors found"
+          description="Try adjusting your search or filters"
+        />
       </div>
     );
   }

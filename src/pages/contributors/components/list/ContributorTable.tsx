@@ -1,20 +1,11 @@
 import { Phone, Pencil, Trash2 } from "lucide-react";
 import { DataTable, type Column } from "@/components/common/DataTable";
-import { cn, formatDate } from "@/lib/utils";
-import { badgeColors, getModuleTheme } from "@/theme/colors";
+import { formatDate } from "@/lib/utils";
+import { getModuleTheme } from "@/theme/colors";
+import { AppBadge } from "@/components/common/AppBadge";
+import { AppButton } from "@/components/common/AppButton";
+import { contributorCategoryBadge, contributorCategoryLabel } from "../../lib/contributorMeta";
 import type { Contributor } from "@/types/Types";
-
-const categoryStyles: Record<string, string> = {
-  PARENT: badgeColors.parents,
-  BOY: badgeColors.boys,
-  GIRL: badgeColors.girls,
-};
-
-const categoryLabels: Record<string, string> = {
-  PARENT: "Parents",
-  BOY: "Boys",
-  GIRL: "Girls",
-};
 
 interface ContributorTableProps {
   contributors: Contributor[];
@@ -63,14 +54,9 @@ export function ContributorTable({
       label: "Category",
       sortable: true,
       render: (c) => (
-        <span
-          className={cn(
-            "inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold",
-            categoryStyles[c.category] || "bg-muted text-muted-foreground",
-          )}
-        >
-          {categoryLabels[c.category] || c.category}
-        </span>
+        <AppBadge size="xs" className={contributorCategoryBadge(c.category)}>
+          {contributorCategoryLabel(c.category)}
+        </AppBadge>
       ),
     },
     {
@@ -98,20 +84,22 @@ export function ContributorTable({
       sortable: false,
       render: (c) => (
         <div className="flex gap-1" onClick={(e) => e.stopPropagation()}>
-          <button
+          <AppButton
+            variant="outline"
+            className="h-8 w-8 p-0 rounded-lg text-muted-foreground hover:bg-muted/60 hover:text-foreground"
             onClick={() => onEdit(c)}
-            className="p-1.5 rounded-lg text-muted-foreground hover:bg-muted/60 hover:text-foreground transition-colors"
             title="Edit"
           >
             <Pencil className="h-3.5 w-3.5" />
-          </button>
-          <button
+          </AppButton>
+          <AppButton
+            variant="outline"
+            className="h-8 w-8 p-0 rounded-lg text-muted-foreground hover:bg-rose-500/10 hover:text-rose-500"
             onClick={() => onDelete(c._id)}
-            className="p-1.5 rounded-lg text-muted-foreground hover:bg-rose-500/10 hover:text-rose-500 transition-colors"
             title="Delete"
           >
             <Trash2 className="h-3.5 w-3.5" />
-          </button>
+          </AppButton>
         </div>
       ),
     },

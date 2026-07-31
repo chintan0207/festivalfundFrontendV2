@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { ContributionService, type ContributionQueryParams } from "./contribution.service";
 import { useContributionApiStore } from "./contribution.store";
+import { normalizeContributions } from "@/lib/contributionFormat";
 import type { CreateContributionPayload, UpdateContributionPayload } from "@/types/Types";
 
 export const CONTRIBUTION_QUERY_KEYS = {
@@ -20,7 +21,7 @@ export const useContributions = (params?: ContributionQueryParams) => {
       if (res.data) {
         setContributions(res.data);
       }
-      return res.data;
+      return normalizeContributions(res.data);
     },
     staleTime: 5 * 60 * 1000,
   });

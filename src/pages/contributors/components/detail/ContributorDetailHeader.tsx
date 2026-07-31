@@ -1,19 +1,8 @@
 import { Phone, Mail, MapPin, FileText } from "lucide-react";
 import { cn, initials } from "@/lib/utils";
-import { gradientColors, badgeColors } from "@/theme/colors";
+import { AppBadge } from "@/components/common/AppBadge";
+import { contributorCategoryBadge, contributorCategoryLabel, contributorAvatarGradient } from "../../lib/contributorMeta";
 import type { Contributor } from "@/types/Types";
-
-const categoryLabels: Record<string, string> = {
-  PARENT: "Parents",
-  BOY: "Boys",
-  GIRL: "Girls",
-};
-
-const categoryStyles: Record<string, string> = {
-  PARENT: badgeColors.parents,
-  BOY: badgeColors.boys,
-  GIRL: badgeColors.girls,
-};
 
 export function ContributorDetailHeader({
   contributor,
@@ -28,12 +17,7 @@ export function ContributorDetailHeader({
   firstDate: string;
   lastDate: string;
 }) {
-  const avatarGradients: Record<string, string> = {
-    PARENT: gradientColors[2],
-    BOY: gradientColors[1],
-    GIRL: gradientColors[0],
-  };
-  const avatarGradient = avatarGradients[contributor.category] || gradientColors[5];
+  const avatarGradient = contributorAvatarGradient(contributor.category);
 
   const fmt = (d: string) => {
     if (!d) return "-";
@@ -61,24 +45,9 @@ export function ContributorDetailHeader({
             <div className="sm:hidden flex-1 min-w-0">
               <div className="flex flex-wrap items-center gap-1.5">
                 <h1 className="text-base font-bold text-foreground truncate">{contributor.name}</h1>
-                <span
-                  className={cn(
-                    "inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold w-fit",
-                    categoryStyles[contributor.category] || "bg-muted text-muted-foreground",
-                  )}
-                >
-                  {categoryLabels[contributor.category] || contributor.category}
-                </span>
-                {/* <span
-                  className={cn(
-                    "inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold w-fit",
-                    contributor.isActive
-                      ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
-                      : "bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400",
-                  )}
-                >
-                  {contributor.isActive ? "Active" : "Inactive"}
-                </span> */}
+                <AppBadge size="xs" className={contributorCategoryBadge(contributor.category)}>
+                  {contributorCategoryLabel(contributor.category)}
+                </AppBadge>
               </div>
               <p className="text-[11px] text-muted-foreground font-mono mt-0.5">{contributor.contributorCode}</p>
             </div>
@@ -88,24 +57,9 @@ export function ContributorDetailHeader({
           <div className="hidden sm:block flex-1 min-w-0 space-y-2">
             <div className="flex flex-wrap items-center gap-3">
               <h1 className="text-lg font-bold text-foreground truncate">{contributor.name}</h1>
-              <span
-                className={cn(
-                  "inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold w-fit",
-                  categoryStyles[contributor.category] || "bg-muted text-muted-foreground",
-                )}
-              >
-                {categoryLabels[contributor.category] || contributor.category}
-              </span>
-              {/* <span
-                className={cn(
-                  "inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold w-fit",
-                  contributor.isActive
-                    ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
-                    : "bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400",
-                )}
-              >
-                {contributor.isActive ? "Active" : "Inactive"}
-              </span> */}
+              <AppBadge size="xs" className={contributorCategoryBadge(contributor.category)}>
+                {contributorCategoryLabel(contributor.category)}
+              </AppBadge>
             </div>
 
             <p className="text-xs text-muted-foreground font-mono">{contributor.contributorCode}</p>
