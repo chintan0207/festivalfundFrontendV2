@@ -1,8 +1,8 @@
 import { useEffect, useState, useCallback } from "react";
-import { Plus, List, LayoutGrid } from "lucide-react";
+import { Plus, List, LayoutGrid, Download } from "lucide-react";
 import { Outlet, useNavigate, useMatches } from "@tanstack/react-router";
 import { useContributorApiStore } from "@/api/contributor/contributor.store";
-import { useContributors } from "@/api/contributor/useContributors";
+import { useContributors, useDownloadContributorsPdf } from "@/api/contributor/useContributors";
 import { useDebounce } from "@/hooks/useDebounce";
 import { getModuleTheme } from "@/theme/colors";
 import { PageHeader } from "@/components/common/PageHeader";
@@ -53,6 +53,8 @@ export default function ContributorsPage() {
 
   const dialogs = useContributorDialogs({ themeGradient: theme.gradient });
   const { openAdd } = dialogs;
+
+  const downloadPdf = useDownloadContributorsPdf();
 
   // Open the add dialog from the mobile FAB
   useEffect(() => {
@@ -130,13 +132,24 @@ export default function ContributorsPage() {
         ]}
         badge={<AppBadge className={theme.badgeColor}>{total} total</AppBadge>}
         actions={
-          <AppButton
-            onClick={dialogs.openAdd}
-            leftIcon={<Plus className="h-4 w-4" />}
-            gradient={theme.gradient}
-          >
-            Add Contributor
-          </AppButton>
+          <>
+            <AppButton
+              className={theme.iconColor}
+              variant="outline"
+              onClick={() => downloadPdf.mutate()}
+              loading={downloadPdf.isPending}
+              leftIcon={<Download className="h-4 w-4" />}
+            >
+              Download PDF
+            </AppButton>
+            <AppButton
+              onClick={dialogs.openAdd}
+              leftIcon={<Plus className="h-4 w-4" />}
+              gradient={theme.gradient}
+            >
+              Add Contributor
+            </AppButton>
+          </>
         }
       />
 

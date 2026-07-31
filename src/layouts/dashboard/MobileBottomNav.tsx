@@ -1,10 +1,11 @@
 import { Link, useLocation } from "@tanstack/react-router";
-import { LayoutDashboard, CalendarDays, Wallet, Receipt, BarChart3 } from "lucide-react";
+import { LayoutDashboard,Wallet, Receipt, BarChart3, Users } from "lucide-react";
 import { moduleGradientColors, moduleIconColors } from "@/theme/colors";
 
 const navItems = [
   { label: "Dashboard", icon: LayoutDashboard, href: "/dashboard", module: "dashboard" },
-  { label: "Festivals", icon: CalendarDays, href: "/dashboard/festivals", module: "festivals" },
+  // { label: "Festivals", icon: CalendarDays, href: "/dashboard/festivals", module: "festivals" },
+  { label: "Contributors", icon: Users, href: "/dashboard/contributors", module: "contributors" },
   { label: "Contributions", icon: Wallet, href: "/dashboard/contributions", module: "contributions" },
   { label: "Expenses", icon: Receipt, href: "/dashboard/expenses", module: "expenses" },
   { label: "Reports", icon: BarChart3, href: "/dashboard/reports", module: "reports" },
