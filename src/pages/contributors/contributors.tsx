@@ -2,12 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 import { Plus } from "lucide-react";
 import { Outlet, useNavigate, useMatches } from "@tanstack/react-router";
 import { useContributorApiStore } from "@/api/contributor/contributor.store";
-import {
-  useContributors,
-  useCreateContributor,
-  useUpdateContributor,
-  useSoftDeleteContributor,
-} from "@/api/contributor/useContributors";
+import { useContributors } from "@/api/contributor/useContributors";
 import { useDebounce } from "@/hooks/useDebounce";
 import { getModuleTheme } from "@/theme/colors";
 import { PageHeader } from "@/components/common/PageHeader";
@@ -15,10 +10,12 @@ import { PageFilterToolbar } from "@/components/common/PageFilterToolbar";
 import { DataTablePagination } from "@/components/common/DataTablePagination";
 import { AppButton } from "@/components/common/AppButton";
 import { AppBadge } from "@/components/common/AppBadge";
-import { ContributorKPIs } from "./components/ContributorKPIs";
-import { ContributorTable } from "./components/ContributorTable";
-import { ContributorMobileCards } from "./components/ContributorMobileCards";
-import { ContributorDialogs, type ContributorFormValues } from "./components/ContributorDialogs";
+import { ContributorKPIs } from "./components/list/ContributorKPIs";
+import { ContributorTable } from "./components/list/ContributorTable";
+import { ContributorMobileCards } from "./components/list/ContributorMobileCards";
+import { ContributorDialogs } from "./components/dialogs/ContributorDialogs";
+import { useContributorDialogs } from "./useContributorDialogs";
+import { contributorCategoryLabel } from "./lib/contributorMeta";
 import type { Contributor } from "@/types/Types";
 
 export default function ContributorsPage() {
@@ -46,12 +43,6 @@ export default function ContributorsPage() {
   // Local UI
   const [localSearch, setLocalSearch] = useState(search);
   const debouncedSearch = useDebounce(localSearch, 400);
-  const [editId, setEditId] = useState<string | null>(null);
-  const [editInitialValues, setEditInitialValues] = useState<ContributorFormValues | undefined>();
-  const [deleteId, setDeleteId] = useState<string | null>(null);
-  const [isAddOpen, setIsAddOpen] = useState(false);
-  const [isEditOpen, setIsEditOpen] = useState(false);
-  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
   useEffect(() => {
     setSearch(debouncedSearch);
@@ -59,6 +50,8 @@ export default function ContributorsPage() {
 
   const navigate = useNavigate();
   const matches = useMatches();
+
+  const dialogs = useContributorDialogs({ themeGradient: theme.gradient });
 
   const handleRowClick = useCallback((contributor: Contributor) => {
     navigate({ to: "/dashboard/contributors/$contributorId", params: { contributorId: contributor._id } });
@@ -82,9 +75,6 @@ export default function ContributorsPage() {
   };
 
   const { isLoading } = useContributors(queryParams);
-  const createMutation = useCreateContributor();
-  const updateMutation = useUpdateContributor();
-  const deleteMutation = useSoftDeleteContributor();
 
   // Handlers
   const handleSort = useCallback(
@@ -99,57 +89,12 @@ export default function ContributorsPage() {
     [sortField, sortOrder, setSortField, setSortOrder],
   );
 
-  const handleCreate = useCallback((values: ContributorFormValues) => {
-    createMutation.mutate(values, {
-      onSuccess: () => {
-        setIsAddOpen(false);
-      },
-    });
-  }, [createMutation]);
-
-  const handleEdit = useCallback((contributor: Contributor) => {
-    setEditId(contributor._id);
-    setEditInitialValues({
-      name: contributor.name,
-      phoneNumber: contributor.phoneNumber || "",
-      email: contributor.email || "",
-      address: contributor.address || "",
-      category: contributor.category,
-    });
-    setIsEditOpen(true);
-  }, []);
-
-  const handleUpdate = useCallback((values: ContributorFormValues) => {
-    if (!editId) return;
-    updateMutation.mutate(
-      { contributorId: editId, payload: values },
-      {
-        onSuccess: () => {
-          setIsEditOpen(false);
-          setEditId(null);
-          setEditInitialValues(undefined);
-        },
-      },
-    );
-  }, [editId, updateMutation]);
-
-  const handleDeleteConfirm = useCallback(() => {
-    if (!deleteId) return;
-    deleteMutation.mutate(deleteId, {
-      onSuccess: () => {
-        setIsDeleteOpen(false);
-        setDeleteId(null);
-      },
-    });
-  }, [deleteId, deleteMutation]);
-
   // Active filters for toolbar
   const activeFilters = [];
   if (category) {
-    const labels: Record<string, string> = { PARENT: "Parents", BOY: "Boys", GIRL: "Girls" };
     activeFilters.push({
       id: "category",
-      label: `Category: ${labels[category] || category}`,
+      label: `Category: ${contributorCategoryLabel(category)}`,
       onRemove: () => setCategory(""),
     });
   }
@@ -178,7 +123,7 @@ export default function ContributorsPage() {
         badge={<AppBadge className={theme.badgeColor}>{total} total</AppBadge>}
         actions={
           <AppButton
-            onClick={() => setIsAddOpen(true)}
+            onClick={dialogs.openAdd}
             leftIcon={<Plus className="h-4 w-4" />}
             gradient={theme.gradient}
           >
@@ -237,11 +182,8 @@ export default function ContributorsPage() {
       <ContributorMobileCards
         contributors={contributors}
         isLoading={isLoading}
-        onEdit={handleEdit}
-        onDelete={(id) => {
-          setDeleteId(id);
-          setIsDeleteOpen(true);
-        }}
+        onEdit={dialogs.openEdit}
+        onDelete={dialogs.openDelete}
         onRowClick={handleRowClick}
       />
 
@@ -253,11 +195,8 @@ export default function ContributorsPage() {
           sortField={sortField}
           sortOrder={sortOrder}
           onSort={handleSort}
-          onEdit={handleEdit}
-          onDelete={(id) => {
-            setDeleteId(id);
-            setIsDeleteOpen(true);
-          }}
+          onEdit={dialogs.openEdit}
+          onDelete={dialogs.openDelete}
           onRowClick={handleRowClick}
         />
       </div>
@@ -272,28 +211,7 @@ export default function ContributorsPage() {
         module="contributors"
       />
 
-      <ContributorDialogs
-        isAddOpen={isAddOpen}
-        isEditOpen={isEditOpen}
-        isDeleteOpen={isDeleteOpen}
-        editInitialValues={editInitialValues}
-        isPending={createMutation.isPending || updateMutation.isPending}
-        isDeleting={deleteMutation.isPending}
-        themeGradient={theme.gradient}
-        onAddClose={() => setIsAddOpen(false)}
-        onEditClose={() => {
-          setIsEditOpen(false);
-          setEditId(null);
-          setEditInitialValues(undefined);
-        }}
-        onDeleteClose={() => {
-          setIsDeleteOpen(false);
-          setDeleteId(null);
-        }}
-        onAddSubmit={handleCreate}
-        onEditSubmit={handleUpdate}
-        onDeleteConfirm={handleDeleteConfirm}
-      />
+      <ContributorDialogs {...dialogs.dialogsProps} />
     </div>
   );
 }
