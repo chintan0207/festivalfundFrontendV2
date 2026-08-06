@@ -42,6 +42,14 @@ export function contributionFestivalLabel(c: {
   return fest ? `${fest.name || ""} ${fest.year || ""}`.trim() : "—";
 }
 
+export function contributorInitials(name?: string): string {
+  if (!name) return "?";
+  const parts = name.trim().split(/\s+/).filter(Boolean);
+  if (parts.length === 0) return "?";
+  if (parts.length === 1) return parts[0].charAt(0).toUpperCase();
+  return (parts[0].charAt(0) + parts[parts.length - 1].charAt(0)).toUpperCase();
+}
+
 export function contributionTotal(contributions: AmountShape[]): number {
   return contributions.reduce((sum, c) => sum + contributionAmountValue(c), 0);
 }

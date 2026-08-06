@@ -105,6 +105,17 @@ export const badgeColors = {
   sound: "bg-gradient-to-r from-red-500/20 to-pink-500/20 text-red-500",
 };
 
+export const categoryAvatarGradients: Record<string, string> = {
+  PARENT: "bg-gradient-to-br from-emerald-400 to-green-600",
+  BOY: "bg-gradient-to-br from-sky-400 to-blue-600",
+  GIRL: "bg-gradient-to-br from-pink-400 to-rose-600",
+  default: "bg-gradient-to-br from-violet-400 to-purple-600",
+};
+
+export function categoryAvatarGradient(category?: string): string {
+  return (category && categoryAvatarGradients[category]) || categoryAvatarGradients.default;
+}
+
 export interface ModuleTheme {
   gradient: string;
   iconColor: string;

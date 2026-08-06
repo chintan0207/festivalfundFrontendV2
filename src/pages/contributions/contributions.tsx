@@ -2,7 +2,11 @@ import { useEffect, useState, useCallback } from "react";
 import { Plus, List, LayoutGrid } from "lucide-react";
 import { Outlet, useNavigate, useMatches } from "@tanstack/react-router";
 import { useContributionApiStore } from "@/api/contribution/contribution.store";
-import { useContributions } from "@/api/contribution/useContributions";
+import {
+  useContributions,
+  useUpdateContributionStatus,
+  useDownloadContributionSlip,
+} from "@/api/contribution/useContributions";
 import { useFestivalApiStore } from "@/api/festival/festival.store";
 import { useDebounce } from "@/hooks/useDebounce";
 import { getModuleTheme } from "@/theme/colors";
@@ -21,7 +25,7 @@ import {
   contributionStatusLabel,
   contributionTypeLabel,
 } from "./lib/contributionMeta";
-import type { ContributionListItem } from "@/types/Types";
+import type { ContributionListItem, ContributionStatus } from "@/types/Types";
 
 export default function ContributionsPage() {
   const theme = getModuleTheme("contributions");
@@ -104,6 +108,24 @@ export default function ContributionsPage() {
   };
 
   const { isLoading } = useContributions(queryParams);
+
+  // Status + slip actions for mobile cards
+  const updateStatusMutation = useUpdateContributionStatus();
+  const downloadSlip = useDownloadContributionSlip();
+
+  const handleStatusChange = useCallback(
+    (id: string, status: ContributionStatus, reason?: string) => {
+      updateStatusMutation.mutate({ id, status, reason });
+    },
+    [updateStatusMutation],
+  );
+
+  const handleDownloadSlip = useCallback(
+    (id: string) => {
+      downloadSlip.mutate(id);
+    },
+    [downloadSlip],
+  );
 
   // Handlers
   const handleSort = useCallback(
@@ -252,6 +274,10 @@ export default function ContributionsPage() {
         onEdit={dialogs.openEdit}
         onDelete={dialogs.openDelete}
         onRowClick={handleRowClick}
+        onStatusChange={handleStatusChange}
+        onDownloadSlip={handleDownloadSlip}
+        isStatusPending={updateStatusMutation.isPending}
+        isSlipPending={downloadSlip.isPending}
       />
 
       {/* Desktop table */}
@@ -265,6 +291,10 @@ export default function ContributionsPage() {
           onEdit={dialogs.openEdit}
           onDelete={dialogs.openDelete}
           onRowClick={handleRowClick}
+          onStatusChange={handleStatusChange}
+          onDownloadSlip={handleDownloadSlip}
+          isStatusPending={updateStatusMutation.isPending}
+          isSlipPending={downloadSlip.isPending}
         />
       </div>
 

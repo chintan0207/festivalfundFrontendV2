@@ -1,4 +1,4 @@
-import { Banknote, Package, Calendar } from "lucide-react";
+import { Banknote, Package, Calendar, ChevronDown } from "lucide-react";
 import { cn, formatDate } from "@/lib/utils";
 import { AppBadge } from "@/components/common/AppBadge";
 import { getModuleTheme } from "@/theme/colors";
@@ -10,15 +10,24 @@ import {
   contributionTypeLabel,
 } from "../../lib/contributionMeta";
 import { formatContributionAmount } from "@/lib/contributionFormat";
-import type { ContributionListItem } from "@/types/Types";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import type { ContributionListItem, ContributionStatus } from "@/types/Types";
 
 export function ContributionDetailHeader({
   contribution,
+  onRequestStatus,
 }: {
   contribution: ContributionListItem;
+  onRequestStatus?: (status: ContributionStatus) => void;
 }) {
   const theme = getModuleTheme("contributions");
   const isCash = contribution.type === "MONEY";
+  const isDeposited = contribution.status === "DEPOSITED";
 
   return (
     <div className="rounded-2xl bg-card border border-border/80 shadow-sm overflow-hidden">
@@ -42,9 +51,45 @@ export function ContributionDetailHeader({
               </p>
             </div>
           </div>
-          <AppBadge size="sm" className={contributionStatusBadge(contribution.status)}>
-            {contributionStatusLabel(contribution.status)}
-          </AppBadge>
+
+          {onRequestStatus && !isDeposited ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  type="button"
+                  className={cn(
+                    "inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[11px] sm:text-xs font-semibold transition-all cursor-pointer",
+                    contributionStatusBadge(contribution.status),
+                    "hover:opacity-80 active:scale-95"
+                  )}
+                >
+                  {contributionStatusLabel(contribution.status)}
+                  <ChevronDown className="h-3 w-3" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-40 rounded-xl p-1.5">
+                {(contribution.status === "PENDING"
+                  ? ["DEPOSITED", "CANCELLED"]
+                  : []
+                ).map((value) => (
+                  <DropdownMenuItem
+                    key={value}
+                    onSelect={() => onRequestStatus(value as ContributionStatus)}
+                    className="text-xs font-medium px-2.5 py-2 rounded-lg cursor-pointer"
+                  >
+                    <span className="inline-flex items-center gap-2">
+                      <span className={cn("h-2 w-2 rounded-full", contributionStatusBadge(value))} />
+                      {contributionStatusLabel(value)}
+                    </span>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <AppBadge size="sm" className={contributionStatusBadge(contribution.status)}>
+              {contributionStatusLabel(contribution.status)}
+            </AppBadge>
+          )}
         </div>
 
         <div className="flex flex-wrap items-center gap-x-6 gap-y-1 text-[11px] sm:text-xs text-muted-foreground">

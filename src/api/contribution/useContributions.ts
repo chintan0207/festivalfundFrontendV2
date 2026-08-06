@@ -88,6 +88,24 @@ export const useUpdateContribution = () => {
   });
 };
 
+export const useUpdateContributionStatus = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, status, reason }: { id: string; status: string; reason?: string }) =>
+      ContributionService.updateContributionStatus(id, status, reason),
+    onSuccess: (res, { id }) => {
+      queryClient.invalidateQueries({ queryKey: ["contributions"] });
+      queryClient.invalidateQueries({ queryKey: CONTRIBUTION_QUERY_KEYS.detail(id) });
+      queryClient.invalidateQueries({ queryKey: ["festivals"] });
+      toast.success(res.message || "Contribution status updated successfully");
+    },
+    onError: (error: any) => {
+      toast.error(error?.response?.data?.message || "Failed to update contribution status");
+    },
+  });
+};
+
 export const useDeleteContribution = () => {
   const queryClient = useQueryClient();
 

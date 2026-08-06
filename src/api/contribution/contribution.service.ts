@@ -68,6 +68,14 @@ export const ContributionService = {
     return response.data;
   },
 
+  updateContributionStatus: async (id: string, status: string, reason?: string) => {
+    const response = await ApiClient.patch<ApiResponse<Contribution>>(
+      `/contributions/${id}/status`,
+      { status, reason: reason?.trim() || "" },
+    );
+    return response.data;
+  },
+
   deleteContribution: async (id: string) => {
     const response = await ApiClient.delete<ApiResponse<null>>(`/contributions/${id}`);
     return response.data;

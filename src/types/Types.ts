@@ -175,6 +175,14 @@ export type ContributionType = "MONEY" | "ITEM";
 export type ContributionStatus = "PENDING" | "DEPOSITED" | "CANCELLED";
 export type PaymentMode = "CASH" | "UPI" | "BANK_TRANSFER" | "OTHER" | string;
 
+export type ContributionStatusHistoryEntry = {
+  from?: ContributionStatus | null;
+  to: ContributionStatus;
+  changedBy?: string;
+  reason?: string;
+  at?: string;
+};
+
 export type Contribution = {
   _id: string;
   organizationId: string;
@@ -245,6 +253,7 @@ export type ContributionListItem = {
   estimatedValue?: number;
   isBalanceApplied: boolean;
   slipPath?: string;
+  statusHistory?: ContributionStatusHistoryEntry[];
   createdAt?: string;
   updatedAt?: string;
   contributor?: {
