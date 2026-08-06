@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Receipt, Pencil, Trash2 } from "lucide-react";
 import { ConfirmDialog, FormDialog } from "@/components/common";
 import { useFestivals } from "@/api/festival/useFestivals";
-import { useContributors } from "@/api/contributor/useContributors";
+import { useFestivalApiStore } from "@/api/festival/festival.store";
 import {
   buildContributionSchema,
   type ContributionFormValues,
@@ -43,7 +43,7 @@ export function ContributionDialogs({
   onDeleteConfirm,
 }: ContributionDialogsProps) {
   const { data: festivalsData } = useFestivals();
-  const { data: contributorsData } = useContributors({ limit: 100, isActive: "true" });
+  const activeFestivalId = useFestivalApiStore((s) => s.activeFestivalId);
 
   const festivalOptions = useMemo(
     () =>
@@ -54,14 +54,7 @@ export function ContributionDialogs({
     [festivalsData],
   );
 
-  const contributorOptions = useMemo(
-    () =>
-      (contributorsData?.contributors || []).map((c) => ({
-        value: c._id,
-        label: `${c.name} (${c.contributorCode})`,
-      })),
-    [contributorsData],
-  );
+  const hideFestival = !!activeFestivalId;
 
   return (
     <>
@@ -71,7 +64,8 @@ export function ContributionDialogs({
         isPending={isPending}
         themeGradient={themeGradient}
         festivalOptions={festivalOptions}
-        contributorOptions={contributorOptions}
+        hideFestival={hideFestival}
+        defaultFestivalId={activeFestivalId ?? ""}
         onClose={onAddClose}
         onSubmit={onAddSubmit}
       />
@@ -83,7 +77,8 @@ export function ContributionDialogs({
         isPending={isPending}
         themeGradient={themeGradient}
         festivalOptions={festivalOptions}
-        contributorOptions={contributorOptions}
+        hideFestival={hideFestival}
+        defaultFestivalId={activeFestivalId ?? ""}
         onClose={onEditClose}
         onSubmit={onEditSubmit}
       />
@@ -110,7 +105,8 @@ function ContributionFormDialog({
   isPending,
   themeGradient,
   festivalOptions,
-  contributorOptions,
+  hideFestival,
+  defaultFestivalId,
   onClose,
   onSubmit,
 }: {
@@ -120,7 +116,8 @@ function ContributionFormDialog({
   isPending: boolean;
   themeGradient: string;
   festivalOptions: { value: string; label: string }[];
-  contributorOptions: { value: string; label: string }[];
+  hideFestival: boolean;
+  defaultFestivalId: string;
   onClose: () => void;
   onSubmit: (values: ContributionFormValues) => void;
 }) {
@@ -143,7 +140,7 @@ function ContributionFormDialog({
       email: "",
       address: "",
       category: "PARENT",
-      festivalId: "",
+      festivalId: defaultFestivalId,
       type: "MONEY",
       status: "PENDING",
       date: new Date().toISOString().slice(0, 10),
@@ -168,7 +165,7 @@ function ContributionFormDialog({
         email: "",
         address: "",
         category: "PARENT",
-        festivalId: "",
+        festivalId: defaultFestivalId,
         type: "MONEY",
         status: "PENDING",
         date: new Date().toISOString().slice(0, 10),
@@ -179,7 +176,7 @@ function ContributionFormDialog({
         paymentMode: "CASH",
       });
     }
-  }, [isOpen, isEdit, initialValues, reset]);
+  }, [isOpen, isEdit, initialValues, reset, defaultFestivalId]);
 
   return (
     <FormDialog
@@ -211,7 +208,7 @@ function ContributionFormDialog({
         setValue={setValue}
         prefix={mode}
         festivalOptions={festivalOptions}
-        contributorOptions={contributorOptions}
+        hideFestival={hideFestival}
       />
     </FormDialog>
   );

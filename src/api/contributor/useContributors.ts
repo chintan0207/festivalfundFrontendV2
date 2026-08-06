@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient, keepPreviousData } from "@tanstack/react-query";
 import { toast } from "sonner";
 import {
   ContributorService,
@@ -13,7 +13,11 @@ export const CONTRIBUTOR_QUERY_KEYS = {
   detail: (id: string) => ["contributor", id] as const,
 };
 
-export const useContributors = (params?: ContributorQueryParams) => {
+export type UseContributorsOptions = {
+  keepPreviousData?: boolean;
+};
+
+export const useContributors = (params?: ContributorQueryParams, options?: UseContributorsOptions) => {
   const setContributors = useContributorApiStore((s) => s.setContributors);
   const setPaginationMeta = useContributorApiStore((s) => s.setPaginationMeta);
   const setCategoryCounts = useContributorApiStore((s) => s.setCategoryCounts);
@@ -35,6 +39,7 @@ export const useContributors = (params?: ContributorQueryParams) => {
       return res.data;
     },
     staleTime: 0,
+    ...(options?.keepPreviousData ? { placeholderData: keepPreviousData } : {}),
   });
 };
 

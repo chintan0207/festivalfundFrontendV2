@@ -69,7 +69,7 @@ export function FormDialog({
           </div>
 
           {/* Body */}
-          <div className="grid gap-3 px-4 py-4 text-xs sm:gap-4 sm:px-6 min-h-0 overflow-y-auto overscroll-contain">
+          <div className="grid gap-2.5 px-4 py-3.5 text-xs sm:gap-4 sm:px-6 min-h-0 overflow-y-auto overscroll-contain">
             {children}
           </div>
 

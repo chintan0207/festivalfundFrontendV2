@@ -38,6 +38,9 @@ export function buildContributionSchema(mode: "add" | "edit") {
         if (data.contributorMode === "new" && !data.category) {
           ctx.addIssue({ path: ["category"], message: "Category is required" });
         }
+        if (data.contributorMode === "new" && data.phoneNumber && !/^\d{10}$/.test(data.phoneNumber)) {
+          ctx.addIssue({ path: ["phoneNumber"], message: "Enter a valid 10-digit phone number" });
+        }
         if (!data.festivalId) {
           ctx.addIssue({ path: ["festivalId"], message: "Select a festival" });
         }
