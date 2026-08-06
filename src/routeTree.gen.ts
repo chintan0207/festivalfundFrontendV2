@@ -36,6 +36,7 @@ import { Route as AuthResetPasswordRouteImport } from './routes/_auth/reset-pass
 import { Route as AuthLoginRouteImport } from './routes/_auth/login'
 import { Route as AuthForgotPasswordRouteImport } from './routes/_auth/forgot-password'
 import { Route as DashboardContributorsContributorIdRouteImport } from './routes/dashboard/contributors.$contributorId'
+import { Route as DashboardContributionsContributionIdRouteImport } from './routes/dashboard/contributions.$contributionId'
 
 const DashboardRouteRoute = DashboardRouteRouteImport.update({
   id: '/dashboard',
@@ -171,6 +172,12 @@ const DashboardContributorsContributorIdRoute =
     path: '/$contributorId',
     getParentRoute: () => DashboardContributorsRoute,
   } as any)
+const DashboardContributionsContributionIdRoute =
+  DashboardContributionsContributionIdRouteImport.update({
+    id: '/$contributionId',
+    path: '/$contributionId',
+    getParentRoute: () => DashboardContributionsRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof MarketingIndexRoute
@@ -190,13 +197,14 @@ export interface FileRoutesByFullPath {
   '/support': typeof MarketingSupportRoute
   '/terms-of-service': typeof MarketingTermsOfServiceRoute
   '/theme': typeof MarketingThemeRoute
-  '/dashboard/contributions': typeof DashboardContributionsRoute
+  '/dashboard/contributions': typeof DashboardContributionsRouteWithChildren
   '/dashboard/contributors': typeof DashboardContributorsRouteWithChildren
   '/dashboard/expenses': typeof DashboardExpensesRoute
   '/dashboard/festivals': typeof DashboardFestivalsRoute
   '/dashboard/reports': typeof DashboardReportsRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
   '/dashboard/': typeof DashboardIndexRoute
+  '/dashboard/contributions/$contributionId': typeof DashboardContributionsContributionIdRoute
   '/dashboard/contributors/$contributorId': typeof DashboardContributorsContributorIdRoute
 }
 export interface FileRoutesByTo {
@@ -216,13 +224,14 @@ export interface FileRoutesByTo {
   '/support': typeof MarketingSupportRoute
   '/terms-of-service': typeof MarketingTermsOfServiceRoute
   '/theme': typeof MarketingThemeRoute
-  '/dashboard/contributions': typeof DashboardContributionsRoute
+  '/dashboard/contributions': typeof DashboardContributionsRouteWithChildren
   '/dashboard/contributors': typeof DashboardContributorsRouteWithChildren
   '/dashboard/expenses': typeof DashboardExpensesRoute
   '/dashboard/festivals': typeof DashboardFestivalsRoute
   '/dashboard/reports': typeof DashboardReportsRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
   '/dashboard': typeof DashboardIndexRoute
+  '/dashboard/contributions/$contributionId': typeof DashboardContributionsContributionIdRoute
   '/dashboard/contributors/$contributorId': typeof DashboardContributorsContributorIdRoute
 }
 export interface FileRoutesById {
@@ -245,7 +254,7 @@ export interface FileRoutesById {
   '/_marketing/support': typeof MarketingSupportRoute
   '/_marketing/terms-of-service': typeof MarketingTermsOfServiceRoute
   '/_marketing/theme': typeof MarketingThemeRoute
-  '/dashboard/contributions': typeof DashboardContributionsRoute
+  '/dashboard/contributions': typeof DashboardContributionsRouteWithChildren
   '/dashboard/contributors': typeof DashboardContributorsRouteWithChildren
   '/dashboard/expenses': typeof DashboardExpensesRoute
   '/dashboard/festivals': typeof DashboardFestivalsRoute
@@ -253,6 +262,7 @@ export interface FileRoutesById {
   '/dashboard/settings': typeof DashboardSettingsRoute
   '/_marketing/': typeof MarketingIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
+  '/dashboard/contributions/$contributionId': typeof DashboardContributionsContributionIdRoute
   '/dashboard/contributors/$contributorId': typeof DashboardContributorsContributorIdRoute
 }
 export interface FileRouteTypes {
@@ -282,6 +292,7 @@ export interface FileRouteTypes {
     | '/dashboard/reports'
     | '/dashboard/settings'
     | '/dashboard/'
+    | '/dashboard/contributions/$contributionId'
     | '/dashboard/contributors/$contributorId'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -308,6 +319,7 @@ export interface FileRouteTypes {
     | '/dashboard/reports'
     | '/dashboard/settings'
     | '/dashboard'
+    | '/dashboard/contributions/$contributionId'
     | '/dashboard/contributors/$contributorId'
   id:
     | '__root__'
@@ -337,6 +349,7 @@ export interface FileRouteTypes {
     | '/dashboard/settings'
     | '/_marketing/'
     | '/dashboard/'
+    | '/dashboard/contributions/$contributionId'
     | '/dashboard/contributors/$contributorId'
   fileRoutesById: FileRoutesById
 }
@@ -537,6 +550,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardContributorsContributorIdRouteImport
       parentRoute: typeof DashboardContributorsRoute
     }
+    '/dashboard/contributions/$contributionId': {
+      id: '/dashboard/contributions/$contributionId'
+      path: '/$contributionId'
+      fullPath: '/dashboard/contributions/$contributionId'
+      preLoaderRoute: typeof DashboardContributionsContributionIdRouteImport
+      parentRoute: typeof DashboardContributionsRoute
+    }
   }
 }
 
@@ -592,6 +612,21 @@ const MarketingRouteRouteWithChildren = MarketingRouteRoute._addFileChildren(
   MarketingRouteRouteChildren,
 )
 
+interface DashboardContributionsRouteChildren {
+  DashboardContributionsContributionIdRoute: typeof DashboardContributionsContributionIdRoute
+}
+
+const DashboardContributionsRouteChildren: DashboardContributionsRouteChildren =
+  {
+    DashboardContributionsContributionIdRoute:
+      DashboardContributionsContributionIdRoute,
+  }
+
+const DashboardContributionsRouteWithChildren =
+  DashboardContributionsRoute._addFileChildren(
+    DashboardContributionsRouteChildren,
+  )
+
 interface DashboardContributorsRouteChildren {
   DashboardContributorsContributorIdRoute: typeof DashboardContributorsContributorIdRoute
 }
@@ -607,7 +642,7 @@ const DashboardContributorsRouteWithChildren =
   )
 
 interface DashboardRouteRouteChildren {
-  DashboardContributionsRoute: typeof DashboardContributionsRoute
+  DashboardContributionsRoute: typeof DashboardContributionsRouteWithChildren
   DashboardContributorsRoute: typeof DashboardContributorsRouteWithChildren
   DashboardExpensesRoute: typeof DashboardExpensesRoute
   DashboardFestivalsRoute: typeof DashboardFestivalsRoute
@@ -617,7 +652,7 @@ interface DashboardRouteRouteChildren {
 }
 
 const DashboardRouteRouteChildren: DashboardRouteRouteChildren = {
-  DashboardContributionsRoute: DashboardContributionsRoute,
+  DashboardContributionsRoute: DashboardContributionsRouteWithChildren,
   DashboardContributorsRoute: DashboardContributorsRouteWithChildren,
   DashboardExpensesRoute: DashboardExpensesRoute,
   DashboardFestivalsRoute: DashboardFestivalsRoute,

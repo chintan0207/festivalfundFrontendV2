@@ -13,7 +13,7 @@ import { ContributorContributions } from "./components/detail/ContributorContrib
 import { ContributorContributionCards } from "./components/detail/ContributorContributionCards";
 import { ContributorDialogs } from "./components/dialogs/ContributorDialogs";
 import { useContributorDialogs } from "./useContributorDialogs";
-import type { Contribution, Contributor } from "@/types/Types";
+import type { Contribution, ContributionListItem, Contributor } from "@/types/Types";
 
 const dummyContributor: Contributor = {
   _id: "dummy-001",
@@ -35,7 +35,7 @@ const dummyContributions: Contribution[] = [
     organizationId: "org-1",
     contributorId: dummyContributor._id,
     festivalId: { _id: "fest-1", name: "Ganesh Chaturthi", year: 2026 } as never,
-    type: "CASH",
+    type: "MONEY",
     status: "DEPOSITED",
     date: "2026-05-12T00:00:00.000Z",
     amount: 5000,
@@ -49,7 +49,7 @@ const dummyContributions: Contribution[] = [
     organizationId: "org-1",
     contributorId: dummyContributor._id,
     festivalId: { _id: "fest-2", name: "Diwali", year: 2025 } as never,
-    type: "CASH",
+    type: "MONEY",
     status: "DEPOSITED",
     date: "2025-11-05T00:00:00.000Z",
     amount: 2000,
@@ -78,7 +78,7 @@ const dummyContributions: Contribution[] = [
     organizationId: "org-1",
     contributorId: dummyContributor._id,
     festivalId: { _id: "fest-4", name: "Navratri", year: 2026 } as never,
-    type: "CASH",
+    type: "MONEY",
     status: "CANCELLED",
     date: "2026-04-10T00:00:00.000Z",
     amount: 3500,
@@ -92,7 +92,7 @@ const dummyContributions: Contribution[] = [
     organizationId: "org-1",
     contributorId: dummyContributor._id,
     festivalId: { _id: "fest-5", name: "Diwali", year: 2024 } as never,
-    type: "CASH",
+    type: "MONEY",
     status: "DEPOSITED",
     date: "2024-10-28T00:00:00.000Z",
     amount: 4000,
@@ -106,7 +106,7 @@ const dummyContributions: Contribution[] = [
     organizationId: "org-1",
     contributorId: dummyContributor._id,
     festivalId: { _id: "fest-6", name: "Ganesh Chaturthi", year: 2025 } as never,
-    type: "CASH",
+    type: "MONEY",
     status: "DEPOSITED",
     date: "2025-08-22T00:00:00.000Z",
     amount: 5000,
@@ -133,16 +133,23 @@ export default function ContributorDetailPage() {
     onDeleted: () => router.history.back(),
   });
 
-  const contributions = contributionsData || [];
+  const contributions = contributionsData?.contributions || [];
   const isDummy = !contributor || contributions.length === 0;
   const activeContributor = contributor || dummyContributor;
-  const displayContributions = isDummy ? dummyContributions : contributions;
+  const displayContributions: ContributionListItem[] = isDummy
+    ? (dummyContributions as unknown as ContributionListItem[])
+    : contributions;
 
   const totalContributed = contributionTotal(displayContributions);
 
   const festivalIds = new Set(
     displayContributions
-      .map((c) => (typeof c.festivalId === "object" ? c.festivalId._id : c.festivalId))
+      .map((c) => {
+        const legacy = (c as Partial<Contribution>).festivalId;
+        if (typeof legacy === "string") return legacy;
+        if (legacy && typeof legacy === "object") return legacy._id;
+        return c.festival?._id;
+      })
       .filter(Boolean),
   );
 
@@ -208,7 +215,7 @@ export default function ContributorDetailPage() {
       <div className="md:hidden space-y-3">
         <ContributionsSectionHeading count={displayContributions.length} />
         <ContributorContributionCards
-          contributions={displayContributions}
+          contributions={displayContributions as Contribution[]}
           isLoading={loadingContributions}
         />
       </div>
@@ -216,7 +223,7 @@ export default function ContributorDetailPage() {
       {/* Contributions - desktop table */}
       <div className="hidden md:block">
         <ContributorContributions
-          contributions={displayContributions}
+          contributions={displayContributions as Contribution[]}
           isLoading={loadingContributions}
           module="contributors"
         />

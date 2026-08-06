@@ -3,27 +3,34 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { ContributionService, type ContributionQueryParams } from "./contribution.service";
 import { useContributionApiStore } from "./contribution.store";
-import { normalizeContributions } from "@/lib/contributionFormat";
 import type { CreateContributionPayload, UpdateContributionPayload } from "@/types/Types";
 
 export const CONTRIBUTION_QUERY_KEYS = {
-  all: (params?: ContributionQueryParams) => ["contributions", params] as const,
+  all: (params?: ContributionQueryParams) =>
+    params ? ["contributions", params] as const : ["contributions"] as const,
   detail: (id: string) => ["contribution", id] as const,
 };
 
 export const useContributions = (params?: ContributionQueryParams) => {
   const setContributions = useContributionApiStore((s) => s.setContributions);
+  const setPaginationMeta = useContributionApiStore((s) => s.setPaginationMeta);
 
   return useQuery({
     queryKey: CONTRIBUTION_QUERY_KEYS.all(params),
     queryFn: async () => {
       const res = await ContributionService.getAllContributions(params);
       if (res.data) {
-        setContributions(res.data);
+        setContributions(res.data.contributions);
+        setPaginationMeta({
+          total: res.data.total,
+          page: res.data.page,
+          limit: res.data.limit,
+          totalPages: res.data.totalPages,
+        });
       }
-      return normalizeContributions(res.data);
+      return res.data;
     },
-    staleTime: 5 * 60 * 1000,
+    staleTime: 0,
   });
 };
 

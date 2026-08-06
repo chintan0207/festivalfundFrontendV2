@@ -1,5 +1,6 @@
 import type {
   Contribution,
+  ContributionListItem,
   CreateContributionPayload,
   UpdateContributionPayload,
 } from "@/types/Types";
@@ -13,24 +14,38 @@ export type ApiResponse<T> = {
 };
 
 export type ContributionQueryParams = {
-  festivalId?: string;
-  contributorId?: string;
-  type?: string;
-  status?: string;
   page?: number;
   limit?: number;
+  search?: string;
+  sortField?: string;
+  sortOrder?: "asc" | "desc";
+  festivalId?: string;
+  contributorId?: string;
+  status?: string;
+  category?: string;
+  type?: string;
+};
+
+export type ContributionListData = {
+  contributions: ContributionListItem[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
 };
 
 export const ContributionService = {
   getAllContributions: async (params?: ContributionQueryParams) => {
-    const response = await ApiClient.get<ApiResponse<Contribution[]>>("/contributions", {
+    const response = await ApiClient.get<ApiResponse<ContributionListData>>("/contributions", {
       params,
     });
     return response.data;
   },
 
   getContributionById: async (id: string) => {
-    const response = await ApiClient.get<ApiResponse<Contribution>>(`/contributions/${id}`);
+    const response = await ApiClient.get<ApiResponse<ContributionListItem>>(
+      `/contributions/${id}`,
+    );
     return response.data;
   },
 

@@ -1,5 +1,4 @@
 import { createRootRouteWithContext, Outlet } from "@tanstack/react-router";
-import { TanStackRouterDevtools } from "@tanstack/router-devtools";
 import { ThemeProvider } from "@/theme/theme-provider";
 import { Providers } from "@/api/providers";
 import { AppToaster } from "@/components/ui/sonner";
@@ -23,7 +22,6 @@ function RootLayout() {
       <Providers>
         <Outlet />
         <AppToaster />
-        <TanStackRouterDevtools />
       </Providers>
     </ThemeProvider>
   );

@@ -171,7 +171,7 @@ export type UpdateContributorPayload = {
 };
 
 // Contribution Types
-export type ContributionType = "CASH" | "ITEM";
+export type ContributionType = "MONEY" | "ITEM";
 export type ContributionStatus = "PENDING" | "DEPOSITED" | "CANCELLED";
 export type PaymentMode = "CASH" | "UPI" | "BANK_TRANSFER" | "OTHER" | string;
 
@@ -230,6 +230,35 @@ export type UpdateContributionPayload = {
   slipPath?: string;
   paymentMode?: PaymentMode;
   isBalanceApplied?: boolean;
+};
+
+export type ContributionListItem = {
+  _id: string;
+  contributionCode: string;
+  type: ContributionType;
+  status: ContributionStatus;
+  paymentMode: PaymentMode;
+  date: string;
+  amount?: number;
+  itemName?: string;
+  quantity?: number;
+  estimatedValue?: number;
+  isBalanceApplied: boolean;
+  slipPath?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  contributor?: {
+    _id: string;
+    contributorCode?: string;
+    name?: string;
+    category?: ContributorCategory;
+    phoneNumber?: string;
+  };
+  festival?: {
+    _id: string;
+    name?: string;
+    year?: number;
+  };
 };
 
 

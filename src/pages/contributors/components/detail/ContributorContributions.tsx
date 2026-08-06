@@ -45,7 +45,7 @@ export function ContributorContributions({
       sortable: true,
       render: (c) => (
         <span className={cn("inline-flex items-center gap-1 text-xs font-semibold", contributionTypeStyles[c.type])}>
-          {c.type === "CASH" ? <Banknote className="h-3 w-3" /> : <Package className="h-3 w-3" />}
+          {c.type === "MONEY" ? <Banknote className="h-3 w-3" /> : <Package className="h-3 w-3" />}
           {c.type}
         </span>
       ),

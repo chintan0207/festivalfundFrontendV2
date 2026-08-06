@@ -28,7 +28,7 @@ function ContributionCard({ c }: { c: Contribution }) {
 
       <div className="flex items-center justify-between text-xs">
         <span className={cn("inline-flex items-center gap-1 font-semibold", contributionTypeStyles[c.type])}>
-          {c.type === "CASH" ? <Banknote className="h-3.5 w-3.5" /> : <Package className="h-3.5 w-3.5" />}
+          {c.type === "MONEY" ? <Banknote className="h-3.5 w-3.5" /> : <Package className="h-3.5 w-3.5" />}
           {c.type}
         </span>
         <span className="font-bold text-foreground">{formatContributionAmount(c)}</span>
