@@ -16,6 +16,7 @@ export const CONTRIBUTOR_QUERY_KEYS = {
 export const useContributors = (params?: ContributorQueryParams) => {
   const setContributors = useContributorApiStore((s) => s.setContributors);
   const setPaginationMeta = useContributorApiStore((s) => s.setPaginationMeta);
+  const setCategoryCounts = useContributorApiStore((s) => s.setCategoryCounts);
 
   return useQuery({
     queryKey: CONTRIBUTOR_QUERY_KEYS.all(params),
@@ -29,6 +30,7 @@ export const useContributors = (params?: ContributorQueryParams) => {
           limit: res.data.limit,
           totalPages: res.data.totalPages,
         });
+        setCategoryCounts(res.data.categoryCounts);
       }
       return res.data;
     },

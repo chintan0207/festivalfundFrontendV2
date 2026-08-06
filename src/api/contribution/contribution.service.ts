@@ -32,6 +32,12 @@ export type ContributionListData = {
   page: number;
   limit: number;
   totalPages: number;
+  statusCounts: {
+    total: number;
+    DEPOSITED: number;
+    PENDING: number;
+    CANCELLED: number;
+  };
 };
 
 export const ContributionService = {

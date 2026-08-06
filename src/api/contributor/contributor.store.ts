@@ -14,6 +14,12 @@ type ContributorState = {
   isActive: string;
   total: number;
   totalPages: number;
+  categoryCounts: {
+    total: number;
+    PARENT: number;
+    BOY: number;
+    GIRL: number;
+  };
 
   setContributors: (contributors: Contributor[]) => void;
   setSelectedContributor: (contributor: Contributor | null) => void;
@@ -26,6 +32,12 @@ type ContributorState = {
   setIsActive: (isActive: string) => void;
   setTotal: (total: number) => void;
   setTotalPages: (totalPages: number) => void;
+  setCategoryCounts: (categoryCounts: {
+    total: number;
+    PARENT: number;
+    BOY: number;
+    GIRL: number;
+  }) => void;
   setPaginationMeta: (data: {
     total: number;
     page: number;
@@ -46,6 +58,7 @@ const initialFilters = {
   isActive: "true",
   total: 0,
   totalPages: 0,
+  categoryCounts: { total: 0, PARENT: 0, BOY: 0, GIRL: 0 },
 };
 
 export const useContributorApiStore = create<ContributorState>((set) => ({
@@ -64,9 +77,16 @@ export const useContributorApiStore = create<ContributorState>((set) => ({
   setIsActive: (isActive) => set({ isActive, page: 1 }),
   setTotal: (total) => set({ total }),
   setTotalPages: (totalPages) => set({ totalPages }),
+  setCategoryCounts: (categoryCounts) => set({ categoryCounts }),
   setPaginationMeta: ({ total, page, limit, totalPages }) =>
     set({ total, page, limit, totalPages }),
-  resetFilters: () => set({ ...initialFilters }),
+  resetFilters: () =>
+    set((state) => ({
+      ...initialFilters,
+      total: state.total,
+      totalPages: state.totalPages,
+      categoryCounts: state.categoryCounts,
+    })),
   clearContributorState: () =>
     set({ contributors: [], selectedContributor: null, ...initialFilters }),
 }));

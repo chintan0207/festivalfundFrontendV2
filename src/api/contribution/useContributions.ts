@@ -14,6 +14,7 @@ export const CONTRIBUTION_QUERY_KEYS = {
 export const useContributions = (params?: ContributionQueryParams) => {
   const setContributions = useContributionApiStore((s) => s.setContributions);
   const setPaginationMeta = useContributionApiStore((s) => s.setPaginationMeta);
+  const setStatusCounts = useContributionApiStore((s) => s.setStatusCounts);
 
   return useQuery({
     queryKey: CONTRIBUTION_QUERY_KEYS.all(params),
@@ -27,6 +28,7 @@ export const useContributions = (params?: ContributionQueryParams) => {
           limit: res.data.limit,
           totalPages: res.data.totalPages,
         });
+        setStatusCounts(res.data.statusCounts);
       }
       return res.data;
     },

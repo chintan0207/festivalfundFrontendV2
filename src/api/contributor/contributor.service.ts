@@ -28,6 +28,12 @@ export type ContributorListData = {
   page: number;
   limit: number;
   totalPages: number;
+  categoryCounts: {
+    total: number;
+    PARENT: number;
+    BOY: number;
+    GIRL: number;
+  };
 };
 
 export const ContributorService = {

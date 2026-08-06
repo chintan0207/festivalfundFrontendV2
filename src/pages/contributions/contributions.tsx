@@ -37,6 +37,7 @@ export default function ContributionsPage() {
   const total = useContributionApiStore((s) => s.total);
   const totalPages = useContributionApiStore((s) => s.totalPages);
   const contributions = useContributionApiStore((s) => s.contributions);
+  const statusCounts = useContributionApiStore((s) => s.statusCounts);
   const setPage = useContributionApiStore((s) => s.setPage);
   const setLimit = useContributionApiStore((s) => s.setLimit);
   const setSearch = useContributionApiStore((s) => s.setSearch);
@@ -176,18 +177,6 @@ export default function ContributionsPage() {
         searchPlaceholder="Search by code, name, phone, or item..."
         quickFilters={[
           {
-            id: "status",
-            label: "Status",
-            value: status || "ALL",
-            options: [
-              { value: "ALL", label: "All Statuses" },
-              { value: "DEPOSITED", label: "Deposited" },
-              { value: "PENDING", label: "Pending" },
-              { value: "CANCELLED", label: "Cancelled" },
-            ],
-            onChange: (val) => setStatus(val === "ALL" ? "" : val),
-          },
-          {
             id: "category",
             label: "Category",
             value: category || "ALL",
@@ -209,6 +198,21 @@ export default function ContributionsPage() {
               { value: "ITEM", label: "Item" },
             ],
             onChange: (val) => setType(val === "ALL" ? "" : val),
+          },
+        ]}
+        pillGroups={[
+          {
+            id: "status",
+            label: "Status",
+            value: status || "ALL",
+            options: [
+              { value: "ALL", label: "All", count: statusCounts.total ?? total },
+              { value: "DEPOSITED", label: "Deposited", count: statusCounts.DEPOSITED ?? 0 },
+              { value: "PENDING", label: "Pending", count: statusCounts.PENDING ?? 0 },
+              { value: "CANCELLED", label: "Cancelled", count: statusCounts.CANCELLED ?? 0 },
+            ],
+            onChange: (val) => setStatus(val === "ALL" ? "" : val),
+            variant: "module",
           },
         ]}
         sortOptions={[

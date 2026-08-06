@@ -1,4 +1,4 @@
-import { type ReactNode } from "react";
+import { type ReactNode, useState } from "react";
 import {
   Search,
   X,
@@ -10,6 +10,7 @@ import {
   ArrowUp,
   ArrowDown,
 } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { Input } from "@/components/ui/input";
 import { AppBadge } from "./AppBadge";
 import {
@@ -155,8 +156,74 @@ export function PageFilterToolbar({
         ]
       : [];
 
-  const primaryFilter = quickFilters.length > 0 ? quickFilters[0] : null;
   const popoverFilters = quickFilters;
+
+  const isMobile = useIsMobile();
+  const [moreOpen, setMoreOpen] = useState(false);
+
+  // Staged (mobile-only) draft state — committed when Apply is pressed.
+  const [draftQuick, setDraftQuick] = useState<Record<string, string>>({});
+  const [draftPills, setDraftPills] = useState<Record<string, string>>({});
+  const [draftSort, setDraftSort] = useState<string | undefined>(activeSort);
+  const [draftOrder, setDraftOrder] = useState<"asc" | "desc">(sortDirection);
+
+  const getDefaultValue = (options: { value: string }[]) =>
+    options.find((o) => o.value === "ALL")?.value ?? options[0]?.value ?? "";
+
+  const seedMobileDraft = () => {
+    const q: Record<string, string> = {};
+    popoverFilters.forEach((g) => (q[g.id] = g.value));
+    setDraftQuick(q);
+    const p: Record<string, string> = {};
+    effectivePillGroups.forEach((g) => (p[g.id] = g.value));
+    setDraftPills(p);
+    setDraftSort(activeSort);
+    setDraftOrder(sortDirection);
+  };
+
+  const handleMoreOpenChange = (open: boolean) => {
+    if (open && isMobile) seedMobileDraft();
+    setMoreOpen(open);
+  };
+
+  const commitSort = () => {
+    if (!onSortChange || draftSort === undefined || draftSort === "") return;
+    const fieldChanged = draftSort !== activeSort;
+    const orderChanged = draftOrder !== sortDirection;
+    if (!fieldChanged && !orderChanged) return;
+
+    onSortChange(draftSort);
+    // If the user only toggled direction on the already-active field, a single
+    // `handleSort` call will toggle it correctly. If a new field was selected,
+    // handleSort pins 'desc'; re-apply once more to honour a staged 'asc'.
+    if (fieldChanged && draftOrder === "asc") {
+      onSortChange(draftSort);
+    }
+  };
+
+  const applyMobileDraft = () => {
+    Object.entries(draftPills).forEach(([id, v]) => {
+      const g = effectivePillGroups.find((grp) => grp.id === id);
+      g?.onChange(v);
+    });
+    Object.entries(draftQuick).forEach(([id, v]) => {
+      const g = popoverFilters.find((grp) => grp.id === id);
+      g?.onChange(v);
+    });
+    commitSort();
+    setMoreOpen(false);
+  };
+
+  const resetMobileDraft = () => {
+    const q: Record<string, string> = {};
+    popoverFilters.forEach((g) => (q[g.id] = getDefaultValue(g.options)));
+    setDraftQuick(q);
+    const p: Record<string, string> = {};
+    effectivePillGroups.forEach((g) => (p[g.id] = getDefaultValue(g.options)));
+    setDraftPills(p);
+    setDraftSort(sortOptions?.[0]?.id ?? activeSort);
+    setDraftOrder("desc");
+  };
 
   const hasActiveFilters =
     Boolean(searchQuery) ||
@@ -191,6 +258,50 @@ export function PageFilterToolbar({
       default:
         return cn(theme.gradient, "text-white font-bold shadow-xs border-0");
     }
+  };
+
+  const renderPillOptions = (
+    group: InlinePillGroup,
+    valueOverride?: string,
+    onSelectOverride?: (value: string) => void
+  ) => {
+    const value = valueOverride ?? group.value;
+    const onSelect = onSelectOverride ?? group.onChange;
+
+    return (
+      <div className="flex items-center gap-1.5 flex-wrap">
+        {group.options.map((opt) => {
+          const isSelected = value === opt.value;
+          const variantClass = getPillVariantStyles(group.variant, isSelected);
+
+          return (
+            <button
+              key={opt.value}
+              type="button"
+              onClick={() => onSelect(opt.value)}
+              className={cn(
+                "h-7 px-3 rounded-full text-xs font-semibold transition-all duration-200 cursor-pointer flex items-center gap-1 whitespace-nowrap active:scale-95",
+                variantClass
+              )}
+            >
+              <span>{opt.label}</span>
+              {opt.count !== undefined && (
+                <span
+                  className={cn(
+                    "text-[10px] px-1.5 py-0.2 rounded-full font-bold ml-0.5",
+                    isSelected
+                      ? "bg-white/20 text-white"
+                      : "bg-muted text-muted-foreground"
+                  )}
+                >
+                  {opt.count}
+                </span>
+              )}
+            </button>
+          );
+        })}
+      </div>
+    );
   };
 
   return (
@@ -229,76 +340,26 @@ export function PageFilterToolbar({
 
           {searchRightActions}
 
-          {/* Primary Quick Select Dropdown */}
-          {!minimal && primaryFilter && (
-            <DropdownMenu key={primaryFilter.id}>
-              <DropdownMenuTrigger asChild>
-                <button
-                  type="button"
-                  className={cn(
-                    "h-9 px-3.5 rounded-full border text-xs font-semibold flex items-center gap-2 transition-all shadow-2xs focus:outline-none cursor-pointer",
-                    primaryFilter.value &&
-                      primaryFilter.value !== "ALL" &&
-                      primaryFilter.value !== ""
-                      ? cn(theme.badgeColor, "font-bold shadow-xs")
-                      : "border-border/80 bg-muted/30 hover:bg-muted/60 text-foreground"
-                  )}
-                >
-                  {primaryFilter.icon}
-                  <span className="truncate max-w-[150px]">
-                    {primaryFilter.options.find(
-                      (o) => o.value === primaryFilter.value
-                    )?.label || primaryFilter.label}
-                  </span>
-                  <ChevronDown className="h-3.5 w-3.5 opacity-70 shrink-0" />
-                </button>
-              </DropdownMenuTrigger>
-
-              <DropdownMenuContent
-                align="start"
-                className="w-52 rounded-2xl p-1.5 shadow-lg border-border/80"
-              >
-                <DropdownMenuLabel className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider px-2 py-1">
-                  {primaryFilter.label}
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator className="my-1" />
-                {primaryFilter.options.map((opt) => {
-                  const isSelected = opt.value === primaryFilter.value;
-                  return (
-                    <DropdownMenuItem
-                      key={opt.value}
-                      onClick={() => primaryFilter.onChange(opt.value)}
-                      className={cn(
-                        "text-xs font-medium px-2.5 py-1.5 rounded-xl flex items-center justify-between cursor-pointer transition-colors",
-                        isSelected
-                          ? cn(theme.badgeColor, "font-bold")
-                          : "text-foreground hover:bg-muted/60"
-                      )}
-                    >
-                      <span>{opt.label}</span>
-                      {isSelected && (
-                        <Check className={cn("h-3.5 w-3.5", theme.iconColor)} />
-                      )}
-                    </DropdownMenuItem>
-                  );
-                })}
-              </DropdownMenuContent>
-            </DropdownMenu>
-          )}
-
           {/* MORE FILTERS POPOVER */}
-          {!minimal && popoverFilters.length > 0 && (
-            <Popover>
+          {!minimal &&
+            (popoverFilters.length > 0 ||
+              (isMobile &&
+                (effectivePillGroups.length > 0 ||
+                  (sortOptions ? sortOptions.length > 0 : false)))) && (
+            <Popover
+              open={moreOpen}
+              onOpenChange={handleMoreOpenChange}
+            >
               <PopoverTrigger asChild>
                 <button
                   type="button"
                   className={cn(
-                    "h-9 px-4 rounded-full text-xs font-semibold flex items-center gap-2 shadow-2xs transition-all cursor-pointer active:scale-95 text-white",
+                    "w-full sm:w-auto h-9 px-4 rounded-full text-xs font-semibold flex items-center justify-center gap-2 shadow-2xs transition-all cursor-pointer active:scale-95 text-white",
                     theme.gradient
                   )}
                 >
                   <SlidersHorizontal className="h-3.5 w-3.5 text-white" />
-                  <span>More</span>
+                  <span>More Filters</span>
                   <ChevronDown className="h-3.5 w-3.5 text-white/80" />
                 </button>
               </PopoverTrigger>
@@ -307,23 +368,114 @@ export function PageFilterToolbar({
                 align="end"
                 className="w-80 p-3.5 rounded-2xl border border-border/80 bg-popover/95 backdrop-blur-md shadow-2xl space-y-3"
               >
-                <div className="flex items-center justify-between pb-2 border-b border-border/60">
+                <div className="flex items-center justify-between gap-2 pb-2 border-b border-border/60">
                   <h4 className="text-xs font-bold text-foreground tracking-tight">Filters</h4>
-                  {onResetAll && (
-                    <button
-                      type="button"
-                      onClick={onResetAll}
-                      className="text-[11px] font-semibold text-rose-500 hover:text-rose-600 transition-colors cursor-pointer"
-                    >
-                      Clear All
-                    </button>
-                  )}
+                  <div className="flex items-center gap-2">
+                    {isMobile && (
+                      <button
+                        type="button"
+                        onClick={applyMobileDraft}
+                        className={cn(
+                          "h-7 px-3 rounded-full text-xs font-bold text-white shadow-xs active:scale-95 transition-all cursor-pointer",
+                          theme.gradient
+                        )}
+                      >
+                        <span>Apply</span>
+                      </button>
+                    )}
+                    {onResetAll && (
+                      <button
+                        type="button"
+                        onClick={isMobile ? resetMobileDraft : onResetAll}
+                        className="text-[11px] font-semibold text-rose-500 hover:text-rose-600 transition-colors cursor-pointer"
+                      >
+                        Clear All
+                      </button>
+                    )}
+                  </div>
                 </div>
 
+                {/* SORT (mobile only — moved to the top) */}
+                {!minimal && sortOptions && sortOptions.length > 0 && onSortChange && (
+                  <div className="sm:hidden pt-2.5 border-t border-border/50 space-y-2.5">
+                    <div className="flex items-center gap-1.5 text-xs text-muted-foreground flex-wrap">
+                      <span className="font-semibold text-muted-foreground">Sort by:</span>
+                      <div className="flex items-center gap-1 overflow-x-auto no-scrollbar">
+                        {sortOptions.map((s) => {
+                          const isSelected = isMobile
+                            ? draftSort === s.id
+                            : activeSort === s.id;
+                          return (
+                            <button
+                              key={s.id}
+                              type="button"
+                              onClick={() => {
+                                if (isMobile) {
+                                  if (draftSort === s.id) {
+                                    setDraftOrder((o) =>
+                                      o === "asc" ? "desc" : "asc"
+                                    );
+                                  } else {
+                                    setDraftSort(s.id);
+                                    setDraftOrder("desc");
+                                  }
+                                } else {
+                                  onSortChange(s.id);
+                                }
+                              }}
+                              className={cn(
+                                "px-2.5 py-1 rounded-full text-xs font-semibold transition-all cursor-pointer flex items-center gap-1 whitespace-nowrap",
+                                isSelected
+                                  ? cn("text-white font-bold shadow-2xs", theme.gradient)
+                                  : "text-muted-foreground hover:text-foreground border border-border/60 bg-background/50"
+                              )}
+                            >
+                              <span>{s.label}</span>
+                              {isSelected &&
+                                ((isMobile ? draftOrder : sortDirection) ===
+                                "asc" ? (
+                                  <ArrowUp className="h-3 w-3 text-white" />
+                                ) : (
+                                  <ArrowDown className="h-3 w-3 text-white" />
+                                ))}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* PILL GROUPS (mobile only — inline row is hidden on mobile) */}
+                {effectivePillGroups.length > 0 && (
+                  <div className="sm:hidden space-y-3">
+                    {effectivePillGroups.map((group) => (
+                      <div key={group.id} className="space-y-1.5">
+                        <div className="flex items-center gap-1.5 text-muted-foreground font-semibold">
+                          {group.icon || <Filter className="h-3.5 w-3.5 text-muted-foreground" />}
+                          <span className="text-xs">{group.label}:</span>
+                        </div>
+                        {isMobile
+                          ? renderPillOptions(
+                              group,
+                              draftPills[group.id] ?? group.value,
+                              (v) =>
+                                setDraftPills((prev) => ({ ...prev, [group.id]: v }))
+                            )
+                          : renderPillOptions(group)}
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* QUICK FILTERS (dropdowns) — shown on all sizes */}
                 <div className="space-y-3 max-h-80 overflow-y-auto no-scrollbar pr-0.5">
                   {popoverFilters.map((group) => {
+                    const activeValue = isMobile
+                      ? draftQuick[group.id] ?? group.value
+                      : group.value;
                     const selectedOpt = group.options.find(
-                      (o) => o.value === group.value
+                      (o) => o.value === activeValue
                     );
                     const selectedLabel = selectedOpt
                       ? selectedOpt.label
@@ -341,7 +493,7 @@ export function PageFilterToolbar({
                               type="button"
                               className={cn(
                                 "w-full h-9 px-3 rounded-xl border text-xs font-semibold flex items-center justify-between transition-all cursor-pointer shadow-2xs",
-                                group.value && group.value !== "ALL"
+                                activeValue && activeValue !== "ALL"
                                   ? cn(theme.badgeColor, "font-bold")
                                   : "border-border/80 bg-muted/30 hover:bg-muted/60 text-foreground"
                               )}
@@ -363,11 +515,18 @@ export function PageFilterToolbar({
                             </DropdownMenuLabel>
                             <DropdownMenuSeparator className="my-1" />
                             {group.options.map((opt) => {
-                              const isSelected = opt.value === group.value;
+                              const isSelected = opt.value === activeValue;
                               return (
                                 <DropdownMenuItem
                                   key={opt.value}
-                                  onClick={() => group.onChange(opt.value)}
+                                  onClick={() =>
+                                    isMobile
+                                      ? setDraftQuick((prev) => ({
+                                          ...prev,
+                                          [group.id]: opt.value,
+                                        }))
+                                      : group.onChange(opt.value)
+                                  }
                                   className={cn(
                                     "text-xs font-medium px-2.5 py-1.5 rounded-xl flex items-center justify-between cursor-pointer transition-colors",
                                     isSelected
@@ -388,14 +547,29 @@ export function PageFilterToolbar({
                     );
                   })}
                 </div>
+
+                {/* MOBILE: CLEAR (staged, full-width) */}
+                {isMobile && (
+                  <div className="sm:hidden pt-2.5 border-t border-border/50 space-y-2.5">
+                    <button
+                      type="button"
+                      onClick={resetMobileDraft}
+                      className="w-full inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-full text-xs font-bold text-white bg-rose-600 hover:bg-rose-700 transition-all cursor-pointer shadow-xs active:scale-95"
+                      title="Clear all active filters"
+                    >
+                      <RotateCcw className="h-3 w-3 text-white" />
+                      <span>Clear All</span>
+                    </button>
+                  </div>
+                )}
               </PopoverContent>
             </Popover>
           )}
         </div>
 
-        {/* Right Side: Sort Selector & Clear Button */}
+        {/* Right Side: Sort Selector & Clear Button (hidden on mobile, shown at sm+) */}
         {!minimal && (
-          <div className="flex items-center gap-2 shrink-0 flex-wrap">
+          <div className="hidden sm:flex items-center gap-2 shrink-0 flex-wrap">
           {/* SORT BY SELECTOR (Matches exact reference screenshot layout) */}
           {sortOptions && sortOptions.length > 0 && onSortChange && (
             <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
@@ -447,9 +621,9 @@ export function PageFilterToolbar({
         )}
       </div>
 
-      {/* SECOND ROW: INLINE PILL FILTER GROUPS (Status: [All] [Deposited], Category: [All] [Parents]...) */}
+      {/* SECOND ROW: INLINE PILL FILTER GROUPS (hidden on mobile, shown at sm+) */}
       {!minimal && effectivePillGroups.length > 0 && (
-        <div className="pt-2.5 border-t border-border/50 space-y-2.5">
+        <div className="hidden sm:block pt-2.5 border-t border-border/50 space-y-2.5">
           {effectivePillGroups.map((group) => (
             <div
               key={group.id}

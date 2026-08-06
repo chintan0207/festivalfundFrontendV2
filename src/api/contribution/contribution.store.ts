@@ -16,6 +16,12 @@ type ContributionState = {
   festivalId: string;
   total: number;
   totalPages: number;
+  statusCounts: {
+    total: number;
+    DEPOSITED: number;
+    PENDING: number;
+    CANCELLED: number;
+  };
 
   setContributions: (contributions: ContributionListItem[]) => void;
   setSelectedContribution: (contribution: ContributionListItem | null) => void;
@@ -34,6 +40,12 @@ type ContributionState = {
     limit: number;
     totalPages: number;
   }) => void;
+  setStatusCounts: (statusCounts: {
+    total: number;
+    DEPOSITED: number;
+    PENDING: number;
+    CANCELLED: number;
+  }) => void;
   resetFilters: () => void;
   clearContributionState: () => void;
 };
@@ -50,6 +62,7 @@ const initialFilters = {
   festivalId: "",
   total: 0,
   totalPages: 0,
+  statusCounts: { total: 0, DEPOSITED: 0, PENDING: 0, CANCELLED: 0 },
 };
 
 export const useContributionApiStore = create<ContributionState>((set) => ({
@@ -70,7 +83,14 @@ export const useContributionApiStore = create<ContributionState>((set) => ({
   setFestivalId: (festivalId) => set({ festivalId, page: 1 }),
   setPaginationMeta: ({ total, page, limit, totalPages }) =>
     set({ total, page, limit, totalPages }),
-  resetFilters: () => set({ ...initialFilters }),
+  setStatusCounts: (statusCounts) => set({ statusCounts }),
+  resetFilters: () =>
+    set((state) => ({
+      ...initialFilters,
+      total: state.total,
+      totalPages: state.totalPages,
+      statusCounts: state.statusCounts,
+    })),
   clearContributionState: () =>
     set({ contributions: [], selectedContribution: null, ...initialFilters }),
 }));

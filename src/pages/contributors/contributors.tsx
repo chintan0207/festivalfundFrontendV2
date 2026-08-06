@@ -30,6 +30,7 @@ export default function ContributorsPage() {
   const total = useContributorApiStore((s) => s.total);
   const totalPages = useContributorApiStore((s) => s.totalPages);
   const contributors = useContributorApiStore((s) => s.contributors);
+  const categoryCounts = useContributorApiStore((s) => s.categoryCounts);
   const setPage = useContributorApiStore((s) => s.setPage);
   const setLimit = useContributorApiStore((s) => s.setLimit);
   const setSearch = useContributorApiStore((s) => s.setSearch);
@@ -166,10 +167,10 @@ export default function ContributorsPage() {
             label: "Category",
             value: category || "ALL",
             options: [
-              { value: "ALL", label: "All", count: total },
-              { value: "PARENT", label: "Parents", count: contributors.filter((c) => c.category === "PARENT").length },
-              { value: "BOY", label: "Boys", count: contributors.filter((c) => c.category === "BOY").length },
-              { value: "GIRL", label: "Girls", count: contributors.filter((c) => c.category === "GIRL").length },
+              { value: "ALL", label: "All", count: categoryCounts.total ?? total },
+              { value: "PARENT", label: "Parents", count: categoryCounts.PARENT ?? 0 },
+              { value: "BOY", label: "Boys", count: categoryCounts.BOY ?? 0 },
+              { value: "GIRL", label: "Girls", count: categoryCounts.GIRL ?? 0 },
             ],
             onChange: (val) => setCategory(val === "ALL" ? "" : val),
             variant: "module",
