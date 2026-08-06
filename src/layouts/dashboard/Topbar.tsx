@@ -1,5 +1,6 @@
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { useFestivalStore } from "@/store/festivalStore";
+import { useFestivalApiStore } from "@/api/festival/festival.store";
+import { useFestivals } from "@/api/festival/useFestivals";
 import { useAuthStore } from "@/api/auth/auth.store";
 import { Badge } from "@/components/ui/badge";
 import { ThemeToggle } from "@/theme/ThemeToggle";
@@ -19,9 +20,11 @@ import {
 
 const Topbar = () => {
   const { user } = useAuthStore();
-  const { activeFestivalId, festivals, setActiveFestival } = useFestivalStore();
+  const { data: festivals = [] } = useFestivals();
+  const { activeFestivalId, isAllFestivals, setActiveFestivalId, setActiveFestivalAll } =
+    useFestivalApiStore();
 
-  const activeFest = festivals.find((f) => f.id === activeFestivalId);
+  const activeFest = festivals.find((f) => f._id === activeFestivalId);
 
   return (
     <header className="sticky top-0 z-40 bg-card border-b border-border h-14 flex items-center px-4 justify-between gap-3">
@@ -36,7 +39,7 @@ const Topbar = () => {
             <button className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-primary/10 border border-primary/20 hover:bg-primary/15 transition-colors cursor-pointer">
               <Calendar className="h-4 w-4 text-primary" />
               <span className="text-xs font-semibold text-primary truncate max-w-[150px] sm:max-w-[220px]">
-                {activeFestivalId === "ALL" ? "All Festivals (Overall)" : activeFest?.name}
+                {isAllFestivals ? "All Festivals (Overall)" : activeFest?.name}
               </span>
               <ChevronDown className="h-3.5 w-3.5 text-primary/70" />
             </button>
@@ -47,33 +50,33 @@ const Topbar = () => {
             </DropdownMenuLabel>
             <DropdownMenuSeparator className="my-1" />
             <DropdownMenuItem
-              onClick={() => setActiveFestival("ALL")}
+              onClick={() => setActiveFestivalAll()}
               className={`flex items-center justify-between cursor-pointer rounded-lg px-2.5 py-2 ${
-                activeFestivalId === "ALL" ? "bg-primary/10 text-primary font-semibold" : ""
+                isAllFestivals ? "bg-primary/10 text-primary font-semibold" : ""
               }`}
             >
               <span className="text-xs font-medium">All Festivals</span>
-              {activeFestivalId === "ALL" && <Check className="h-4 w-4 text-primary" />}
+              {isAllFestivals && <Check className="h-4 w-4 text-primary" />}
             </DropdownMenuItem>
             {festivals.map((f) => (
               <DropdownMenuItem
-                key={f.id}
-                onClick={() => setActiveFestival(f.id)}
+                key={f._id}
+                onClick={() => setActiveFestivalId(f._id)}
                 className={`flex items-center justify-between cursor-pointer rounded-lg px-2.5 py-2 text-xs ${
-                  activeFestivalId === f.id ? "bg-primary/10 text-primary font-semibold" : ""
+                  activeFestivalId === f._id ? "bg-primary/10 text-primary font-semibold" : ""
                 }`}
               >
                 <div className="flex flex-col">
                   <span>{f.name}</span>
                   <span className="text-2xs text-muted-foreground">{f.year}</span>
                 </div>
-                {activeFestivalId === f.id && <Check className="h-4 w-4 text-primary" />}
+                {activeFestivalId === f._id && <Check className="h-4 w-4 text-primary" />}
               </DropdownMenuItem>
             ))}
           </DropdownMenuContent>
         </DropdownMenu>
 
-        {activeFestivalId !== "ALL" && activeFest && (
+        {!isAllFestivals && activeFest && (
           <Badge
             variant="outline"
             className={`hidden sm:inline-flex text-2xs font-medium border ${

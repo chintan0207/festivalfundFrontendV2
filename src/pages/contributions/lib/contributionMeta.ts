@@ -49,16 +49,16 @@ export const contributionStatusOptions: { value: string; label: string }[] = [
 ];
 
 export const contributionTypeOptions: { value: string; label: string }[] = [
-  { value: "MONEY", label: "Cash" },
+  { value: "MONEY", label: "Money" },
   { value: "ITEM", label: "Item" },
 ];
 
 export const contributionPaymentOptions: { value: string; label: string }[] = [
   { value: "CASH", label: "Cash" },
   { value: "UPI", label: "UPI" },
-  { value: "BANK_TRANSFER", label: "Bank Transfer" },
-  { value: "ONLINE", label: "Online" },
-  { value: "OTHER", label: "Other" },
+  // { value: "BANK_TRANSFER", label: "Bank Transfer" },
+  // { value: "ONLINE", label: "Online" },
+  // { value: "OTHER", label: "Other" },
 ];
 
 export const contributionCategoryOptions: { value: string; label: string }[] = [

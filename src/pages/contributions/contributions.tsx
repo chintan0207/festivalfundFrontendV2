@@ -1,9 +1,9 @@
 import { useEffect, useState, useCallback } from "react";
-import { Plus, List, LayoutGrid, CalendarDays } from "lucide-react";
+import { Plus, List, LayoutGrid } from "lucide-react";
 import { Outlet, useNavigate, useMatches } from "@tanstack/react-router";
 import { useContributionApiStore } from "@/api/contribution/contribution.store";
 import { useContributions } from "@/api/contribution/useContributions";
-import { useFestivals } from "@/api/festival/useFestivals";
+import { useFestivalApiStore } from "@/api/festival/festival.store";
 import { useDebounce } from "@/hooks/useDebounce";
 import { getModuleTheme } from "@/theme/colors";
 import { PageHeader } from "@/components/common/PageHeader";
@@ -34,7 +34,6 @@ export default function ContributionsPage() {
   const status = useContributionApiStore((s) => s.status);
   const category = useContributionApiStore((s) => s.category);
   const type = useContributionApiStore((s) => s.type);
-  const festivalId = useContributionApiStore((s) => s.festivalId);
   const total = useContributionApiStore((s) => s.total);
   const totalPages = useContributionApiStore((s) => s.totalPages);
   const contributions = useContributionApiStore((s) => s.contributions);
@@ -46,11 +45,11 @@ export default function ContributionsPage() {
   const setStatus = useContributionApiStore((s) => s.setStatus);
   const setCategory = useContributionApiStore((s) => s.setCategory);
   const setType = useContributionApiStore((s) => s.setType);
-  const setFestivalId = useContributionApiStore((s) => s.setFestivalId);
   const resetFilters = useContributionApiStore((s) => s.resetFilters);
 
   // Festivals (for filter)
-  const { data: festivalsData } = useFestivals();
+  const { isAllFestivals, activeFestivalId } = useFestivalApiStore();
+  const festivalId = isAllFestivals || !activeFestivalId ? "" : activeFestivalId;
 
   // Local UI
   const [localSearch, setLocalSearch] = useState(search);
@@ -120,14 +119,6 @@ export default function ContributionsPage() {
 
   // Active filters for toolbar
   const activeFilters = [];
-  if (festivalId) {
-    const festival = (festivalsData || []).find((f) => f._id === festivalId);
-    activeFilters.push({
-      id: "festivalId",
-      label: `Festival: ${festival ? `${festival.name} ${festival.year}` : festivalId}`,
-      onRemove: () => setFestivalId(""),
-    });
-  }
   if (status) {
     activeFilters.push({
       id: "status",
@@ -153,11 +144,6 @@ export default function ContributionsPage() {
   if (matches.some((m) => m.routeId === "/dashboard/contributions/$contributionId")) {
     return <Outlet />;
   }
-
-  const festivalOptions = (festivalsData || []).map((f) => ({
-    value: f._id,
-    label: `${f.name} (${f.year})`,
-  }));
 
   return (
     <div className="space-y-5 pb-40 md:pb-12 max-w-[1400px] mx-auto px-1 sm:px-0">
@@ -189,17 +175,6 @@ export default function ContributionsPage() {
         onSearchChange={setLocalSearch}
         searchPlaceholder="Search by code, name, phone, or item..."
         quickFilters={[
-          // {
-          //   id: "festivalId",
-          //   label: "Festival",
-          //   icon: <CalendarDays className="h-3.5 w-3.5" />,
-          //   value: festivalId || "ALL",
-          //   options: [
-          //     { value: "ALL", label: "All Festivals" },
-          //     ...festivalOptions,
-          //   ],
-          //   onChange: (val) => setFestivalId(val === "ALL" ? "" : val),
-          // },
           {
             id: "status",
             label: "Status",

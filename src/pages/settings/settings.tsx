@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { useFestivalStore } from "@/store/festivalStore";
+import { useFestivalApiStore } from "@/api/festival/festival.store";
+import { useFestivals } from "@/api/festival/useFestivals";
 import { AppButton } from "@/components/common/AppButton";
 import { AppSelect } from "@/components/common/AppSelect";
 import { Badge } from "@/components/ui/badge";
@@ -14,7 +15,9 @@ import {
 } from "lucide-react";
 
 export const SettingsPage = () => {
-  const { activeFestivalId, festivals, setActiveFestival } = useFestivalStore();
+  const { data: festivals = [] } = useFestivals();
+  const { activeFestivalId, isAllFestivals, setActiveFestivalId, setActiveFestivalAll } =
+    useFestivalApiStore();
 
   const [orgName, setOrgName] = useState("Shri Ganesh Temple Trust");
   const [currency, setCurrency] = useState("INR (₹)");
@@ -101,12 +104,18 @@ export const SettingsPage = () => {
             <AppSelect
               id="activeSelect"
               label="Select Default Active Festival"
-              value={activeFestivalId}
-              onChange={(val) => setActiveFestival(val)}
+              value={isAllFestivals ? "ALL" : activeFestivalId || ""}
+              onChange={(val) => {
+                if (val === "ALL") {
+                  setActiveFestivalAll();
+                } else {
+                  setActiveFestivalId(val);
+                }
+              }}
               options={[
                 { value: "ALL", label: "All Festivals (Combined Overview)" },
                 ...festivals.map((f) => ({
-                  value: f.id,
+                  value: f._id,
                   label: `${f.name} (${f.year}) — ${f.status}`,
                 })),
               ]}
