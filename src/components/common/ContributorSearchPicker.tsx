@@ -1,11 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import {
-  ArrowLeft,
-  Loader2,
-  Plus,
-  Search,
-  UserRound,
-} from "lucide-react";
+import { createPortal } from "react-dom";
+import { ArrowLeft, Loader2, Plus, Search, UserRound } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { useContributors } from "@/api/contributor/useContributors";
 import { useDebounce } from "@/hooks/useDebounce";
@@ -33,9 +28,16 @@ export function ContributorSearchPicker({
   const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState<Contributor | null>(null);
   const [activeIndex, setActiveIndex] = useState(-1);
+  const [panelPos, setPanelPos] = useState<{
+    top: number;
+    left: number;
+    width: number;
+  } | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const cellRef = useRef<HTMLDivElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
 
   const debouncedQuery = useDebounce(query.trim(), 250);
 
@@ -48,33 +50,53 @@ export function ContributorSearchPicker({
 
   const suggestions = useMemo(() => data?.contributors ?? [], [data]);
 
-  // Clamp active index to a valid range for the current suggestion list
-  const safeActiveIndex =
-    activeIndex >= 0 && activeIndex < suggestions.length ? activeIndex : -1;
-
   const hasQuery = query.trim().length > 0;
+
+  // Clamp active index to a valid range for the current suggestion list
+  // (+1 virtual slot for the "New contributor" footer when querying)
+  const footerCount = hasQuery ? 1 : 0;
+  const safeActiveIndex =
+    activeIndex >= 0 && activeIndex < suggestions.length + footerCount ? activeIndex : -1;
+
   const showLoading = isPending || (isFetching && suggestions.length === 0);
   const showEmpty = !showLoading && suggestions.length === 0 && !hasQuery;
   const showNoResults = !showLoading && suggestions.length === 0 && hasQuery;
 
-  // Close on outside click / Escape
+  // Anchor the portal panel to the input cell
+  const updatePanelPos = () => {
+    const cell = cellRef.current;
+    if (!cell) return;
+    const rect = cell.getBoundingClientRect();
+    setPanelPos({ top: rect.bottom + 6, left: rect.left, width: rect.width });
+  };
+
+  // Close on outside click / Escape (include the portaled panel)
   useEffect(() => {
     if (!open) return;
+    updatePanelPos();
     const handlePointerDown = (e: MouseEvent | TouchEvent) => {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
-        setOpen(false);
-      }
+      const target = e.target as Node;
+      if (!target) return;
+      if (containerRef.current?.contains(target)) return;
+      if (panelRef.current?.contains(target)) return;
+      setOpen(false);
     };
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") setOpen(false);
     };
+    const handleScroll = () => updatePanelPos();
+    const handleResize = () => updatePanelPos();
     document.addEventListener("mousedown", handlePointerDown);
     document.addEventListener("touchstart", handlePointerDown);
     document.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("scroll", handleScroll, true);
+    window.addEventListener("resize", handleResize);
     return () => {
       document.removeEventListener("mousedown", handlePointerDown);
       document.removeEventListener("touchstart", handlePointerDown);
       document.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("scroll", handleScroll, true);
+      window.removeEventListener("resize", handleResize);
     };
   }, [open]);
 
@@ -123,21 +145,28 @@ export function ContributorSearchPicker({
   };
 
   const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    const lastIndex = suggestions.length + footerCount - 1;
     if (e.key === "ArrowDown") {
       e.preventDefault();
       setOpen(true);
       setActiveIndex((i) => {
-        const base = i >= 0 && i < suggestions.length ? i : -1;
-        return Math.min(base + 1, suggestions.length - 1);
+        const base = i >= 0 && i < suggestions.length + footerCount ? i : -1;
+        return Math.min(base + 1, lastIndex);
       });
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
       setActiveIndex((i) => {
-        const base = i >= 0 && i < suggestions.length ? i : suggestions.length;
+        const base =
+          i >= 0 && i < suggestions.length + footerCount
+            ? i
+            : suggestions.length + footerCount;
         return Math.max(base - 1, 0);
       });
     } else if (e.key === "Enter") {
-      if (safeActiveIndex >= 0 && suggestions[safeActiveIndex]) {
+      if (safeActiveIndex === suggestions.length && footerCount > 0) {
+        e.preventDefault();
+        handleNewContributor();
+      } else if (safeActiveIndex >= 0 && suggestions[safeActiveIndex]) {
         e.preventDefault();
         handleSelect(suggestions[safeActiveIndex]);
       } else if (hasQuery && suggestions.length === 0 && !isFetching && !isPending) {
@@ -150,7 +179,9 @@ export function ContributorSearchPicker({
   return (
     <div ref={containerRef} className="space-y-1.5 sm:space-y-2 w-full">
       {label && (
-        <Label className="text-xs sm:text-sm font-semibold text-foreground">{label}</Label>
+        <Label className="text-xs sm:text-sm font-semibold text-foreground">
+          {label}
+        </Label>
       )}
 
       {mode === "new" ? (
@@ -208,7 +239,7 @@ export function ContributorSearchPicker({
           </div>
         </div>
       ) : (
-        <div className="relative w-full">
+        <div className="relative w-full" ref={cellRef}>
           <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground flex items-center justify-center pointer-events-none">
             <Search className="h-4 w-4" />
           </span>
@@ -227,7 +258,8 @@ export function ContributorSearchPicker({
               "h-9 sm:h-10.5 w-full rounded-2xl border bg-background/90 pl-10 pr-10 text-sm shadow-sm transition-all",
               "focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:border-primary focus:outline-none",
               open && "ring-2 ring-primary/30 border-primary",
-              error && "border-destructive focus-visible:ring-destructive/30 focus-visible:border-destructive",
+              error &&
+                "border-destructive focus-visible:ring-destructive/30 focus-visible:border-destructive",
             )}
           />
           {isFetching && (
@@ -236,81 +268,115 @@ export function ContributorSearchPicker({
             </span>
           )}
 
-          {open && (
-            <div className="absolute left-0 right-0 top-full z-50 mt-1.5 rounded-2xl border border-border/80 bg-popover p-1.5 shadow-xl">
-              {showLoading && (
-                <p className="px-2.5 py-3 text-xs text-muted-foreground flex items-center gap-2">
-                  <Loader2 className="h-3.5 w-3.5 animate-spin" /> Searching...
-                </p>
-              )}
-
-              {showEmpty && (
-                <p className="px-2.5 py-3 text-xs text-muted-foreground text-center">
-                  Type to search contributors
-                </p>
-              )}
-
-              {showNoResults && (
-                <div className="space-y-1.5">
-                  <p className="px-2.5 py-2 text-xs text-muted-foreground text-center">
-                    No contributor found for “{query.trim()}”
+          {open &&
+            panelPos &&
+            createPortal(
+              <div
+                ref={panelRef}
+                style={{ top: panelPos.top, left: panelPos.left, width: panelPos.width }}
+                className="fixed z-[60] pointer-events-auto rounded-2xl border border-border/80 bg-popover p-1.5 shadow-xl"
+              >
+                {showLoading && (
+                  <p className="px-2.5 py-3 text-xs text-muted-foreground flex items-center gap-2">
+                    <Loader2 className="h-3.5 w-3.5 animate-spin" /> Searching...
                   </p>
-                  <button
-                    type="button"
-                    onClick={handleNewContributor}
-                    className="w-full flex items-center justify-center gap-2 rounded-xl border border-dashed border-primary/40 bg-primary/5 px-2.5 py-2.5 text-xs font-semibold text-primary transition-colors hover:bg-primary/10 cursor-pointer"
-                  >
-                    <Plus className="h-4 w-4" />
-                    New contributor
-                  </button>
-                </div>
-              )}
+                )}
 
-              {suggestions.length > 0 && (
-                <div
-                  ref={listRef}
-                  className="max-h-64 overflow-y-auto overscroll-contain space-y-0.5 pr-0.5 [scrollbar-width:thin] [scrollbar-color:var(--color-border)_transparent]"
-                >
-                  {suggestions.map((c, index) => (
-                    <button
-                      key={c._id}
-                      type="button"
-                      data-index={index}
-                      onClick={() => handleSelect(c)}
-                      onMouseEnter={() => setActiveIndex(index)}
-                      className={cn(
-                        "w-full flex items-center gap-2.5 rounded-xl px-2.5 py-2 text-left transition-colors cursor-pointer",
-                        safeActiveIndex === index ? "bg-accent text-accent-foreground" : "hover:bg-accent",
-                      )}
-                    >
-                      <span className="h-7 w-7 shrink-0 rounded-full bg-muted text-muted-foreground font-bold flex items-center justify-center text-2xs">
-                        {c.name.charAt(0).toUpperCase()}
-                      </span>
-                      <span className="min-w-0 flex-1">
-                        <span className="block text-xs font-semibold text-foreground truncate">
-                          {c.name}
-                        </span>
-                        <span className="block text-2xs text-muted-foreground truncate">
-                          {c.contributorCode}
-                          {c.phoneNumber ? ` · ${c.phoneNumber}` : ""}
-                        </span>
-                      </span>
-                    </button>
-                  ))}
-                  {suggestions.length >= 50 && (
-                    <p className="px-2.5 py-2 text-2xs text-muted-foreground text-center">
-                      Showing top {suggestions.length} matches — refine your search
+                {showEmpty && (
+                  <p className="px-2.5 py-3 text-xs text-muted-foreground text-center">
+                    Type to search contributors
+                  </p>
+                )}
+
+                {showNoResults && (
+                  <div className="space-y-1.5">
+                    <p className="px-2.5 py-2 text-xs text-muted-foreground text-center">
+                      No contributor found for “{query.trim()}”
                     </p>
-                  )}
-                </div>
-              )}
-            </div>
-          )}
+                    <button
+                      type="button"
+                      onClick={handleNewContributor}
+                      className="w-full flex items-center justify-center gap-2 rounded-xl border border-dashed border-primary/40 bg-primary/5 px-2.5 py-2.5 text-xs font-semibold text-primary transition-colors hover:bg-primary/10 cursor-pointer"
+                    >
+                      <Plus className="h-4 w-4" />
+                      New contributor
+                    </button>
+                  </div>
+                )}
+
+                {suggestions.length > 0 && (
+                  <div
+                    ref={listRef}
+                    className="max-h-64 overflow-y-auto overscroll-contain space-y-0.5 pr-0.5 [scrollbar-width:thin] [scrollbar-color:var(--color-border)_transparent]"
+                  >
+                    {suggestions.map((c, index) => (
+                      <button
+                        key={c._id}
+                        type="button"
+                        data-index={index}
+                        onClick={() => handleSelect(c)}
+                        onMouseEnter={() => setActiveIndex(index)}
+                        className={cn(
+                          "w-full flex items-center gap-2.5 rounded-xl px-2.5 py-2 text-left transition-colors cursor-pointer",
+                          safeActiveIndex === index
+                            ? "bg-accent text-accent-foreground"
+                            : "hover:bg-accent",
+                        )}
+                      >
+                        <span className="h-7 w-7 shrink-0 rounded-full bg-muted text-muted-foreground font-bold flex items-center justify-center text-2xs">
+                          {c.name.charAt(0).toUpperCase()}
+                        </span>
+                        <span className="min-w-0 flex-1">
+                          <span className="block text-xs font-semibold text-foreground truncate">
+                            {c.name}
+                          </span>
+                          <span className="block text-2xs text-muted-foreground truncate">
+                            {c.contributorCode}
+                            {c.phoneNumber ? ` · ${c.phoneNumber}` : ""}
+                          </span>
+                        </span>
+                      </button>
+                    ))}
+
+                    {hasQuery && (
+                      <button
+                        type="button"
+                        data-index={suggestions.length}
+                        onClick={handleNewContributor}
+                        onMouseEnter={() => setActiveIndex(suggestions.length)}
+                        className={cn(
+                          "w-full flex items-center gap-2.5 rounded-xl border border-dashed border-primary/40 bg-primary/5 px-2.5 py-2 text-left transition-colors cursor-pointer",
+                          safeActiveIndex === suggestions.length
+                            ? "bg-primary/10 text-primary"
+                            : "hover:bg-primary/10",
+                        )}
+                      >
+                        <Plus className="h-4 w-4 text-primary shrink-0" />
+                        <span className="min-w-0">
+                          <span className="block text-xs font-semibold text-primary truncate">
+                            New contributor{hasQuery ? ` “${query.trim()}”` : ""}
+                          </span>
+                        </span>
+                      </button>
+                    )}
+
+                    {suggestions.length >= 50 && (
+                      <p className="px-2.5 py-2 text-2xs text-muted-foreground text-center">
+                        Showing top {suggestions.length} matches — refine your search
+                      </p>
+                    )}
+                  </div>
+                )}
+              </div>,
+              document.body,
+            )}
         </div>
       )}
 
       {error ? (
-        <p className="text-[11px] sm:text-xs font-medium text-destructive leading-tight">{error}</p>
+        <p className="text-[11px] sm:text-xs font-medium text-destructive leading-tight">
+          {error}
+        </p>
       ) : null}
     </div>
   );

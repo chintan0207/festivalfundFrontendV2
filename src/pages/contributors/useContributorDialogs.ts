@@ -7,6 +7,18 @@ import {
 import type { ContributorFormValues } from "./components/dialogs/contributorFormSchema";
 import type { Contributor } from "@/types/Types";
 
+/**
+ * Builds a clean backend payload: empty strings become null and strings are
+ * trimmed so the API treats them as "not provided" instead of invalid format.
+ */
+const buildPayload = (values: ContributorFormValues) => ({
+  name: values.name.trim(),
+  phoneNumber: values.phoneNumber?.trim() || null,
+  email: values.email?.trim() || null,
+  address: values.address?.trim() || null,
+  category: values.category,
+});
+
 interface UseContributorDialogsOptions {
   themeGradient: string;
   onCreated?: () => void;
@@ -63,7 +75,7 @@ export function useContributorDialogs({
 
   const handleAddSubmit = useCallback(
     (values: ContributorFormValues) => {
-      createMutation.mutate(values, {
+      createMutation.mutate(buildPayload(values), {
         onSuccess: () => {
           setIsAddOpen(false);
           onCreated?.();
@@ -77,7 +89,7 @@ export function useContributorDialogs({
     (values: ContributorFormValues) => {
       if (!editId) return;
       updateMutation.mutate(
-        { contributorId: editId, payload: values },
+        { contributorId: editId, payload: buildPayload(values) },
         {
           onSuccess: () => {
             const id = editId;
