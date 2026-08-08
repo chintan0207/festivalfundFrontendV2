@@ -48,7 +48,8 @@ export default function ContributionDetailPage() {
   }
 
   const contributorId = contribution.contributor?._id;
-  const isDeposited = contribution.status === "DEPOSITED";
+  const status = contribution.status;
+  const isDeposited = status === "DEPOSITED";
 
   return (
     <div className="space-y-5 pb-28 md:pb-10 max-w-[1400px] mx-auto px-1 sm:px-0">
@@ -61,17 +62,19 @@ export default function ContributionDetailPage() {
         ]}
         actions={
           <>
-            <AppButton
-              variant="outline"
-              leftIcon={<FileDown className="h-3.5 w-3.5" />}
-              className="h-8 text-xs rounded-full"
-              onClick={() => downloadSlip.mutate(contribution._id)}
-              loading={downloadSlip.isPending}
-            >
-              <span className="hidden sm:inline">Download Slip</span>
-              <span className="sm:hidden">Slip</span>
-            </AppButton>
-            {!isDeposited && (
+            {isDeposited && (
+              <AppButton
+                variant="outline"
+                leftIcon={<FileDown className="h-3.5 w-3.5" />}
+                className="h-8 text-xs rounded-full"
+                onClick={() => downloadSlip.mutate(contribution._id)}
+                loading={downloadSlip.isPending}
+              >
+                <span className="hidden sm:inline">Download Slip</span>
+                <span className="sm:hidden">Slip</span>
+              </AppButton>
+            )}
+            {status === "PENDING" && (
               <AppButton
                 variant="outline"
                 leftIcon={<Pencil className="h-3.5 w-3.5" />}
@@ -113,7 +116,7 @@ export default function ContributionDetailPage() {
       />
 
       <StatusConfirmDialog
-        open={!!statusTarget && !isDeposited}
+        open={!!statusTarget}
         contribution={contribution}
         nextStatus={statusTarget ?? "PENDING"}
         loading={updateStatus.isPending}

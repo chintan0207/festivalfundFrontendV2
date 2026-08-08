@@ -1,4 +1,4 @@
-import { Banknote, Package, Calendar, MoreVertical, Pencil, Receipt, Trash2, ChevronDown } from "lucide-react";
+import { Banknote, Package, Calendar, MoreVertical, Pencil, Receipt, Trash2, ChevronDown, Eye } from "lucide-react";
 import { useState } from "react";
 import { DataTable, type Column } from "@/components/common/DataTable";
 import { formatDate, cn } from "@/lib/utils";
@@ -17,6 +17,7 @@ import {
   contributionStatusBadge,
   contributionStatusLabel,
   contributionStatusOptions,
+  contributionStatusTransitions,
   contributionTypeBadge,
   contributionTypeLabel,
 } from "../../lib/contributionMeta";
@@ -33,7 +34,7 @@ interface ContributionTableProps {
   onEdit: (contribution: ContributionListItem) => void;
   onDelete: (id: string) => void;
   onRowClick: (contribution: ContributionListItem) => void;
-  onStatusChange: (id: string, status: ContributionStatus, reason?: string) => void;
+  onStatusChange: (id: string, status: ContributionStatus, reason?: string) => Promise<unknown> | void;
   onDownloadSlip: (id: string) => void;
   isStatusPending?: boolean;
   isSlipPending?: boolean;
@@ -122,54 +123,65 @@ export function ContributionTable({
       id: "status",
       label: "Status",
       sortable: true,
-      render: (c) => (
-        <div onClick={(e) => e.stopPropagation()}>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <button
-                type="button"
-                className={cn(
-                  "inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold transition-opacity",
-                  contributionStatusBadge(c.status),
-                  "hover:opacity-80 active:scale-95 cursor-pointer disabled:opacity-60"
-                )}
-                disabled={isStatusPending}
-                onClick={(e) => e.stopPropagation()}
-                onPointerDown={(e) => e.stopPropagation()}
-              >
-                {contributionStatusLabel(c.status)}
-                <ChevronDown className="h-3 w-3" />
-              </button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-40 rounded-xl p-1.5">
-              {contributionStatusOptions.map((opt) => {
-                const allowed =
-                  c.status === "PENDING" ||
-                  (c.status === "DEPOSITED" && opt.value === "PENDING");
-                if (!allowed) return null;
-                return (
-                  <DropdownMenuItem
-                    key={opt.value}
-                    disabled={opt.value === c.status}
-                    onSelect={(event) => {
-                      event.preventDefault();
-                      event.stopPropagation();
-                      setStatusTarget({ contribution: c, status: opt.value as ContributionStatus });
-                    }}
-                    className="text-xs font-medium px-2.5 py-2 rounded-lg cursor-pointer"
-                  >
-                    <span className="inline-flex items-center gap-2">
-                      <span className={cn("h-2 w-2 rounded-full", contributionStatusBadge(opt.value))} />
-                      {opt.label}
-                    </span>
-                    {opt.value === c.status && <span className="ml-auto text-muted-foreground">✓</span>}
-                  </DropdownMenuItem>
-                );
-              })}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      ),
+      render: (c) => {
+        const transitions = contributionStatusTransitions[c.status] ?? [];
+        if (transitions.length === 0) {
+          return (
+            <span
+              className={cn(
+                "inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold",
+                contributionStatusBadge(c.status),
+              )}
+            >
+              {contributionStatusLabel(c.status)}
+            </span>
+          );
+        }
+        return (
+          <div onClick={(e) => e.stopPropagation()}>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  type="button"
+                  className={cn(
+                    "inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold transition-opacity",
+                    contributionStatusBadge(c.status),
+                    "hover:opacity-80 active:scale-95 cursor-pointer disabled:opacity-60"
+                  )}
+                  disabled={isStatusPending}
+                  onClick={(e) => e.stopPropagation()}
+                  onPointerDown={(e) => e.stopPropagation()}
+                >
+                  {contributionStatusLabel(c.status)}
+                  <ChevronDown className="h-3 w-3" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-40 rounded-xl p-1.5">
+                {contributionStatusOptions
+                  .filter((opt) => transitions.includes(opt.value))
+                  .map((opt) => (
+                    <DropdownMenuItem
+                      key={opt.value}
+                      disabled={opt.value === c.status}
+                      onSelect={(event) => {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        setStatusTarget({ contribution: c, status: opt.value as ContributionStatus });
+                      }}
+                      className="text-xs font-medium px-2.5 py-2 rounded-lg cursor-pointer"
+                    >
+                      <span className="inline-flex items-center gap-2">
+                        <span className={cn("h-2 w-2 rounded-full", contributionStatusBadge(opt.value))} />
+                        {opt.label}
+                      </span>
+                      {opt.value === c.status && <span className="ml-auto text-muted-foreground">✓</span>}
+                    </DropdownMenuItem>
+                  ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        );
+      },
     },
     {
       id: "date",
@@ -202,7 +214,14 @@ export function ContributionTable({
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-44 rounded-xl p-1.5">
-              {c.status !== "DEPOSITED" && (
+              <DropdownMenuItem
+                onSelect={() => onRowClick(c)}
+                className="text-xs font-medium px-2.5 py-2 rounded-lg cursor-pointer"
+              >
+                <Eye className="h-3.5 w-3.5" />
+                View
+              </DropdownMenuItem>
+              {c.status === "PENDING" && (
                 <DropdownMenuItem
                   onSelect={() => onEdit(c)}
                   className="text-xs font-medium px-2.5 py-2 rounded-lg cursor-pointer"
@@ -211,24 +230,29 @@ export function ContributionTable({
                   Edit
                 </DropdownMenuItem>
               )}
-              <DropdownMenuItem
-                onSelect={() => onDownloadSlip(c._id)}
-                disabled={isSlipPending}
-                className="text-xs font-medium px-2.5 py-2 rounded-lg cursor-pointer"
-              >
-                <Receipt className="h-3.5 w-3.5" />
-                Download Slip
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
-                variant="destructive"
-                disabled={c.status === "DEPOSITED"}
-                onSelect={() => onDelete(c._id)}
-                className="text-xs font-medium px-2.5 py-2 rounded-lg cursor-pointer"
-              >
-                <Trash2 className="h-3.5 w-3.5" />
-                Delete
-              </DropdownMenuItem>
+              {c.status === "DEPOSITED" && (
+                <DropdownMenuItem
+                  onSelect={() => onDownloadSlip(c._id)}
+                  disabled={isSlipPending}
+                  className="text-xs font-medium px-2.5 py-2 rounded-lg cursor-pointer"
+                >
+                  <Receipt className="h-3.5 w-3.5" />
+                  Download Slip
+                </DropdownMenuItem>
+              )}
+              {c.status !== "DEPOSITED" && (
+                <>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    variant="destructive"
+                    onSelect={() => onDelete(c._id)}
+                    className="text-xs font-medium px-2.5 py-2 rounded-lg cursor-pointer"
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                    Delete
+                  </DropdownMenuItem>
+                </>
+              )}
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
@@ -257,9 +281,14 @@ export function ContributionTable({
         contribution={statusTarget?.contribution ?? null}
         nextStatus={statusTarget?.status ?? "PENDING"}
         loading={isStatusPending}
-        onConfirm={(reason) => {
+        onConfirm={async (reason) => {
           if (statusTarget) {
-            onStatusChange(statusTarget.contribution._id, statusTarget.status, reason);
+            try {
+              await onStatusChange(statusTarget.contribution._id, statusTarget.status, reason);
+              setStatusTarget(null);
+            } catch {
+              // keep dialog open so the user can retry
+            }
           }
         }}
         onCancel={() => setStatusTarget(null)}

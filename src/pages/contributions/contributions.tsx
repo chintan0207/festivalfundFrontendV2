@@ -115,7 +115,7 @@ export default function ContributionsPage() {
 
   const handleStatusChange = useCallback(
     (id: string, status: ContributionStatus, reason?: string) => {
-      updateStatusMutation.mutate({ id, status, reason });
+      return updateStatusMutation.mutateAsync({ id, status, reason });
     },
     [updateStatusMutation],
   );

@@ -4,7 +4,8 @@ import { ContributorSearchPicker } from "@/components/common/ContributorSearchPi
 import {
   contributionCategoryOptions,
   contributionPaymentOptions,
-  contributionStatusOptions,
+  contributionStatusCreateOptions,
+  contributionStatusLabel,
   contributionTypeOptions,
 } from "../../lib/contributionMeta";
 
@@ -129,14 +130,26 @@ export function ContributionFormFields({
         options={contributionTypeOptions}
         error={errors.type?.message}
       />
-      <AppSelect
-        id={`${prefix}-status`}
-        label="Status"
-        value={watch("status") || "PENDING"}
-        onChange={(val) => setValue("status", val, { shouldValidate: true })}
-        options={contributionStatusOptions}
-        error={errors.status?.message}
-      />
+      {mode === "add" ? (
+        <AppSelect
+          id={`${prefix}-status`}
+          label="Status"
+          value={watch("status") || "PENDING"}
+          onChange={(val) => setValue("status", val, { shouldValidate: true })}
+          options={contributionStatusCreateOptions}
+          error={errors.status?.message}
+        />
+      ) : (
+        <div className="col-span-1 min-[360px]:col-span-2 rounded-xl border border-border/60 bg-muted/40 px-3 py-2.5">
+          <span className="block text-[11px] font-semibold text-muted-foreground">Status</span>
+          <span className="block text-sm font-bold text-foreground mt-0.5">
+            {contributionStatusLabel(watch("status"))}
+          </span>
+          <span className="block text-[11px] text-muted-foreground mt-0.5">
+            Status changes use the status menu, not this form.
+          </span>
+        </div>
+      )}
 
       <div className="col-span-1 min-[360px]:col-span-2">
         <AppInput

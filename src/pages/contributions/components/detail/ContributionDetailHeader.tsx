@@ -6,6 +6,7 @@ import {
   contributionPaymentLabel,
   contributionStatusBadge,
   contributionStatusLabel,
+  contributionStatusTransitions,
   contributionTypeBadge,
   contributionTypeLabel,
 } from "../../lib/contributionMeta";
@@ -27,7 +28,6 @@ export function ContributionDetailHeader({
 }) {
   const theme = getModuleTheme("contributions");
   const isCash = contribution.type === "MONEY";
-  const isDeposited = contribution.status === "DEPOSITED";
 
   return (
     <div className="rounded-2xl bg-card border border-border/80 shadow-sm overflow-hidden">
@@ -52,7 +52,7 @@ export function ContributionDetailHeader({
             </div>
           </div>
 
-          {onRequestStatus && !isDeposited ? (
+          {onRequestStatus && (contributionStatusTransitions[contribution.status] ?? []).length > 0 ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button
@@ -68,13 +68,12 @@ export function ContributionDetailHeader({
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-40 rounded-xl p-1.5">
-                {(contribution.status === "PENDING"
-                  ? ["DEPOSITED", "CANCELLED"]
-                  : []
+                {(
+                  (contributionStatusTransitions[contribution.status] ?? []) as ContributionStatus[]
                 ).map((value) => (
                   <DropdownMenuItem
                     key={value}
-                    onSelect={() => onRequestStatus(value as ContributionStatus)}
+                    onSelect={() => onRequestStatus(value)}
                     className="text-xs font-medium px-2.5 py-2 rounded-lg cursor-pointer"
                   >
                     <span className="inline-flex items-center gap-2">

@@ -16,6 +16,7 @@ import {
   contributionStatusBadge,
   contributionStatusLabel,
   contributionStatusOptions,
+  contributionStatusTransitions,
 } from "../../lib/contributionMeta";
 import { contributorInitials, formatContributionAmount } from "@/lib/contributionFormat";
 import { StatusConfirmDialog } from "./StatusConfirmDialog";
@@ -28,7 +29,7 @@ interface ContributionMobileCardsProps {
   onEdit: (contribution: ContributionListItem) => void;
   onDelete: (id: string) => void;
   onRowClick: (contribution: ContributionListItem) => void;
-  onStatusChange: (id: string, status: ContributionStatus, reason?: string) => void;
+  onStatusChange: (id: string, status: ContributionStatus, reason?: string) => Promise<unknown> | void;
   onDownloadSlip: (id: string) => void;
   isStatusPending?: boolean;
   isSlipPending?: boolean;
@@ -43,6 +44,21 @@ function StatusDropdown({
   disabled?: boolean;
   onRequestStatus: (status: ContributionStatus) => void;
 }) {
+  const transitions = contributionStatusTransitions[status] ?? [];
+
+  if (transitions.length === 0) {
+    return (
+      <span
+        className={cn(
+          "inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold",
+          contributionStatusBadge(status),
+        )}
+      >
+        {contributionStatusLabel(status)}
+      </span>
+    );
+  }
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -65,12 +81,9 @@ function StatusDropdown({
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-40 rounded-xl p-1.5">
-        {contributionStatusOptions.map((opt) => {
-          const allowed =
-            status === "PENDING" ||
-            (status === "DEPOSITED" && opt.value === "PENDING");
-          if (!allowed) return null;
-          return (
+        {contributionStatusOptions
+          .filter((opt) => transitions.includes(opt.value))
+          .map((opt) => (
             <DropdownMenuItem
               key={opt.value}
               disabled={opt.value === status}
@@ -87,8 +100,7 @@ function StatusDropdown({
               </span>
               {opt.value === status && <span className="ml-auto text-muted-foreground">✓</span>}
             </DropdownMenuItem>
-          );
-        })}
+          ))}
       </DropdownMenuContent>
     </DropdownMenu>
   );
@@ -100,14 +112,14 @@ function MoreMenu({
   isSlipPending,
   onDownloadSlip,
   onView,
-  isDeposited,
+  status,
 }: {
   onEdit: () => void;
   onDelete: () => void;
   isSlipPending?: boolean;
   onDownloadSlip: () => void;
   onView: () => void;
-  isDeposited: boolean;
+  status: ContributionStatus;
 }) {
   return (
     <DropdownMenu>
@@ -128,7 +140,7 @@ function MoreMenu({
           <Eye className="h-3.5 w-3.5" />
           View
         </DropdownMenuItem>
-        {!isDeposited && (
+        {status === "PENDING" && (
           <DropdownMenuItem
             onSelect={onEdit}
             className="text-xs font-medium px-2.5 py-2 rounded-lg cursor-pointer"
@@ -137,24 +149,29 @@ function MoreMenu({
             Edit
           </DropdownMenuItem>
         )}
-        <DropdownMenuItem
-          onSelect={onDownloadSlip}
-          disabled={isSlipPending}
-          className="text-xs font-medium px-2.5 py-2 rounded-lg cursor-pointer"
-        >
-          <Receipt className="h-3.5 w-3.5" />
-          Download Slip
-        </DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem
-          variant="destructive"
-          disabled={isDeposited}
-          onSelect={onDelete}
-          className="text-xs font-medium px-2.5 py-2 rounded-lg cursor-pointer"
-        >
-          <Trash2 className="h-3.5 w-3.5" />
-          Delete
-        </DropdownMenuItem>
+        {status === "DEPOSITED" && (
+          <DropdownMenuItem
+            onSelect={onDownloadSlip}
+            disabled={isSlipPending}
+            className="text-xs font-medium px-2.5 py-2 rounded-lg cursor-pointer"
+          >
+            <Receipt className="h-3.5 w-3.5" />
+            Download Slip
+          </DropdownMenuItem>
+        )}
+        {status !== "DEPOSITED" && (
+          <>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              variant="destructive"
+              onSelect={onDelete}
+              className="text-xs font-medium px-2.5 py-2 rounded-lg cursor-pointer"
+            >
+              <Trash2 className="h-3.5 w-3.5" />
+              Delete
+            </DropdownMenuItem>
+          </>
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );
@@ -233,7 +250,7 @@ onEdit,
                 onDownloadSlip={() => onDownloadSlip(contribution._id)}
                 onView={() => onView(contribution)}
                 isSlipPending={isSlipPending}
-                isDeposited={contribution.status === "DEPOSITED"}
+                status={contribution.status}
               />
             </div>
           </div>
@@ -295,7 +312,7 @@ onEdit,
                   onDownloadSlip={() => onDownloadSlip(contribution._id)}
                   onView={() => onView(contribution)}
                   isSlipPending={isSlipPending}
-                  isDeposited={contribution.status === "DEPOSITED"}
+                  status={contribution.status}
                 />
               </div>
             </div>
@@ -385,9 +402,14 @@ export function ContributionMobileCards({
         contribution={statusTarget?.contribution ?? null}
         nextStatus={statusTarget?.status ?? "PENDING"}
         loading={isStatusPending}
-        onConfirm={(reason) => {
+        onConfirm={async (reason) => {
           if (statusTarget) {
-            onStatusChange(statusTarget.contribution._id, statusTarget.status, reason);
+            try {
+              await onStatusChange(statusTarget.contribution._id, statusTarget.status, reason);
+              setStatusTarget(null);
+            } catch {
+              // keep dialog open so the user can retry
+            }
           }
         }}
         onCancel={() => setStatusTarget(null)}

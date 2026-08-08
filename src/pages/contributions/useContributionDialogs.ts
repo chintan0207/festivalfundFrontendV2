@@ -104,7 +104,6 @@ export function useContributionDialogs({
   const buildUpdatePayload = useCallback((values: ContributionFormValues): UpdateContributionPayload => {
     const payload: UpdateContributionPayload = {
       type: values.type,
-      status: values.status,
       date: values.date || new Date().toISOString(),
       paymentMode: values.paymentMode || "CASH",
     };

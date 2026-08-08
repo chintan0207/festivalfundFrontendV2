@@ -48,6 +48,12 @@ export const contributionStatusOptions: { value: string; label: string }[] = [
   { value: "CANCELLED", label: "Cancelled" },
 ];
 
+/** Statuses allowed when creating a new contribution (records never start cancelled). */
+export const contributionStatusCreateOptions: { value: string; label: string }[] = [
+  { value: "PENDING", label: "Pending" },
+  { value: "DEPOSITED", label: "Deposited" },
+];
+
 export const contributionTypeOptions: { value: string; label: string }[] = [
   { value: "MONEY", label: "Money" },
   { value: "ITEM", label: "Item" },
@@ -66,6 +72,16 @@ export const contributionCategoryOptions: { value: string; label: string }[] = [
   { value: "BOY", label: "Boys" },
   { value: "GIRL", label: "Girls" },
 ];
+
+/**
+ * Allowed status transitions for a given current status.
+ * Mirrors the backend transition matrix (see backend/src/utils/utility.js).
+ */
+export const contributionStatusTransitions: Record<string, string[]> = {
+  PENDING: ["DEPOSITED", "CANCELLED"],
+  DEPOSITED: ["PENDING"],
+  CANCELLED: [],
+};
 
 export function contributionStatusLabel(status?: string): string {
   return (status && contributionStatusLabels[status]) || status || "—";
