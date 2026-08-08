@@ -12,6 +12,7 @@ import { AppButton } from "@/components/common/AppButton";
 import { AppBadge } from "@/components/common/AppBadge";
 import { ContributorTable } from "./components/list/ContributorTable";
 import { ContributorMobileCards } from "./components/list/ContributorMobileCards";
+// import { ContributorKPIs } from "./components/list/ContributorKPIs";
 import { ContributorDialogs } from "./components/dialogs/ContributorDialogs";
 import { useContributorDialogs } from "./useContributorDialogs";
 import { contributorCategoryLabel } from "./lib/contributorMeta";
@@ -154,7 +155,7 @@ export default function ContributorsPage() {
         }
       />
 
-      {/* <ContributorKPIs total={total} contributors={contributors} themeGradient={theme.gradient} /> */}
+      {/* <ContributorKPIs themeGradient={theme.gradient} /> */}
 
       <PageFilterToolbar
         module="contributors"

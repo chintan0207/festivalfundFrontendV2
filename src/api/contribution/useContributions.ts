@@ -16,19 +16,23 @@ export const useContributions = (params?: ContributionQueryParams) => {
   const setPaginationMeta = useContributionApiStore((s) => s.setPaginationMeta);
   const setStatusCounts = useContributionApiStore((s) => s.setStatusCounts);
 
+  const isListQuery = params?.page !== undefined && params?.limit !== undefined;
+
   return useQuery({
     queryKey: CONTRIBUTION_QUERY_KEYS.all(params),
     queryFn: async () => {
       const res = await ContributionService.getAllContributions(params);
       if (res.data) {
-        setContributions(res.data.contributions);
-        setPaginationMeta({
-          total: res.data.total,
-          page: res.data.page,
-          limit: res.data.limit,
-          totalPages: res.data.totalPages,
-        });
-        setStatusCounts(res.data.statusCounts);
+        if (isListQuery) {
+          setContributions(res.data.contributions);
+          setPaginationMeta({
+            total: res.data.total,
+            page: res.data.page,
+            limit: res.data.limit,
+            totalPages: res.data.totalPages,
+          });
+          setStatusCounts(res.data.statusCounts);
+        }
       }
       return res.data;
     },

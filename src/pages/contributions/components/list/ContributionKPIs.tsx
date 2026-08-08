@@ -1,27 +1,38 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { CheckCircle, Clock, Wallet, Package } from "lucide-react";
 import { KPICard, KPIGrid } from "@/components/common/KPICard";
-import { contributionAmountValue } from "@/lib/contributionFormat";
-import type { ContributionListItem } from "@/types/Types";
+import { useFestivalApiStore } from "@/api/festival/festival.store";
 
 interface ContributionKPIsProps {
-  contributions: ContributionListItem[];
   themeGradient?: string;
 }
 
 const fmt = (value: number) => (value ? `₹${value.toLocaleString("en-IN")}` : "₹0");
 
-export function ContributionKPIs({
-  contributions,
-  themeGradient,
-}: ContributionKPIsProps) {
-  const deposited = contributions
-    .filter((c) => c.status === "DEPOSITED")
-    .reduce((sum, c) => sum + contributionAmountValue(c), 0);
-  const pending = contributions
-    .filter((c) => c.status === "PENDING")
-    .reduce((sum, c) => sum + contributionAmountValue(c), 0);
-  const itemCount = contributions.filter((c) => c.type === "ITEM").length;
+const emptyStats = {
+  totalCollected: 0,
+  pendingAmount: 0,
+  itemCount: 0,
+};
+
+export function ContributionKPIs({ themeGradient }: ContributionKPIsProps) {
+  const { isAllFestivals, activeFestivalId, festivals } = useFestivalApiStore();
+
+  const stats = isAllFestivals
+    ? festivals
+        .filter((f) => !f.isDeleted)
+        .reduce(
+          (acc, f) => ({
+            totalCollected: acc.totalCollected + (f.stats?.totalCollected || 0),
+            pendingAmount: acc.pendingAmount + (f.stats?.pendingAmount || 0),
+            itemCount: acc.itemCount + (f.stats?.itemCount || 0),
+          }),
+          emptyStats,
+        )
+    : festivals.find((f) => f._id === activeFestivalId)?.stats || emptyStats;
+
+  const deposited = stats.totalCollected;
+  const pending = stats.pendingAmount;
 
   return (
     <KPIGrid columns={4}>
@@ -30,6 +41,7 @@ export function ContributionKPIs({
         value={fmt(deposited)}
         icon={<CheckCircle className="h-5 w-5" />}
         accent="emerald"
+        // gradient={themeGradient}
         subtext="Confirmed receipts"
       />
       <KPICard
@@ -37,6 +49,7 @@ export function ContributionKPIs({
         value={fmt(pending)}
         icon={<Clock className="h-5 w-5" />}
         accent="rose"
+        // gradient={themeGradient}
         subtext="Awaiting deposit"
       />
       <KPICard
@@ -44,13 +57,15 @@ export function ContributionKPIs({
         value={fmt(deposited + pending)}
         icon={<Wallet className="h-5 w-5" />}
         accent="blue"
+        // gradient={themeGradient}
         subtext="All contributions"
       />
       <KPICard
         label="Item Contributions"
-        value={itemCount}
+        value={stats.itemCount || 0}
         icon={<Package className="h-5 w-5" />}
         accent="amber"
+        // gradient={themeGradient}
         subtext="In-kind donations"
       />
     </KPIGrid>

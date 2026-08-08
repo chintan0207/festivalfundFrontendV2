@@ -1,10 +1,16 @@
-import { MapPin, Phone, Pencil, Trash2, Search } from "lucide-react";
+import { MapPin, Phone, MoreVertical, Pencil, Trash2, Search, Eye } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { cn, initials, formatDate } from "@/lib/utils";
 import { AppBadge } from "@/components/common/AppBadge";
-import { AppButton } from "@/components/common/AppButton";
 import { EmptyState } from "@/components/common/EmptyState";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { contributorCategoryBadge, contributorCategoryLabel, contributorAvatarGradient } from "../../lib/contributorMeta";
 import type { Contributor } from "@/types/Types";
 
@@ -15,6 +21,55 @@ interface ContributorMobileCardsProps {
   onEdit: (contributor: Contributor) => void;
   onDelete: (id: string) => void;
   onRowClick: (contributor: Contributor) => void;
+}
+
+function MoreMenu({
+  onEdit,
+  onDelete,
+  onView,
+}: {
+  onEdit: () => void;
+  onDelete: () => void;
+  onView: () => void;
+}) {
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button
+          type="button"
+          title="More actions"
+          className="h-8 w-8 rounded-lg text-muted-foreground hover:bg-muted/60 hover:text-foreground flex items-center justify-center transition-all active:scale-95 cursor-pointer"
+        >
+          <MoreVertical className="h-4 w-4" />
+        </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-44 rounded-xl p-1.5">
+        <DropdownMenuItem
+          onSelect={onView}
+          className="text-xs font-medium px-2.5 py-2 rounded-lg cursor-pointer"
+        >
+          <Eye className="h-3.5 w-3.5" />
+          View
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          onSelect={onEdit}
+          className="text-xs font-medium px-2.5 py-2 rounded-lg cursor-pointer"
+        >
+          <Pencil className="h-3.5 w-3.5" />
+          Edit
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem
+          variant="destructive"
+          onSelect={onDelete}
+          className="text-xs font-medium px-2.5 py-2 rounded-lg cursor-pointer"
+        >
+          <Trash2 className="h-3.5 w-3.5" />
+          Delete
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
 }
 
 function ContributorCard({
@@ -33,92 +88,116 @@ function ContributorCard({
   return (
     <div
       className={cn(
-        "rounded-2xl bg-card border border-border/80 shadow-xs cursor-pointer active:scale-[0.99] transition-transform",
-        minimal ? "p-3" : "p-4 space-y-3"
+        "rounded-2xl bg-card border border-border/80 shadow-xs transition-transform overflow-hidden",
+        !minimal && "group"
       )}
-      onClick={() => onRowClick(contributor)}
     >
-      <div className="flex items-center gap-3">
-        <Avatar>
-          <AvatarFallback className={cn("text-xs font-bold text-white", contributorAvatarGradient(contributor.category))}>
-            {initials(contributor.name)}
-          </AvatarFallback>
-        </Avatar>
-        <div className="flex-1 min-w-0">
-          <p className="text-sm font-bold text-foreground truncate">{contributor.name}</p>
-          <p className="text-[11px] text-muted-foreground">{contributor.contributorCode}</p>
-        </div>
-        <AppBadge size="xs" className={contributorCategoryBadge(contributor.category)}>
-          {contributorCategoryLabel(contributor.category)}
-        </AppBadge>
-      </div>
-
-      {!minimal && (
-        <>
-          <div className="grid grid-cols-2 gap-2 text-xs">
-            {contributor.phoneNumber && (
-              <div className="flex items-center gap-1.5 p-2 rounded-lg bg-muted/30 text-muted-foreground">
-                <Phone className="h-3 w-3 text-indigo-500" />
-                <span>{contributor.phoneNumber}</span>
-              </div>
-            )}
-            {contributor.createdAt && (
-              <div className="flex items-center gap-1.5 p-2 rounded-lg bg-muted/30 text-muted-foreground">
-                <span className="text-[10px]">{formatDate(contributor.createdAt)}</span>
-              </div>
-            )}
-          </div>
-
-          {contributor.address && (
-            <div className="flex items-start gap-1.5 pl-2 text-[11px] text-muted-foreground">
-              <MapPin className="h-3 w-3 mt-0.5 shrink-0 text-indigo-500" />
-              <span className="truncate">{contributor.address}</span>
+      <div className={cn(minimal ? "p-3" : "p-3.5", minimal ? "space-y-2" : "space-y-2.5")}>
+        {minimal ? (
+          <div className="flex items-center gap-3">
+            <Avatar size="default" className="h-8 w-8">
+              <AvatarFallback
+                className={cn("rounded-full text-white text-[11px] font-bold", contributorAvatarGradient(contributor.category))}
+              >
+                {initials(contributor.name)}
+              </AvatarFallback>
+            </Avatar>
+            <div className="min-w-0 flex-1">
+              <p className="text-[13px] font-bold text-foreground truncate">{contributor.name}</p>
+              <p className="font-mono text-[10px] text-muted-foreground truncate">
+                {contributor.contributorCode}
+              </p>
             </div>
-          )}
-
-          <div className="flex gap-2 pt-1" onClick={(e) => e.stopPropagation()}>
-            <AppButton
-              variant="outline"
-              className="flex-1 h-9 rounded-xl text-xs text-muted-foreground hover:bg-muted/60 hover:text-foreground"
-              onClick={() => onEdit(contributor)}
-              leftIcon={<Pencil className="h-3.5 w-3.5" />}
-            >
-              Edit
-            </AppButton>
-            <AppButton
-              variant="outline"
-              className="flex-1 h-9 rounded-xl text-xs text-rose-500 hover:bg-rose-500/10"
-              onClick={() => onDelete(contributor._id)}
-              leftIcon={<Trash2 className="h-3.5 w-3.5" />}
-            >
-              Delete
-            </AppButton>
+            <AppBadge size="xs" className={contributorCategoryBadge(contributor.category)}>
+              {contributorCategoryLabel(contributor.category)}
+            </AppBadge>
+            <div onClick={(e) => e.stopPropagation()} className="shrink-0">
+              <MoreMenu
+                onEdit={() => onEdit(contributor)}
+                onDelete={() => onDelete(contributor._id)}
+                onView={() => onRowClick(contributor)}
+              />
+            </div>
           </div>
-        </>
-      )}
+        ) : (
+          <>
+            <div className="flex items-center gap-2.5">
+              <Avatar size="default" className="h-9 w-9 rounded-xl">
+                <AvatarFallback
+                  className={cn(
+                    "rounded-lg text-white text-xs font-bold",
+                    contributorAvatarGradient(contributor.category)
+                  )}
+                >
+                  {initials(contributor.name)}
+                </AvatarFallback>
+              </Avatar>
+
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-bold text-foreground truncate">{contributor.name}</p>
+                <p className="font-mono text-[11px] text-muted-foreground">
+                  {contributor.contributorCode}
+                </p>
+              </div>
+
+              <AppBadge size="xs" className={contributorCategoryBadge(contributor.category)}>
+                {contributorCategoryLabel(contributor.category)}
+              </AppBadge>
+            </div>
+
+            {contributor.phoneNumber && (
+              <div className="flex items-center gap-1.5 text-muted-foreground">
+                <Phone className="h-3 w-3 text-indigo-500" />
+                <span className="text-[11px]">{contributor.phoneNumber}</span>
+                {contributor.createdAt && (
+                  <span className="text-[11px] text-muted-foreground/70 ml-auto">
+                    {formatDate(contributor.createdAt)}
+                  </span>
+                )}
+              </div>
+            )}
+
+            {contributor.address && (
+              <div className="flex items-start gap-1.5 pl-0.5 text-[11px] text-muted-foreground">
+                <MapPin className="h-3 w-3 mt-0.5 shrink-0 text-indigo-500" />
+                <span className="truncate">{contributor.address}</span>
+              </div>
+            )}
+
+            <div className="flex items-end justify-between gap-2">
+              <div className="min-w-0">
+                {contributor.email ? (
+                  <p className="text-xs font-semibold text-foreground truncate">{contributor.email}</p>
+                ) : null}
+              </div>
+
+              <div onClick={(e) => e.stopPropagation()} className="shrink-0">
+                <MoreMenu
+                  onEdit={() => onEdit(contributor)}
+                  onDelete={() => onDelete(contributor._id)}
+                  onView={() => onRowClick(contributor)}
+                />
+              </div>
+            </div>
+          </>
+        )}
+      </div>
     </div>
   );
 }
 
 function MobileCardSkeleton() {
   return (
-    <div className="p-4 rounded-2xl bg-card border border-border/80 space-y-3">
-      <div className="flex items-center gap-3">
-        <Skeleton className="h-8 w-8 rounded-full" />
+    <div className="p-3.5 rounded-2xl bg-card border border-border/80 space-y-2.5">
+      <div className="flex items-center gap-2.5">
+        <Skeleton className="h-9 w-9 rounded-lg" />
         <div className="flex-1 space-y-1">
           <Skeleton className="h-4 w-32" />
           <Skeleton className="h-3 w-20" />
         </div>
-        <Skeleton className="h-5 w-16 rounded-full" />
+        <Skeleton className="h-6 w-16 rounded-full" />
       </div>
-      <div className="grid grid-cols-2 gap-2">
-        <Skeleton className="h-8 rounded-lg" />
-        <Skeleton className="h-8 rounded-lg" />
-      </div>
-      <div className="flex gap-2">
-        <Skeleton className="h-9 flex-1 rounded-xl" />
-        <Skeleton className="h-9 flex-1 rounded-xl" />
-      </div>
+      <Skeleton className="h-8 rounded-lg" />
     </div>
   );
 }

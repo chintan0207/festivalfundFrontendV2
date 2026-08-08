@@ -1,47 +1,47 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Users } from "lucide-react";
 import { KPICard, KPIGrid } from "@/components/common/KPICard";
-import type { Contributor } from "@/types/Types";
+import { useContributorApiStore } from "@/api/contributor/contributor.store";
 
 interface ContributorKPIsProps {
-  total: number;
-  contributors: Contributor[];
   themeGradient?: string;
 }
 
-export function ContributorKPIs({ total, contributors, themeGradient }: ContributorKPIsProps) {
-  const parentsCount = contributors.filter((c) => c.category === "PARENT").length;
-  const boysCount = contributors.filter((c) => c.category === "BOY").length;
-  const girlsCount = contributors.filter((c) => c.category === "GIRL").length;
+export function ContributorKPIs({ themeGradient }: ContributorKPIsProps) {
+  const categoryCounts = useContributorApiStore((s) => s.categoryCounts);
 
   return (
     <KPIGrid columns={4}>
       <KPICard
         label="Total Donors"
-        value={total}
+        value={categoryCounts.total}
         icon={<Users className="h-5 w-5" />}
-        accent="emerald"
+        accent="cyan"
+        // gradient={themeGradient}
         subtext="Registered donors"
       />
       <KPICard
         label="Parents"
-        value={parentsCount}
+        value={categoryCounts.PARENT}
         icon={<Users className="h-5 w-5" />}
         accent="emerald"
+        // gradient={themeGradient}
         subtext="Head of families"
       />
       <KPICard
         label="Boys & Youth"
-        value={boysCount}
+        value={categoryCounts.BOY}
         icon={<Users className="h-5 w-5" />}
         accent="blue"
+        // gradient={themeGradient}
         subtext="Youth team members"
       />
       <KPICard
         label="Girls & Youth"
-        value={girlsCount}
+        value={categoryCounts.GIRL}
         icon={<Users className="h-5 w-5" />}
         accent="rose"
+        // gradient={themeGradient}
         subtext="Cultural performers"
       />
     </KPIGrid>

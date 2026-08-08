@@ -13,7 +13,11 @@ export interface DataTablePaginationProps {
   module?: string;
 }
 
-function getPageNumbers(current: number, total: number, siblings: number): (number | "...")[] {
+function getPageNumbers(
+  current: number,
+  total: number,
+  siblings: number,
+): (number | "...")[] {
   const pages: (number | "...")[] = [];
   const rangeStart = Math.max(2, current - siblings);
   const rangeEnd = Math.min(total - 1, current + siblings);
@@ -35,6 +39,11 @@ export function DataTablePagination({
   module = "default",
 }: DataTablePaginationProps) {
   const theme = getModuleTheme(module);
+
+  if (total === 0) {
+    return null;
+  }
+
   const pages = getPageNumbers(page, totalPages, 1);
   const isFirst = page <= 1;
   const isLast = page >= totalPages;
@@ -60,12 +69,11 @@ export function DataTablePagination({
             value={String(limit)}
             onChange={(val) => onLimitChange(Number(val))}
             options={[
-              { value: "10", label: "10" },
-              { value: "1", label: "1" },
-              { value: "2", label: "2" },
-
               { value: "5", label: "5" },
+              { value: "10", label: "10" },
               { value: "20", label: "20" },
+              { value: "50", label: "50" },
+              { value: "100", label: "100" },
             ]}
             className="!h-7 sm:!h-7 text-[11px] rounded-full px-2.5 min-w-[52px]"
           />

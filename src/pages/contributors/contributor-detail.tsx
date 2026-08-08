@@ -1,4 +1,5 @@
-import { Pencil, Trash2 } from "lucide-react";
+import { useCallback } from "react";
+import { Pencil, Trash2, Search } from "lucide-react";
 import { useParams, useRouter } from "@tanstack/react-router";
 import { useContributor } from "@/api/contributor/useContributors";
 import { useContributions } from "@/api/contribution/useContributions";
@@ -6,6 +7,7 @@ import { getModuleTheme } from "@/theme/colors";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AppButton } from "@/components/common/AppButton";
 import { PageHeader } from "@/components/common/PageHeader";
+import { EmptyState } from "@/components/common/EmptyState";
 import { contributionTotal } from "@/lib/contributionFormat";
 import { ContributorDetailHeader } from "./components/detail/ContributorDetailHeader";
 import { ContributionsSectionHeading } from "./components/detail/ContributionsSectionHeading";
@@ -13,109 +15,7 @@ import { ContributorContributions } from "./components/detail/ContributorContrib
 import { ContributorContributionCards } from "./components/detail/ContributorContributionCards";
 import { ContributorDialogs } from "./components/dialogs/ContributorDialogs";
 import { useContributorDialogs } from "./useContributorDialogs";
-import type { Contribution, ContributionListItem, Contributor } from "@/types/Types";
-
-const dummyContributor: Contributor = {
-  _id: "dummy-001",
-  organizationId: "org-1",
-  contributorCode: "CTR-0042",
-  name: "Ramesh Sharma",
-  phoneNumber: "+91 98765 43210",
-  email: "ramesh.sharma@example.com",
-  address: "12, Navrangpura, Ahmedabad - 380009",
-  category: "PARENT",
-  isActive: true,
-  notes: "Regular donor since 2023. Prefers to donate during major festivals.",
-  createdAt: "2023-03-05T10:00:00.000Z",
-};
-
-const dummyContributions: Contribution[] = [
-  {
-    _id: "con-dummy-1",
-    organizationId: "org-1",
-    contributorId: dummyContributor._id,
-    festivalId: { _id: "fest-1", name: "Ganesh Chaturthi", year: 2026 } as never,
-    type: "MONEY",
-    status: "DEPOSITED",
-    date: "2026-05-12T00:00:00.000Z",
-    amount: 5000,
-    contributionCode: "CON-001",
-    paymentMode: "CASH",
-    isBalanceApplied: false,
-    isDeleted: false,
-  },
-  {
-    _id: "con-dummy-2",
-    organizationId: "org-1",
-    contributorId: dummyContributor._id,
-    festivalId: { _id: "fest-2", name: "Diwali", year: 2025 } as never,
-    type: "MONEY",
-    status: "DEPOSITED",
-    date: "2025-11-05T00:00:00.000Z",
-    amount: 2000,
-    contributionCode: "CON-002",
-    paymentMode: "CASH",
-    isBalanceApplied: false,
-    isDeleted: false,
-  },
-  {
-    _id: "con-dummy-3",
-    organizationId: "org-1",
-    contributorId: dummyContributor._id,
-    festivalId: { _id: "fest-3", name: "Holi", year: 2026 } as never,
-    type: "ITEM",
-    status: "PENDING",
-    date: "2026-03-20T00:00:00.000Z",
-    estimatedValue: 1500,
-    itemName: "Colors & Pichkari set",
-    contributionCode: "CON-003",
-    paymentMode: "CASH",
-    isBalanceApplied: false,
-    isDeleted: false,
-  },
-  {
-    _id: "con-dummy-4",
-    organizationId: "org-1",
-    contributorId: dummyContributor._id,
-    festivalId: { _id: "fest-4", name: "Navratri", year: 2026 } as never,
-    type: "MONEY",
-    status: "CANCELLED",
-    date: "2026-04-10T00:00:00.000Z",
-    amount: 3500,
-    contributionCode: "CON-004",
-    paymentMode: "ONLINE",
-    isBalanceApplied: false,
-    isDeleted: false,
-  },
-  {
-    _id: "con-dummy-5",
-    organizationId: "org-1",
-    contributorId: dummyContributor._id,
-    festivalId: { _id: "fest-5", name: "Diwali", year: 2024 } as never,
-    type: "MONEY",
-    status: "DEPOSITED",
-    date: "2024-10-28T00:00:00.000Z",
-    amount: 4000,
-    contributionCode: "CON-005",
-    paymentMode: "CASH",
-    isBalanceApplied: false,
-    isDeleted: false,
-  },
-  {
-    _id: "con-dummy-6",
-    organizationId: "org-1",
-    contributorId: dummyContributor._id,
-    festivalId: { _id: "fest-6", name: "Ganesh Chaturthi", year: 2025 } as never,
-    type: "MONEY",
-    status: "DEPOSITED",
-    date: "2025-08-22T00:00:00.000Z",
-    amount: 5000,
-    contributionCode: "CON-006",
-    paymentMode: "ONLINE",
-    isBalanceApplied: false,
-    isDeleted: false,
-  },
-];
+import type { Contribution, ContributionListItem } from "@/types/Types";
 
 export default function ContributorDetailPage() {
   const { contributorId } = useParams({ from: "/dashboard/contributors/$contributorId" });
@@ -133,17 +33,12 @@ export default function ContributorDetailPage() {
     onDeleted: () => router.history.back(),
   });
 
-  const contributions = contributionsData?.contributions || [];
-  const isDummy = !contributor || contributions.length === 0;
-  const activeContributor = contributor || dummyContributor;
-  const displayContributions: ContributionListItem[] = isDummy
-    ? (dummyContributions as unknown as ContributionListItem[])
-    : contributions;
+  const contributions = (contributionsData?.contributions || []) as ContributionListItem[];
 
-  const totalContributed = contributionTotal(displayContributions);
+  const totalContributed = contributionTotal(contributions);
 
   const festivalIds = new Set(
-    displayContributions
+    contributions
       .map((c) => {
         const legacy = (c as Partial<Contribution>).festivalId;
         if (typeof legacy === "string") return legacy;
@@ -153,7 +48,7 @@ export default function ContributorDetailPage() {
       .filter(Boolean),
   );
 
-  const dates = displayContributions
+  const dates = contributions
     .map((c) => c.date)
     .filter(Boolean)
     .sort();
@@ -161,7 +56,17 @@ export default function ContributorDetailPage() {
   const firstDate = dates[0] || "";
   const lastDate = dates[dates.length - 1] || "";
 
-  if (loadingContributor && !isDummy) {
+  const handleContributionClick = useCallback(
+    (contribution: Contribution) => {
+      router.navigate({
+        to: "/dashboard/contributions/$contributionId",
+        params: { contributionId: contribution._id },
+      });
+    },
+    [router],
+  );
+
+  if (loadingContributor && !contributor) {
     return (
       <div className="space-y-5 pb-28 md:pb-10 max-w-[1400px] mx-auto px-1 sm:px-0">
         <Skeleton className="h-10 w-48" />
@@ -171,14 +76,27 @@ export default function ContributorDetailPage() {
     );
   }
 
+  if (!contributor) {
+    return (
+      <div className="space-y-5 pb-28 md:pb-10 max-w-[1400px] mx-auto px-1 sm:px-0">
+        <EmptyState
+          icon={Search}
+          title="Contributor not found"
+          description="This contributor may have been deleted or the link is invalid."
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-5 pb-28 md:pb-10 max-w-[1400px] mx-auto px-1 sm:px-0">
       <PageHeader
         module="contributors"
+        title=""
         breadcrumbs={[
           { label: "Home", to: "/dashboard" },
           { label: "Contributors", to: "/dashboard/contributors" },
-          { label: activeContributor.name },
+          { label: contributor.name },
         ]}
         actions={
           <>
@@ -186,7 +104,7 @@ export default function ContributorDetailPage() {
               variant="outline"
               leftIcon={<Pencil className="h-3.5 w-3.5" />}
               className="h-8 text-xs rounded-full"
-              onClick={() => dialogs.openEdit(activeContributor)}
+              onClick={() => dialogs.openEdit(contributor)}
             >
               <span className="hidden sm:inline">Edit</span>
             </AppButton>
@@ -194,7 +112,7 @@ export default function ContributorDetailPage() {
               variant="outline"
               leftIcon={<Trash2 className="h-3.5 w-3.5" />}
               className="h-8 text-xs rounded-full text-rose-600 border-rose-200 hover:bg-rose-50 dark:border-rose-800 dark:hover:bg-rose-950"
-              onClick={() => dialogs.openDelete(activeContributor._id)}
+              onClick={() => dialogs.openDelete(contributor._id)}
             >
               <span className="hidden sm:inline">Delete</span>
             </AppButton>
@@ -204,7 +122,7 @@ export default function ContributorDetailPage() {
 
       {/* Profile + Stats */}
       <ContributorDetailHeader
-        contributor={activeContributor}
+        contributor={contributor}
         totalContributed={totalContributed}
         festivalCount={festivalIds.size}
         firstDate={firstDate}
@@ -213,18 +131,20 @@ export default function ContributorDetailPage() {
 
       {/* Contributions - mobile cards */}
       <div className="md:hidden space-y-3">
-        <ContributionsSectionHeading count={displayContributions.length} />
+        <ContributionsSectionHeading count={contributions.length} />
         <ContributorContributionCards
-          contributions={displayContributions as Contribution[]}
+          contributions={contributions as Contribution[]}
           isLoading={loadingContributions}
+          onRowClick={handleContributionClick}
         />
       </div>
 
       {/* Contributions - desktop table */}
       <div className="hidden md:block">
         <ContributorContributions
-          contributions={displayContributions as Contribution[]}
+          contributions={contributions as Contribution[]}
           isLoading={loadingContributions}
+          onRowClick={handleContributionClick}
           module="contributors"
         />
       </div>

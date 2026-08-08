@@ -14,10 +14,12 @@ import type { Contribution } from "@/types/Types";
 export function ContributorContributions({
   contributions,
   isLoading,
+  onRowClick,
   module = "contributors",
 }: {
   contributions: Contribution[];
   isLoading: boolean;
+  onRowClick?: (contribution: Contribution) => void;
   module?: string;
 }) {
   const columns: Column<Contribution>[] = [
@@ -87,6 +89,7 @@ export function ContributorContributions({
         sortField="date"
         sortOrder="desc"
         isLoading={isLoading}
+        onRowClick={onRowClick}
         emptyTitle="No contributions found"
         emptyDescription="This contributor has not made any contributions yet."
         module={module}

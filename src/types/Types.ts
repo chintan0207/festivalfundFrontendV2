@@ -79,6 +79,7 @@ export type FestivalStats = {
   totalExpenses: number;
   currentBalance: number;
   contributorsCount?: number;
+  itemCount?: number;
 };
 
 export type Festival = {

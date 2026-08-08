@@ -19,7 +19,9 @@ import { useContributionDialogs } from "./useContributionDialogs";
 import type { ContributionStatus } from "@/types/Types";
 
 export default function ContributionDetailPage() {
-  const { contributionId } = useParams({ from: "/dashboard/contributions/$contributionId" });
+  const { contributionId } = useParams({
+    from: "/dashboard/contributions/$contributionId",
+  });
   const router = useRouter();
   const theme = getModuleTheme("contributions");
 
@@ -54,6 +56,7 @@ export default function ContributionDetailPage() {
   return (
     <div className="space-y-5 pb-28 md:pb-10 max-w-[1400px] mx-auto px-1 sm:px-0">
       <PageHeader
+        title=""
         module="contributions"
         breadcrumbs={[
           { label: "Home", to: "/dashboard" },
@@ -98,7 +101,10 @@ export default function ContributionDetailPage() {
         }
       />
 
-      <ContributionDetailHeader contribution={contribution} onRequestStatus={setStatusTarget} />
+      <ContributionDetailHeader
+        contribution={contribution}
+        onRequestStatus={setStatusTarget}
+      />
 
       <ContributionStatusHistory contribution={contribution} />
 

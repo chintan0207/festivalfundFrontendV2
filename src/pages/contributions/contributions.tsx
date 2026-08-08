@@ -190,7 +190,7 @@ export default function ContributionsPage() {
         }
       />
 
-      <ContributionKPIs contributions={contributions} themeGradient={theme.gradient} />
+      <ContributionKPIs themeGradient={theme.gradient} />
 
       <PageFilterToolbar
         module="contributions"

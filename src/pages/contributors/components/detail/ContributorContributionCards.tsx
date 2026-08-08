@@ -1,4 +1,4 @@
-import { Banknote, Package, Calendar, Search } from "lucide-react";
+import { Banknote, Package, Calendar, ChevronRight, Search } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn, formatDate } from "@/lib/utils";
 import { AppBadge } from "@/components/common/AppBadge";
@@ -11,14 +11,20 @@ import {
 } from "@/lib/contributionFormat";
 import type { Contribution } from "@/types/Types";
 
-function ContributionCard({ c }: { c: Contribution }) {
+function ContributionCard({ c, onClick }: { c: Contribution; onClick: () => void }) {
   return (
-    <div className="p-3.5 rounded-2xl bg-card border border-border/80 shadow-xs space-y-2.5">
+    <div
+      onClick={onClick}
+      className="p-3.5 rounded-2xl bg-card border border-border/80 shadow-xs space-y-2.5 cursor-pointer active:scale-[0.99] transition-transform"
+    >
       <div className="flex items-center justify-between">
         <span className="font-mono font-bold text-indigo-600 text-[11px]">{c.contributionCode}</span>
-        <AppBadge size="xs" className={contributionStatusBadge(c.status)}>
-          {c.status}
-        </AppBadge>
+        <div className="flex items-center gap-1">
+          <AppBadge size="xs" className={contributionStatusBadge(c.status)}>
+            {c.status}
+          </AppBadge>
+          <ChevronRight className="h-3.5 w-3.5 text-muted-foreground" />
+        </div>
       </div>
 
       <div className="flex items-center gap-2 text-sm">
@@ -61,9 +67,11 @@ function CardSkeleton() {
 export function ContributorContributionCards({
   contributions,
   isLoading,
+  onRowClick,
 }: {
   contributions: Contribution[];
   isLoading: boolean;
+  onRowClick?: (contribution: Contribution) => void;
 }) {
   if (isLoading) {
     return (
@@ -88,7 +96,11 @@ export function ContributorContributionCards({
   return (
     <div className="space-y-3">
       {contributions.map((c) => (
-        <ContributionCard key={c._id} c={c} />
+        <ContributionCard
+          key={c._id}
+          c={c}
+          onClick={() => onRowClick?.(c)}
+        />
       ))}
     </div>
   );

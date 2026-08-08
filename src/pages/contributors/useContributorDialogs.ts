@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCallback, useMemo, useState } from "react";
 import {
   useCreateContributor,
@@ -52,7 +53,7 @@ export function useContributorDialogs({
       phoneNumber: contributor.phoneNumber || "",
       email: contributor.email || "",
       address: contributor.address || "",
-      category: contributor.category,
+      category: contributor.category as any,
     });
     setIsEditOpen(true);
   }, []);

@@ -22,19 +22,23 @@ export const useContributors = (params?: ContributorQueryParams, options?: UseCo
   const setPaginationMeta = useContributorApiStore((s) => s.setPaginationMeta);
   const setCategoryCounts = useContributorApiStore((s) => s.setCategoryCounts);
 
+  const isListQuery = params?.page !== undefined && params?.limit !== undefined;
+
   return useQuery({
     queryKey: CONTRIBUTOR_QUERY_KEYS.all(params),
     queryFn: async () => {
       const res = await ContributorService.getAllContributors(params);
       if (res.data) {
-        setContributors(res.data.contributors);
-        setPaginationMeta({
-          total: res.data.total,
-          page: res.data.page,
-          limit: res.data.limit,
-          totalPages: res.data.totalPages,
-        });
-        setCategoryCounts(res.data.categoryCounts);
+        if (isListQuery) {
+          setContributors(res.data.contributors);
+          setPaginationMeta({
+            total: res.data.total,
+            page: res.data.page,
+            limit: res.data.limit,
+            totalPages: res.data.totalPages,
+          });
+          setCategoryCounts(res.data.categoryCounts);
+        }
       }
       return res.data;
     },
