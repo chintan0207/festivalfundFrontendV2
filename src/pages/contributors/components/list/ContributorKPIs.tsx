@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Users } from "lucide-react";
 import { KPICard, KPIGrid } from "@/components/common/KPICard";
 import type { Contributor } from "@/types/Types";
@@ -5,9 +6,10 @@ import type { Contributor } from "@/types/Types";
 interface ContributorKPIsProps {
   total: number;
   contributors: Contributor[];
+  themeGradient?: string;
 }
 
-export function ContributorKPIs({ total, contributors }: ContributorKPIsProps) {
+export function ContributorKPIs({ total, contributors, themeGradient }: ContributorKPIsProps) {
   const parentsCount = contributors.filter((c) => c.category === "PARENT").length;
   const boysCount = contributors.filter((c) => c.category === "BOY").length;
   const girlsCount = contributors.filter((c) => c.category === "GIRL").length;

@@ -154,7 +154,7 @@ export default function ContributorsPage() {
         }
       />
 
-      {/* <ContributorKPIs total={total} contributors={contributors} /> */}
+      {/* <ContributorKPIs total={total} contributors={contributors} themeGradient={theme.gradient} /> */}
 
       <PageFilterToolbar
         module="contributors"

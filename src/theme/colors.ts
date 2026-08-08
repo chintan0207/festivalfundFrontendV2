@@ -11,6 +11,19 @@ export const gradientColors = [
   "bg-gradient-to-r from-violet-500 to-fuchsia-600",
 ] as const;
 
+export const gradientColorNames = {
+  pinkToRose: gradientColors[0],
+  skyToBlue: gradientColors[1],
+  greenToEmerald: gradientColors[2],
+  roseToRed: gradientColors[3],
+  violetToPurple: gradientColors[4],
+  slateToZinc: gradientColors[5],
+  redToOrange: gradientColors[6],
+  amberToYellow: gradientColors[7],
+  limeToGreen: gradientColors[8],
+  violetToFuchsia: gradientColors[9],
+} as const;
+
 export const moduleGradientColors: Record<string, string> = {
   dashboard: gradientColors[1],
   festivals: gradientColors[0],

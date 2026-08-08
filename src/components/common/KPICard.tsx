@@ -1,6 +1,7 @@
 import { type ReactNode } from "react";
 import { TrendingUp, TrendingDown, Minus } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { gradientColorNames } from "@/theme/colors";
 
 export type KPIAccentColor =
   | "emerald"
@@ -9,6 +10,7 @@ export type KPIAccentColor =
   | "amber"
   | "rose"
   | "purple"
+  | "violet"
   | "cyan";
 
 export interface KPICardProps {
@@ -19,54 +21,42 @@ export interface KPICardProps {
   icon?: ReactNode;
   sparkData?: number[];
   accent?: KPIAccentColor;
+  gradient?: string;
   subtext?: string;
   className?: string;
 }
 
-const ACCENT_STYLES: Record<
-  KPIAccentColor,
-  { bg: string; text: string; border: string; spark: string }
-> = {
+const ACCENT_STYLES: Record<KPIAccentColor, { gradient: string; spark: string }> = {
   emerald: {
-    bg: "bg-emerald-500/10 dark:bg-emerald-500/15",
-    text: "text-emerald-600 dark:text-emerald-400",
-    border: "border-emerald-500/20",
+    gradient: gradientColorNames.greenToEmerald,
     spark: "#10b981",
   },
   blue: {
-    bg: "bg-blue-500/10 dark:bg-blue-500/15",
-    text: "text-blue-600 dark:text-blue-400",
-    border: "border-blue-500/20",
+    gradient: gradientColorNames.skyToBlue,
     spark: "#3b82f6",
   },
   indigo: {
-    bg: "bg-indigo-500/10 dark:bg-indigo-500/15",
-    text: "text-indigo-600 dark:text-indigo-400",
-    border: "border-indigo-500/20",
+    gradient: gradientColorNames.violetToPurple,
     spark: "#6366f1",
   },
   amber: {
-    bg: "bg-amber-500/10 dark:bg-amber-500/15",
-    text: "text-amber-600 dark:text-amber-400",
-    border: "border-amber-500/20",
+    gradient: gradientColorNames.amberToYellow,
     spark: "#f59e0b",
   },
   rose: {
-    bg: "bg-rose-500/10 dark:bg-rose-500/15",
-    text: "text-rose-600 dark:text-rose-400",
-    border: "border-rose-500/20",
+    gradient: gradientColorNames.pinkToRose,
     spark: "#f43f5e",
   },
   purple: {
-    bg: "bg-purple-500/10 dark:bg-purple-500/15",
-    text: "text-purple-600 dark:text-purple-400",
-    border: "border-purple-500/20",
+    gradient: gradientColorNames.violetToPurple,
+    spark: "#8b5cf6",
+  },
+  violet: {
+    gradient: gradientColorNames.violetToFuchsia,
     spark: "#8b5cf6",
   },
   cyan: {
-    bg: "bg-cyan-500/10 dark:bg-cyan-500/15",
-    text: "text-cyan-600 dark:text-cyan-400",
-    border: "border-cyan-500/20",
+    gradient: gradientColorNames.skyToBlue,
     spark: "#06b6d4",
   },
 };
@@ -79,6 +69,7 @@ export function KPICard({
   icon,
   sparkData,
   accent = "emerald",
+  gradient,
   subtext,
   className,
 }: KPICardProps) {
@@ -109,10 +100,8 @@ export function KPICard({
         {icon && (
           <div
             className={cn(
-              "h-9 w-9 rounded-xl flex items-center justify-center border shrink-0 transition-colors",
-              style.bg,
-              style.text,
-              style.border
+              "h-9 w-9 rounded-xl flex items-center justify-center text-white shrink-0",
+              gradient ?? style.gradient
             )}
           >
             {icon}
