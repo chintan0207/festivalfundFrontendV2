@@ -307,7 +307,7 @@ export function PageFilterToolbar({
   return (
     <div
       className={cn(
-        "rounded-2xl border border-border/80 bg-card/90 backdrop-blur-md p-3.5 sm:p-4 shadow-2xs space-y-3.5",
+        "rounded-2xl border border-border/80 bg-card/90 backdrop-blur-md p-3.5 px-2 sm:p-4 shadow-2xs space-y-3.5",
         className
       )}
     >
@@ -397,7 +397,7 @@ export function PageFilterToolbar({
 
                 {/* SORT (mobile only — moved to the top) */}
                 {!minimal && sortOptions && sortOptions.length > 0 && onSortChange && (
-                  <div className="sm:hidden pt-2.5 border-t border-border/50 space-y-2.5">
+                  <div className="sm:hidden space-y-2.5">
                     <div className="flex items-center gap-1.5 text-xs text-muted-foreground flex-wrap">
                       <span className="font-semibold text-muted-foreground">Sort by:</span>
                       <div className="flex items-center gap-1 overflow-x-auto no-scrollbar">

@@ -1,4 +1,14 @@
-import { Banknote, Package, ChevronDown, MoreVertical, Pencil, Receipt, Trash2, Search, Eye } from "lucide-react";
+import {
+  Banknote,
+  Package,
+  ChevronDown,
+  MoreVertical,
+  Pencil,
+  Receipt,
+  Trash2,
+  Search,
+  Eye,
+} from "lucide-react";
 import { useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn, formatDate } from "@/lib/utils";
@@ -29,7 +39,11 @@ interface ContributionMobileCardsProps {
   onEdit: (contribution: ContributionListItem) => void;
   onDelete: (id: string) => void;
   onRowClick: (contribution: ContributionListItem) => void;
-  onStatusChange: (id: string, status: ContributionStatus, reason?: string) => Promise<unknown> | void;
+  onStatusChange: (
+    id: string,
+    status: ContributionStatus,
+    reason?: string,
+  ) => Promise<unknown> | void;
   onDownloadSlip: (id: string) => void;
   isStatusPending?: boolean;
   isSlipPending?: boolean;
@@ -67,7 +81,7 @@ function StatusDropdown({
           className={cn(
             "inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold transition-opacity",
             contributionStatusBadge(status),
-            "hover:opacity-80 active:scale-95 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+            "hover:opacity-80 active:scale-95 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed",
           )}
           disabled={disabled}
           onClick={(e) => {
@@ -95,10 +109,17 @@ function StatusDropdown({
               className="text-xs font-medium px-2.5 py-2 rounded-lg cursor-pointer"
             >
               <span className="inline-flex items-center gap-2">
-                <span className={cn("h-2 w-2 rounded-full", contributionStatusBadge(opt.value))} />
+                <span
+                  className={cn(
+                    "h-2 w-2 rounded-full",
+                    contributionStatusBadge(opt.value),
+                  )}
+                />
                 {opt.label}
               </span>
-              {opt.value === status && <span className="ml-auto text-muted-foreground">✓</span>}
+              {opt.value === status && (
+                <span className="ml-auto text-muted-foreground">✓</span>
+              )}
             </DropdownMenuItem>
           ))}
       </DropdownMenuContent>
@@ -180,7 +201,7 @@ function MoreMenu({
 function ContributionCard({
   contribution,
   minimal,
-onEdit,
+  onEdit,
   onDelete,
   onView,
   onRequestStatus,
@@ -209,16 +230,21 @@ onEdit,
     <div
       className={cn(
         "rounded-2xl bg-card border border-border/80 shadow-xs transition-transform overflow-hidden",
-        !minimal && "group"
+        !minimal && "group",
       )}
     >
-      <div className={cn(minimal ? "p-3" : "p-3.5", minimal ? "space-y-2" : "space-y-2.5")}>
+      <div
+        className={cn(minimal ? "p-2" : "p-3.5", minimal ? "space-y-2" : "space-y-2.5")}
+      >
         {minimal ? (
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2.5 min-w-0 flex-1">
               <Avatar size="default" className="h-8 w-8">
                 <AvatarFallback
-                  className={cn("rounded-full text-white text-[11px] font-bold", categoryAvatarGradient(category))}
+                  className={cn(
+                    "rounded-full text-white text-[11px] font-bold",
+                    categoryAvatarGradient(category),
+                  )}
                 >
                   {contributorInitials(contribution.contributor?.name)}
                 </AvatarFallback>
@@ -232,26 +258,26 @@ onEdit,
                 </p>
               </div>
             </div>
+            <div className="flex items-center gap-1">
+              <p className="text-sm font-extrabold text-foreground whitespace-nowrap text-center">
+                {valueLabel}
+              </p>
 
-            <p className="text-sm font-extrabold text-foreground whitespace-nowrap text-center">
-              {valueLabel}
-            </p>
-
-            <StatusDropdown
-              status={contribution.status}
-              disabled={isStatusPending}
-              onRequestStatus={(s) => onRequestStatus(s)}
-            />
-
-            <div onClick={(e) => e.stopPropagation()} className="shrink-0">
-              <MoreMenu
-                onEdit={() => onEdit(contribution)}
-                onDelete={() => onDelete(contribution._id)}
-                onDownloadSlip={() => onDownloadSlip(contribution._id)}
-                onView={() => onView(contribution)}
-                isSlipPending={isSlipPending}
+              <StatusDropdown
                 status={contribution.status}
+                disabled={isStatusPending}
+                onRequestStatus={(s) => onRequestStatus(s)}
               />
+              <div onClick={(e) => e.stopPropagation()} className="shrink-0">
+                <MoreMenu
+                  onEdit={() => onEdit(contribution)}
+                  onDelete={() => onDelete(contribution._id)}
+                  onDownloadSlip={() => onDownloadSlip(contribution._id)}
+                  onView={() => onView(contribution)}
+                  isSlipPending={isSlipPending}
+                  status={contribution.status}
+                />
+              </div>
             </div>
           </div>
         ) : (
@@ -261,7 +287,7 @@ onEdit,
                 <AvatarFallback
                   className={cn(
                     "rounded-lg text-white text-xs font-bold",
-                    categoryAvatarGradient(category)
+                    categoryAvatarGradient(category),
                   )}
                 >
                   {contributorInitials(contribution.contributor?.name)}
@@ -277,34 +303,6 @@ onEdit,
                 </p>
               </div>
 
-              <StatusDropdown
-                status={contribution.status}
-                disabled={isStatusPending}
-                onRequestStatus={(s) => onRequestStatus(s)}
-              />
-            </div>
-
-            <div className="flex items-center gap-1.5 text-muted-foreground">
-              {isCash ? (
-                <Banknote className={`h-3 w-3 ${theme.iconColor}`} />
-              ) : (
-                <Package className={`h-3 w-3 ${theme.iconColor}`} />
-              )}
-              <span className="text-[11px]">
-                {isCash ? "Cash" : contribution.itemName || "Item"}
-              </span>
-              {contribution.date && (
-                <span className="text-[11px] text-muted-foreground/70 ml-auto">
-                  {formatDate(contribution.date)}
-                </span>
-              )}
-            </div>
-
-            <div className="flex items-end justify-between gap-2">
-              <div className="min-w-0">
-                <p className="text-base font-extrabold text-foreground break-words">{amount}</p>
-              </div>
-
               <div onClick={(e) => e.stopPropagation()} className="shrink-0">
                 <MoreMenu
                   onEdit={() => onEdit(contribution)}
@@ -314,6 +312,42 @@ onEdit,
                   isSlipPending={isSlipPending}
                   status={contribution.status}
                 />
+              </div>
+            </div>
+
+            <div className="space-y-1.5 pl-[10px]">
+              <div className="flex items-center justify-between gap-2 text-muted-foreground">
+                <div className="flex items-center gap-1.5 min-w-0">
+                  {isCash ? (
+                    <Banknote className={`h-3 w-3 shrink-0 ${theme.iconColor}`} />
+                  ) : (
+                    <Package className={`h-3 w-3 shrink-0 ${theme.iconColor}`} />
+                  )}
+                  <span className="text-[11px] truncate">
+                    {isCash ? "Cash" : contribution.itemName || "Item"}
+                  </span>
+                </div>
+                {contribution.date && (
+                  <span className="text-[11px] text-muted-foreground/70">
+                    {formatDate(contribution.date)}
+                  </span>
+                )}
+              </div>
+
+              <div className="flex items-center justify-between gap-2">
+                <div className="min-w-0 ">
+                  <p className="text-base font-extrabold text-foreground break-words">
+                    {amount}
+                  </p>
+                </div>
+
+                <div onClick={(e) => e.stopPropagation()} className="shrink-0">
+                  <StatusDropdown
+                    status={contribution.status}
+                    disabled={isStatusPending}
+                    onRequestStatus={(s) => onRequestStatus(s)}
+                  />
+                </div>
               </div>
             </div>
           </>
@@ -405,7 +439,11 @@ export function ContributionMobileCards({
         onConfirm={async (reason) => {
           if (statusTarget) {
             try {
-              await onStatusChange(statusTarget.contribution._id, statusTarget.status, reason);
+              await onStatusChange(
+                statusTarget.contribution._id,
+                statusTarget.status,
+                reason,
+              );
               setStatusTarget(null);
             } catch {
               // keep dialog open so the user can retry

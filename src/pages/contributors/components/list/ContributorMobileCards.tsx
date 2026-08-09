@@ -1,4 +1,4 @@
-import { MapPin, Phone, MoreVertical, Pencil, Trash2, Search, Eye } from "lucide-react";
+import { MapPin, Phone, Mail, MoreVertical, Pencil, Trash2, Search, Eye } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { cn, initials, formatDate } from "@/lib/utils";
@@ -11,7 +11,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { contributorCategoryBadge, contributorCategoryLabel, contributorAvatarGradient } from "../../lib/contributorMeta";
+import {
+  contributorCategoryBadge,
+  contributorCategoryLabel,
+  contributorAvatarGradient,
+} from "../../lib/contributorMeta";
 import type { Contributor } from "@/types/Types";
 
 interface ContributorMobileCardsProps {
@@ -89,26 +93,36 @@ function ContributorCard({
     <div
       className={cn(
         "rounded-2xl bg-card border border-border/80 shadow-xs transition-transform overflow-hidden",
-        !minimal && "group"
+        !minimal && "group",
       )}
     >
-      <div className={cn(minimal ? "p-3" : "p-3.5", minimal ? "space-y-2" : "space-y-2.5")}>
+      <div
+        className={cn(minimal ? "p-3" : "p-3.5", minimal ? "space-y-2" : "space-y-2.5")}
+      >
         {minimal ? (
           <div className="flex items-center gap-3">
             <Avatar size="default" className="h-8 w-8">
               <AvatarFallback
-                className={cn("rounded-full text-white text-[11px] font-bold", contributorAvatarGradient(contributor.category))}
+                className={cn(
+                  "rounded-full text-white text-[11px] font-bold",
+                  contributorAvatarGradient(contributor.category),
+                )}
               >
                 {initials(contributor.name)}
               </AvatarFallback>
             </Avatar>
             <div className="min-w-0 flex-1">
-              <p className="text-[13px] font-bold text-foreground truncate">{contributor.name}</p>
+              <p className="text-[13px] font-bold text-foreground truncate">
+                {contributor.name}
+              </p>
               <p className="font-mono text-[10px] text-muted-foreground truncate">
                 {contributor.contributorCode}
               </p>
             </div>
-            <AppBadge size="xs" className={contributorCategoryBadge(contributor.category)}>
+            <AppBadge
+              size="xs"
+              className={contributorCategoryBadge(contributor.category)}
+            >
               {contributorCategoryLabel(contributor.category)}
             </AppBadge>
             <div onClick={(e) => e.stopPropagation()} className="shrink-0">
@@ -126,58 +140,65 @@ function ContributorCard({
                 <AvatarFallback
                   className={cn(
                     "rounded-lg text-white text-xs font-bold",
-                    contributorAvatarGradient(contributor.category)
+                    contributorAvatarGradient(contributor.category),
                   )}
                 >
                   {initials(contributor.name)}
                 </AvatarFallback>
               </Avatar>
-
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-bold text-foreground truncate">{contributor.name}</p>
+                <p className="text-sm font-bold text-foreground truncate">
+                  {contributor.name}
+                </p>
                 <p className="font-mono text-[11px] text-muted-foreground">
                   {contributor.contributorCode}
                 </p>
               </div>
-
-              <AppBadge size="xs" className={contributorCategoryBadge(contributor.category)}>
-                {contributorCategoryLabel(contributor.category)}
-              </AppBadge>
+              <div className="flex items-center gap-1.5 shrink-0">
+                <AppBadge
+                  size="xs"
+                  className={contributorCategoryBadge(contributor.category)}
+                >
+                  {contributorCategoryLabel(contributor.category)}
+                </AppBadge>
+                <div onClick={(e) => e.stopPropagation()}>
+                  <MoreMenu
+                    onEdit={() => onEdit(contributor)}
+                    onDelete={() => onDelete(contributor._id)}
+                    onView={() => onRowClick(contributor)}
+                  />
+                </div>
+              </div>
             </div>
 
-            {contributor.phoneNumber && (
-              <div className="flex items-center gap-1.5 text-muted-foreground">
-                <Phone className="h-3 w-3 text-indigo-500" />
-                <span className="text-[11px]">{contributor.phoneNumber}</span>
-                {contributor.createdAt && (
-                  <span className="text-[11px] text-muted-foreground/70 ml-auto">
-                    {formatDate(contributor.createdAt)}
-                  </span>
-                )}
-              </div>
-            )}
+            <div className="space-y-1.5 pl-[10px]">
+              {contributor.phoneNumber && (
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-1.5 text-muted-foreground">
+                    <Phone className="h-3 w-3 text-indigo-500" />
+                    <span className="text-[11px]">{contributor.phoneNumber}</span>
+                  </div>
+                  {contributor.createdAt && (
+                    <span className="text-[11px] text-muted-foreground/70">
+                      {formatDate(contributor.createdAt)}
+                    </span>
+                  )}
+                </div>
+              )}
 
-            {contributor.address && (
-              <div className="flex items-start gap-1.5 pl-0.5 text-[11px] text-muted-foreground">
-                <MapPin className="h-3 w-3 mt-0.5 shrink-0 text-indigo-500" />
-                <span className="truncate">{contributor.address}</span>
-              </div>
-            )}
+              {contributor.email && (
+                <div className="flex items-center gap-1.5 text-muted-foreground">
+                  <Mail className="h-3 w-3 shrink-0 text-indigo-500" />
+                  <span className="text-[11px] truncate">{contributor.email}</span>
+                </div>
+              )}
 
-            <div className="flex items-end justify-between gap-2">
-              <div className="min-w-0">
-                {contributor.email ? (
-                  <p className="text-xs font-semibold text-foreground truncate">{contributor.email}</p>
-                ) : null}
-              </div>
-
-              <div onClick={(e) => e.stopPropagation()} className="shrink-0">
-                <MoreMenu
-                  onEdit={() => onEdit(contributor)}
-                  onDelete={() => onDelete(contributor._id)}
-                  onView={() => onRowClick(contributor)}
-                />
-              </div>
+              {contributor.address && (
+                <div className="flex items-start gap-1.5 text-[11px] text-muted-foreground">
+                  <MapPin className="h-3 w-3 mt-0.5 shrink-0 text-indigo-500" />
+                  <span className="truncate">{contributor.address}</span>
+                </div>
+              )}
             </div>
           </>
         )}

@@ -19,7 +19,7 @@ const DashboardLayout = () => {
         <SidebarInset className="flex flex-col min-h-screen">
           <Topbar />
 
-          <main className="flex-1 overflow-auto p-4 md:p-6 bg-muted/30">
+          <main className="flex-1 overflow-auto p-1 md:p-6 bg-muted/30">
             <Outlet />
           </main>
 
