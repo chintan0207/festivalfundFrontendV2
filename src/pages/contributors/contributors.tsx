@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import { Plus, List, LayoutGrid, Download } from "lucide-react";
+import { Plus, Download } from "lucide-react";
 import { Outlet, useNavigate, useMatches } from "@tanstack/react-router";
 import { useContributorApiStore } from "@/api/contributor/contributor.store";
 import { useContributors, useDownloadContributorsPdf } from "@/api/contributor/useContributors";
@@ -8,6 +8,8 @@ import { getModuleTheme } from "@/theme/colors";
 import { PageHeader } from "@/components/common/PageHeader";
 import { PageFilterToolbar } from "@/components/common/PageFilterToolbar";
 import { DataTablePagination } from "@/components/common/DataTablePagination";
+import { PageContainer } from "@/components/common/PageContainer";
+import { ViewToggleButton } from "@/components/common/ViewToggleButton";
 import { AppButton } from "@/components/common/AppButton";
 import { AppBadge } from "@/components/common/AppBadge";
 import { ContributorTable } from "./components/list/ContributorTable";
@@ -15,7 +17,7 @@ import { ContributorMobileCards } from "./components/list/ContributorMobileCards
 // import { ContributorKPIs } from "./components/list/ContributorKPIs";
 import { ContributorDialogs } from "./components/dialogs/ContributorDialogs";
 import { useContributorDialogs } from "./useContributorDialogs";
-import { contributorCategoryLabel } from "./lib/contributorMeta";
+import { categoryLabel } from "@/lib/categoryMeta";
 import type { Contributor } from "@/types/Types";
 
 export default function ContributorsPage() {
@@ -106,7 +108,7 @@ export default function ContributorsPage() {
   if (category) {
     activeFilters.push({
       id: "category",
-      label: `Category: ${contributorCategoryLabel(category)}`,
+      label: `Category: ${categoryLabel(category)}`,
       onRemove: () => setCategory(""),
     });
   }
@@ -123,7 +125,7 @@ export default function ContributorsPage() {
   }
 
   return (
-    <div className="space-y-5 pb-40 md:pb-12 max-w-[1400px] mx-auto px-1 sm:px-0">
+    <PageContainer variant="list">
       <PageHeader
         module="contributors"
         title="Contributors"
@@ -201,19 +203,10 @@ export default function ContributorsPage() {
         onResetAll={handleResetAll}
         minimal={minimalView}
         searchRightActions={
-          <button
-            type="button"
-            onClick={() => setMinimalView((v) => !v)}
-            title={minimalView ? "Show full cards" : "Compact list view"}
-            className="md:hidden h-9 px-2.5 rounded-full border border-border/80 bg-muted/30 hover:bg-muted/60 text-foreground text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition-all cursor-pointer active:scale-95 shrink-0 whitespace-nowrap"
-          >
-            {minimalView ? (
-              <LayoutGrid className="h-3.5 w-3.5" />
-            ) : (
-              <List className="h-3.5 w-3.5" />
-            )}
-            <span>{minimalView ? "Cards" : "Compact"}</span>
-          </button>
+          <ViewToggleButton
+            minimal={minimalView}
+            onToggle={() => setMinimalView((v) => !v)}
+          />
         }
       />
 
@@ -252,6 +245,6 @@ export default function ContributorsPage() {
       />
 
       <ContributorDialogs {...dialogs.dialogsProps} />
-    </div>
+    </PageContainer>
   );
 }

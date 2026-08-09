@@ -2,7 +2,8 @@ import { useState } from "react";
 import { Banknote, Package, AlertTriangle, RotateCcw } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { AppButton } from "@/components/common/AppButton";
-import { contributionStatusLabel } from "../../lib/contributionMeta";
+import { AppTextArea } from "@/components/common/AppTextArea";
+import { contributionStatusLabel } from "../lib/contributionMeta";
 import { contributionAmountValue } from "@/lib/contributionFormat";
 import { cn } from "@/lib/utils";
 import type { ContributionListItem, ContributionStatus } from "@/types/Types";
@@ -128,22 +129,15 @@ export function StatusConfirmDialog({
 
           {showReason && (
             <>
-              <label className="block space-y-1.5">
-                <span className="text-xs font-semibold text-foreground">
-                  {requiresReason ? "Reason for reversal" : "Reason (optional)"}
-                </span>
-                <textarea
-                  value={reason}
-                  onChange={(e) => setReason(e.target.value)}
-                  rows={2}
-                  placeholder={requiresReason ? "Required — explain why this deposit is reversed" : "Optional note (stored in audit trail)"}
-                  className={cn(
-                    "w-full rounded-xl border border-input bg-background/90 px-3 py-2 text-sm shadow-sm outline-none resize-none transition-all",
-                    "focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:border-primary",
-                    requiresReason && !reason.trim() && "border-amber-400/60",
-                  )}
-                />
-              </label>
+              <AppTextArea
+                id="status-reason"
+                label={requiresReason ? "Reason for reversal" : "Reason (optional)"}
+                value={reason}
+                onChange={(e) => setReason(e.target.value)}
+                rows={2}
+                placeholder={requiresReason ? "Required — explain why this deposit is reversed" : "Optional note (stored in audit trail)"}
+                className={cn(requiresReason && !reason.trim() && "border-amber-400/60")}
+              />
 
               <div className="flex flex-wrap gap-1.5">
                 {PRESET_REASONS.map((r) => (

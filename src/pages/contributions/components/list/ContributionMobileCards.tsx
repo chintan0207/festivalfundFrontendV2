@@ -1,8 +1,6 @@
 import {
   Banknote,
   Package,
-  ChevronDown,
-  MoreVertical,
   Pencil,
   Receipt,
   Trash2,
@@ -10,18 +8,14 @@ import {
   Eye,
 } from "lucide-react";
 import { useState } from "react";
-import { Skeleton } from "@/components/ui/skeleton";
 import { cn, formatDate } from "@/lib/utils";
 import { EmptyState } from "@/components/common/EmptyState";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { getModuleTheme, categoryAvatarGradient } from "@/theme/colors";
+import { RowActionsMenu } from "@/components/common/RowActionsMenu";
+import { StatusBadgeSelect } from "@/components/common/StatusBadgeSelect";
+import { CardListSkeleton } from "@/components/common/CardListSkeleton";
+import { getModuleTheme } from "@/theme/colors";
+import { categoryAvatarGradient } from "@/lib/categoryMeta";
 import {
   contributionStatusBadge,
   contributionStatusLabel,
@@ -29,7 +23,7 @@ import {
   contributionStatusTransitions,
 } from "../../lib/contributionMeta";
 import { contributorInitials, formatContributionAmount } from "@/lib/contributionFormat";
-import { StatusConfirmDialog } from "./StatusConfirmDialog";
+import { StatusConfirmDialog } from "../StatusConfirmDialog";
 import type { ContributionListItem, ContributionStatus } from "@/types/Types";
 
 interface ContributionMobileCardsProps {
@@ -47,155 +41,6 @@ interface ContributionMobileCardsProps {
   onDownloadSlip: (id: string) => void;
   isStatusPending?: boolean;
   isSlipPending?: boolean;
-}
-
-function StatusDropdown({
-  status,
-  disabled,
-  onRequestStatus,
-}: {
-  status: ContributionStatus;
-  disabled?: boolean;
-  onRequestStatus: (status: ContributionStatus) => void;
-}) {
-  const transitions = contributionStatusTransitions[status] ?? [];
-
-  if (transitions.length === 0) {
-    return (
-      <span
-        className={cn(
-          "inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold",
-          contributionStatusBadge(status),
-        )}
-      >
-        {contributionStatusLabel(status)}
-      </span>
-    );
-  }
-
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <button
-          type="button"
-          className={cn(
-            "inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold transition-opacity",
-            contributionStatusBadge(status),
-            "hover:opacity-80 active:scale-95 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed",
-          )}
-          disabled={disabled}
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-          }}
-          onPointerDown={(e) => e.stopPropagation()}
-        >
-          {contributionStatusLabel(status)}
-          <ChevronDown className="h-3 w-3" />
-        </button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-40 rounded-xl p-1.5">
-        {contributionStatusOptions
-          .filter((opt) => transitions.includes(opt.value))
-          .map((opt) => (
-            <DropdownMenuItem
-              key={opt.value}
-              disabled={opt.value === status}
-              onSelect={(event) => {
-                event.preventDefault();
-                event.stopPropagation();
-                onRequestStatus(opt.value as ContributionStatus);
-              }}
-              className="text-xs font-medium px-2.5 py-2 rounded-lg cursor-pointer"
-            >
-              <span className="inline-flex items-center gap-2">
-                <span
-                  className={cn(
-                    "h-2 w-2 rounded-full",
-                    contributionStatusBadge(opt.value),
-                  )}
-                />
-                {opt.label}
-              </span>
-              {opt.value === status && (
-                <span className="ml-auto text-muted-foreground">✓</span>
-              )}
-            </DropdownMenuItem>
-          ))}
-      </DropdownMenuContent>
-    </DropdownMenu>
-  );
-}
-
-function MoreMenu({
-  onEdit,
-  onDelete,
-  isSlipPending,
-  onDownloadSlip,
-  onView,
-  status,
-}: {
-  onEdit: () => void;
-  onDelete: () => void;
-  isSlipPending?: boolean;
-  onDownloadSlip: () => void;
-  onView: () => void;
-  status: ContributionStatus;
-}) {
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <button
-          type="button"
-          title="More actions"
-          className="h-8 w-8 rounded-lg text-muted-foreground hover:bg-muted/60 hover:text-foreground flex items-center justify-center transition-all active:scale-95 cursor-pointer"
-        >
-          <MoreVertical className="h-4 w-4" />
-        </button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-44 rounded-xl p-1.5">
-        <DropdownMenuItem
-          onSelect={onView}
-          className="text-xs font-medium px-2.5 py-2 rounded-lg cursor-pointer"
-        >
-          <Eye className="h-3.5 w-3.5" />
-          View
-        </DropdownMenuItem>
-        {status === "PENDING" && (
-          <DropdownMenuItem
-            onSelect={onEdit}
-            className="text-xs font-medium px-2.5 py-2 rounded-lg cursor-pointer"
-          >
-            <Pencil className="h-3.5 w-3.5" />
-            Edit
-          </DropdownMenuItem>
-        )}
-        {status === "DEPOSITED" && (
-          <DropdownMenuItem
-            onSelect={onDownloadSlip}
-            disabled={isSlipPending}
-            className="text-xs font-medium px-2.5 py-2 rounded-lg cursor-pointer"
-          >
-            <Receipt className="h-3.5 w-3.5" />
-            Download Slip
-          </DropdownMenuItem>
-        )}
-        {status !== "DEPOSITED" && (
-          <>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem
-              variant="destructive"
-              onSelect={onDelete}
-              className="text-xs font-medium px-2.5 py-2 rounded-lg cursor-pointer"
-            >
-              <Trash2 className="h-3.5 w-3.5" />
-              Delete
-            </DropdownMenuItem>
-          </>
-        )}
-      </DropdownMenuContent>
-    </DropdownMenu>
-  );
 }
 
 function ContributionCard({
@@ -225,6 +70,56 @@ function ContributionCard({
   const amount = formatContributionAmount(contribution);
   const valueLabel =
     minimal && amount === "—" && contribution.itemName ? contribution.itemName : amount;
+
+  const statusSelect = (
+    <StatusBadgeSelect
+      status={contribution.status}
+      options={contributionStatusOptions}
+      transitions={contributionStatusTransitions[contribution.status]}
+      badgeClass={contributionStatusBadge}
+      labelOf={contributionStatusLabel}
+      onRequestStatus={(s) => onRequestStatus(s as ContributionStatus)}
+      disabled={isStatusPending}
+      align="end"
+    />
+  );
+
+  const actionsMenu = (
+    <RowActionsMenu
+      actions={[
+        {
+          key: "view",
+          label: "View",
+          icon: <Eye className="h-3.5 w-3.5" />,
+          onSelect: () => onView(contribution),
+        },
+        {
+          key: "edit",
+          label: "Edit",
+          icon: <Pencil className="h-3.5 w-3.5" />,
+          show: contribution.status === "PENDING",
+          onSelect: () => onEdit(contribution),
+        },
+        {
+          key: "slip",
+          label: "Download Slip",
+          icon: <Receipt className="h-3.5 w-3.5" />,
+          show: contribution.status === "DEPOSITED",
+          disabled: isSlipPending,
+          onSelect: () => onDownloadSlip(contribution._id),
+        },
+        {
+          key: "delete",
+          label: "Delete",
+          icon: <Trash2 className="h-3.5 w-3.5" />,
+          variant: "destructive",
+          separatorBefore: true,
+          show: contribution.status !== "DEPOSITED",
+          onSelect: () => onDelete(contribution._id),
+        },
+      ]}
+    />
+  );
 
   return (
     <div
@@ -263,20 +158,9 @@ function ContributionCard({
                 {valueLabel}
               </p>
 
-              <StatusDropdown
-                status={contribution.status}
-                disabled={isStatusPending}
-                onRequestStatus={(s) => onRequestStatus(s)}
-              />
+              {statusSelect}
               <div onClick={(e) => e.stopPropagation()} className="shrink-0">
-                <MoreMenu
-                  onEdit={() => onEdit(contribution)}
-                  onDelete={() => onDelete(contribution._id)}
-                  onDownloadSlip={() => onDownloadSlip(contribution._id)}
-                  onView={() => onView(contribution)}
-                  isSlipPending={isSlipPending}
-                  status={contribution.status}
-                />
+                {actionsMenu}
               </div>
             </div>
           </div>
@@ -304,14 +188,7 @@ function ContributionCard({
               </div>
 
               <div onClick={(e) => e.stopPropagation()} className="shrink-0">
-                <MoreMenu
-                  onEdit={() => onEdit(contribution)}
-                  onDelete={() => onDelete(contribution._id)}
-                  onDownloadSlip={() => onDownloadSlip(contribution._id)}
-                  onView={() => onView(contribution)}
-                  isSlipPending={isSlipPending}
-                  status={contribution.status}
-                />
+                {actionsMenu}
               </div>
             </div>
 
@@ -342,33 +219,13 @@ function ContributionCard({
                 </div>
 
                 <div onClick={(e) => e.stopPropagation()} className="shrink-0">
-                  <StatusDropdown
-                    status={contribution.status}
-                    disabled={isStatusPending}
-                    onRequestStatus={(s) => onRequestStatus(s)}
-                  />
+                  {statusSelect}
                 </div>
               </div>
             </div>
           </>
         )}
       </div>
-    </div>
-  );
-}
-
-function MobileCardSkeleton() {
-  return (
-    <div className="p-3.5 rounded-2xl bg-card border border-border/80 space-y-2.5">
-      <div className="flex items-center gap-2.5">
-        <Skeleton className="h-9 w-9 rounded-lg" />
-        <div className="flex-1 space-y-1">
-          <Skeleton className="h-4 w-32" />
-          <Skeleton className="h-3 w-20" />
-        </div>
-        <Skeleton className="h-6 w-14 rounded-full" />
-      </div>
-      <Skeleton className="h-8 rounded-lg" />
     </div>
   );
 }
@@ -391,13 +248,7 @@ export function ContributionMobileCards({
   } | null>(null);
 
   if (isLoading) {
-    return (
-      <div className="space-y-3 md:hidden">
-        {Array.from({ length: 3 }).map((_, i) => (
-          <MobileCardSkeleton key={i} />
-        ))}
-      </div>
-    );
+    return <CardListSkeleton />;
   }
 
   if (contributions.length === 0) {

@@ -2,12 +2,12 @@ import { AppInput } from "@/components/common/AppInput";
 import { AppSelect, type AppSelectOption } from "@/components/common/AppSelect";
 import { ContributorSearchPicker } from "@/components/common/ContributorSearchPicker";
 import {
-  contributionCategoryOptions,
   contributionPaymentOptions,
   contributionStatusCreateOptions,
   contributionStatusLabel,
   contributionTypeOptions,
 } from "../../lib/contributionMeta";
+import { categoryOptions } from "@/lib/categoryMeta";
 
 export function ContributionFormFields({
   mode,
@@ -67,7 +67,7 @@ export function ContributionFormFields({
                 label="Category"
                 value={watch("category") || "PARENT"}
                 onChange={(val) => setValue("category", val, { shouldValidate: true })}
-                options={contributionCategoryOptions}
+                options={categoryOptions}
                 error={errors.category?.message}
               />
               <AppInput

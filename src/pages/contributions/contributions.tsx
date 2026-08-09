@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import { Plus, List, LayoutGrid } from "lucide-react";
+import { Plus } from "lucide-react";
 import { Outlet, useNavigate, useMatches } from "@tanstack/react-router";
 import { useContributionApiStore } from "@/api/contribution/contribution.store";
 import {
@@ -13,6 +13,8 @@ import { getModuleTheme } from "@/theme/colors";
 import { PageHeader } from "@/components/common/PageHeader";
 import { PageFilterToolbar } from "@/components/common/PageFilterToolbar";
 import { DataTablePagination } from "@/components/common/DataTablePagination";
+import { PageContainer } from "@/components/common/PageContainer";
+import { ViewToggleButton } from "@/components/common/ViewToggleButton";
 import { AppButton } from "@/components/common/AppButton";
 import { AppBadge } from "@/components/common/AppBadge";
 import { ContributionTable } from "./components/list/ContributionTable";
@@ -21,10 +23,10 @@ import { ContributionKPIs } from "./components/list/ContributionKPIs";
 import { ContributionDialogs } from "./components/dialogs/ContributionDialogs";
 import { useContributionDialogs } from "./useContributionDialogs";
 import {
-  contributionCategoryLabel,
   contributionStatusLabel,
   contributionTypeLabel,
 } from "./lib/contributionMeta";
+import { categoryLabel } from "@/lib/categoryMeta";
 import type { ContributionListItem, ContributionStatus } from "@/types/Types";
 
 export default function ContributionsPage() {
@@ -152,7 +154,7 @@ export default function ContributionsPage() {
   if (category) {
     activeFilters.push({
       id: "category",
-      label: `Category: ${contributionCategoryLabel(category)}`,
+      label: `Category: ${categoryLabel(category)}`,
       onRemove: () => setCategory(""),
     });
   }
@@ -169,7 +171,7 @@ export default function ContributionsPage() {
   }
 
   return (
-    <div className="space-y-5 pb-40 md:pb-12 max-w-[1400px] mx-auto px-1 sm:px-0">
+    <PageContainer variant="list">
       <PageHeader
         module="contributions"
         title="Contributions"
@@ -250,19 +252,10 @@ export default function ContributionsPage() {
         onResetAll={handleResetAll}
         minimal={minimalView}
         searchRightActions={
-          <button
-            type="button"
-            onClick={() => setMinimalView((v) => !v)}
-            title={minimalView ? "Show full cards" : "Compact list view"}
-            className="md:hidden h-9 px-2.5 rounded-full border border-border/80 bg-muted/30 hover:bg-muted/60 text-foreground text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition-all cursor-pointer active:scale-95 shrink-0 whitespace-nowrap"
-          >
-            {minimalView ? (
-              <LayoutGrid className="h-3.5 w-3.5" />
-            ) : (
-              <List className="h-3.5 w-3.5" />
-            )}
-            <span>{minimalView ? "Cards" : "Compact"}</span>
-          </button>
+          <ViewToggleButton
+            minimal={minimalView}
+            onToggle={() => setMinimalView((v) => !v)}
+          />
         }
       />
 
@@ -309,6 +302,6 @@ export default function ContributionsPage() {
       />
 
       <ContributionDialogs {...dialogs.dialogsProps} />
-    </div>
+    </PageContainer>
   );
 }

@@ -30,18 +30,6 @@ export const contributionTypeBadgeStyles: Record<string, string> = {
   ITEM: "bg-gradient-to-r from-indigo-500/20 to-violet-500/20 text-indigo-500",
 };
 
-export const contributionCategoryBadgeStyles: Record<string, string> = {
-  PARENT: badgeColors.parents,
-  BOY: badgeColors.boys,
-  GIRL: badgeColors.girls,
-};
-
-export const contributionCategoryLabels: Record<string, string> = {
-  PARENT: "Parents",
-  BOY: "Boys",
-  GIRL: "Girls",
-};
-
 export const contributionStatusOptions: { value: string; label: string }[] = [
   { value: "DEPOSITED", label: "Deposited" },
   { value: "PENDING", label: "Pending" },
@@ -65,12 +53,6 @@ export const contributionPaymentOptions: { value: string; label: string }[] = [
   // { value: "BANK_TRANSFER", label: "Bank Transfer" },
   // { value: "ONLINE", label: "Online" },
   // { value: "OTHER", label: "Other" },
-];
-
-export const contributionCategoryOptions: { value: string; label: string }[] = [
-  { value: "PARENT", label: "Parents" },
-  { value: "BOY", label: "Boys" },
-  { value: "GIRL", label: "Girls" },
 ];
 
 /**
@@ -101,12 +83,4 @@ export function contributionStatusBadge(status?: string): string {
 
 export function contributionTypeBadge(type?: string): string {
   return (type && contributionTypeBadgeStyles[type]) || "bg-muted text-muted-foreground";
-}
-
-export function contributionCategoryLabel(category?: string): string {
-  return (category && contributionCategoryLabels[category]) || category || "—";
-}
-
-export function contributionCategoryBadge(category?: string): string {
-  return (category && contributionCategoryBadgeStyles[category]) || "bg-muted text-muted-foreground";
 }

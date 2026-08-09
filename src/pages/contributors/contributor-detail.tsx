@@ -4,9 +4,10 @@ import { useParams, useRouter } from "@tanstack/react-router";
 import { useContributor } from "@/api/contributor/useContributors";
 import { useContributions } from "@/api/contribution/useContributions";
 import { getModuleTheme } from "@/theme/colors";
-import { Skeleton } from "@/components/ui/skeleton";
 import { AppButton } from "@/components/common/AppButton";
 import { PageHeader } from "@/components/common/PageHeader";
+import { PageContainer } from "@/components/common/PageContainer";
+import { DetailPageSkeleton } from "@/components/common/DetailPageSkeleton";
 import { EmptyState } from "@/components/common/EmptyState";
 import { contributionTotal } from "@/lib/contributionFormat";
 import { ContributorDetailHeader } from "./components/detail/ContributorDetailHeader";
@@ -68,28 +69,26 @@ export default function ContributorDetailPage() {
 
   if (loadingContributor && !contributor) {
     return (
-      <div className="space-y-5 pb-28 md:pb-10 max-w-[1400px] mx-auto px-1 sm:px-0">
-        <Skeleton className="h-10 w-48" />
-        <Skeleton className="h-48 w-full rounded-2xl" />
-        <Skeleton className="h-64 w-full rounded-2xl" />
-      </div>
+      <PageContainer variant="detail">
+        <DetailPageSkeleton variant="stack" />
+      </PageContainer>
     );
   }
 
   if (!contributor) {
     return (
-      <div className="space-y-5 pb-28 md:pb-10 max-w-[1400px] mx-auto px-1 sm:px-0">
+      <PageContainer variant="detail">
         <EmptyState
           icon={Search}
           title="Contributor not found"
           description="This contributor may have been deleted or the link is invalid."
         />
-      </div>
+      </PageContainer>
     );
   }
 
   return (
-    <div className="space-y-5 pb-28 md:pb-10 max-w-[1400px] mx-auto px-1 sm:px-0">
+    <PageContainer variant="detail">
       <PageHeader
         module="contributors"
         title=""
@@ -150,6 +149,6 @@ export default function ContributorDetailPage() {
       </div>
 
       <ContributorDialogs {...dialogs.dialogsProps} />
-    </div>
+    </PageContainer>
   );
 }

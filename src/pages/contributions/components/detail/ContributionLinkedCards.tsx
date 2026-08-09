@@ -1,10 +1,8 @@
 import { Phone, Calendar, ChevronRight } from "lucide-react";
 import { cn, initials } from "@/lib/utils";
 import { AppBadge } from "@/components/common/AppBadge";
-import {
-  contributionCategoryBadge,
-  contributionCategoryLabel,
-} from "../../lib/contributionMeta";
+import { AppCardButton } from "@/components/common/AppCardButton";
+import { categoryBadge, categoryLabel } from "@/lib/categoryMeta";
 import type { ContributionListItem } from "@/types/Types";
 
 export function ContributionLinkedCards({
@@ -22,15 +20,11 @@ export function ContributionLinkedCards({
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
       {/* Contributor */}
-      <button
-        type="button"
+      <AppCardButton
         onClick={onContributorClick}
         disabled={!onContributorClick || !contributor}
         className={cn(
-          "rounded-2xl bg-card border border-border/80 shadow-xs p-4 text-left transition-all text-xs",
-          onContributorClick && contributor
-            ? "hover:shadow-md cursor-pointer hover:border-indigo-500/40"
-            : "cursor-default"
+          onContributorClick && contributor && "hover:border-indigo-500/40",
         )}
       >
         <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-2">
@@ -51,8 +45,8 @@ export function ContributionLinkedCards({
               <p className="font-mono text-[11px] text-muted-foreground">{contributor.contributorCode}</p>
             )}
           </div>
-          <AppBadge size="xs" className={contributionCategoryBadge(contributor?.category)}>
-            {contributionCategoryLabel(contributor?.category)}
+          <AppBadge size="xs" className={categoryBadge(contributor?.category)}>
+            {categoryLabel(contributor?.category)}
           </AppBadge>
         </div>
         {contributor?.phoneNumber && (
@@ -66,19 +60,13 @@ export function ContributionLinkedCards({
             View profile <ChevronRight className="h-3 w-3" />
           </div>
         )}
-      </button>
+      </AppCardButton>
 
       {/* Festival */}
-      <button
-        type="button"
+      <AppCardButton
         onClick={onFestivalClick}
         disabled={!onFestivalClick || !festival}
-        className={cn(
-          "rounded-2xl bg-card border border-border/80 shadow-xs p-4 text-left transition-all text-xs",
-          onFestivalClick && festival
-            ? "hover:shadow-md cursor-pointer hover:border-pink-500/40"
-            : "cursor-default"
-        )}
+        className={cn(onFestivalClick && festival && "hover:border-pink-500/40")}
       >
         <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-2">
           Festival
@@ -97,7 +85,7 @@ export function ContributionLinkedCards({
             View festival <ChevronRight className="h-3 w-3" />
           </div>
         )}
-      </button>
+      </AppCardButton>
     </div>
   );
 }

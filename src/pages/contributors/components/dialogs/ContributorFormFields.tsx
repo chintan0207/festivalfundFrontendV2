@@ -1,6 +1,6 @@
 import { AppInput } from "@/components/common/AppInput";
 import { AppSelect } from "@/components/common/AppSelect";
-import { contributorCategoryOptions } from "../../lib/contributorMeta";
+import { categoryOptions } from "@/lib/categoryMeta";
 
 export function ContributorFormFields({
   register,
@@ -42,7 +42,7 @@ export function ContributorFormFields({
           label="Category"
           value={watch("category")}
           onChange={(val) => setValue("category", val, { shouldValidate: true })}
-          options={contributorCategoryOptions}
+          options={categoryOptions}
           error={errors.category?.message}
         />
       </div>

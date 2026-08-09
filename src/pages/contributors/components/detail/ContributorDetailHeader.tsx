@@ -1,7 +1,8 @@
 import { Phone, Mail, MapPin, FileText } from "lucide-react";
 import { cn, initials } from "@/lib/utils";
 import { AppBadge } from "@/components/common/AppBadge";
-import { contributorCategoryBadge, contributorCategoryLabel, contributorAvatarGradient } from "../../lib/contributorMeta";
+import { DetailStatsRow } from "@/components/common/DetailStatsRow";
+import { categoryAvatarGradient, categoryBadge, categoryLabel } from "@/lib/categoryMeta";
 import type { Contributor } from "@/types/Types";
 
 export function ContributorDetailHeader({
@@ -17,7 +18,7 @@ export function ContributorDetailHeader({
   firstDate: string;
   lastDate: string;
 }) {
-  const avatarGradient = contributorAvatarGradient(contributor.category);
+  const avatarGradient = categoryAvatarGradient(contributor.category);
 
   const fmt = (d: string) => {
     if (!d) return "-";
@@ -45,8 +46,8 @@ export function ContributorDetailHeader({
             <div className="sm:hidden flex-1 min-w-0">
               <div className="flex flex-wrap items-center gap-1.5">
                 <h1 className="text-base font-bold text-foreground truncate">{contributor.name}</h1>
-                <AppBadge size="xs" className={contributorCategoryBadge(contributor.category)}>
-                  {contributorCategoryLabel(contributor.category)}
+                <AppBadge size="xs" className={categoryBadge(contributor.category)}>
+                  {categoryLabel(contributor.category)}
                 </AppBadge>
               </div>
               <p className="text-[11px] text-muted-foreground font-mono mt-0.5">{contributor.contributorCode}</p>
@@ -57,8 +58,8 @@ export function ContributorDetailHeader({
           <div className="hidden sm:block flex-1 min-w-0 space-y-2">
             <div className="flex flex-wrap items-center gap-3">
               <h1 className="text-lg font-bold text-foreground truncate">{contributor.name}</h1>
-              <AppBadge size="xs" className={contributorCategoryBadge(contributor.category)}>
-                {contributorCategoryLabel(contributor.category)}
+              <AppBadge size="xs" className={categoryBadge(contributor.category)}>
+                {categoryLabel(contributor.category)}
               </AppBadge>
             </div>
 
@@ -99,24 +100,18 @@ export function ContributorDetailHeader({
       </div>
 
       {/* Stats row */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 divide-x divide-border/60 border-t border-border/60">
-        <StatBox label="Total" labelSm="Total Contributed" value={`₹${totalContributed.toLocaleString("en-IN")}`} />
-        <StatBox label="Festivals" value={String(festivalCount)} />
-        <StatBox label="First" labelSm="First Contribution" value={fmt(firstDate)} />
-        <StatBox label="Latest" value={fmt(lastDate)} />
-      </div>
-    </div>
-  );
-}
-
-function StatBox({ label, labelSm, value }: { label: string; labelSm?: string; value: string }) {
-  return (
-    <div className="flex flex-col items-center justify-center py-2.5 sm:py-3 px-1.5 sm:px-2 text-center">
-      <span className="text-[10px] sm:text-[11px] text-muted-foreground font-medium">
-        <span className="sm:hidden">{labelSm || label}</span>
-        <span className="hidden sm:inline">{label}</span>
-      </span>
-      <span className="text-xs sm:text-sm font-bold text-foreground mt-0.5">{value}</span>
+      <DetailStatsRow
+        stats={[
+          {
+            label: "Total",
+            labelSm: "Total Contributed",
+            value: `₹${totalContributed.toLocaleString("en-IN")}`,
+          },
+          { label: "Festivals", value: String(festivalCount) },
+          { label: "First", labelSm: "First Contribution", value: fmt(firstDate) },
+          { label: "Latest", value: fmt(lastDate) },
+        ]}
+      />
     </div>
   );
 }

@@ -7,12 +7,13 @@ import {
   useUpdateContributionStatus,
 } from "@/api/contribution/useContributions";
 import { getModuleTheme } from "@/theme/colors";
-import { Skeleton } from "@/components/ui/skeleton";
 import { AppButton } from "@/components/common/AppButton";
 import { PageHeader } from "@/components/common/PageHeader";
+import { PageContainer } from "@/components/common/PageContainer";
+import { DetailPageSkeleton } from "@/components/common/DetailPageSkeleton";
 import { ContributionDetailHeader } from "./components/detail/ContributionDetailHeader";
 import { ContributionLinkedCards } from "./components/detail/ContributionLinkedCards";
-import { StatusConfirmDialog } from "./components/list/StatusConfirmDialog";
+import { StatusConfirmDialog } from "./components/StatusConfirmDialog";
 import { ContributionStatusHistory } from "./components/detail/ContributionStatusHistory";
 import { ContributionDialogs } from "./components/dialogs/ContributionDialogs";
 import { useContributionDialogs } from "./useContributionDialogs";
@@ -38,14 +39,9 @@ export default function ContributionDetailPage() {
 
   if (isLoading || !contribution) {
     return (
-      <div className="space-y-5 pb-28 md:pb-10 max-w-[1400px] mx-auto px-1 sm:px-0">
-        <Skeleton className="h-10 w-48" />
-        <Skeleton className="h-48 w-full rounded-2xl" />
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <Skeleton className="h-40 rounded-2xl" />
-          <Skeleton className="h-40 rounded-2xl" />
-        </div>
-      </div>
+      <PageContainer variant="detail">
+        <DetailPageSkeleton />
+      </PageContainer>
     );
   }
 
@@ -54,7 +50,7 @@ export default function ContributionDetailPage() {
   const isDeposited = status === "DEPOSITED";
 
   return (
-    <div className="space-y-5 pb-28 md:pb-10 max-w-[1400px] mx-auto px-1 sm:px-0">
+    <PageContainer variant="detail">
       <PageHeader
         title=""
         module="contributions"
@@ -138,6 +134,6 @@ export default function ContributionDetailPage() {
       />
 
       <ContributionDialogs {...dialogs.dialogsProps} />
-    </div>
+    </PageContainer>
   );
 }

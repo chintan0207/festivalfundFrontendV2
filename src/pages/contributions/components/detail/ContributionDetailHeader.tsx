@@ -1,22 +1,19 @@
-import { Banknote, Package, Calendar, ChevronDown } from "lucide-react";
+import { Banknote, Package, Calendar } from "lucide-react";
 import { cn, formatDate } from "@/lib/utils";
 import { AppBadge } from "@/components/common/AppBadge";
 import { getModuleTheme } from "@/theme/colors";
+import { StatusBadgeSelect } from "@/components/common/StatusBadgeSelect";
+import { DetailStatsRow } from "@/components/common/DetailStatsRow";
 import {
   contributionPaymentLabel,
   contributionStatusBadge,
   contributionStatusLabel,
+  contributionStatusOptions,
   contributionStatusTransitions,
   contributionTypeBadge,
   contributionTypeLabel,
 } from "../../lib/contributionMeta";
 import { formatContributionAmount } from "@/lib/contributionFormat";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import type { ContributionListItem, ContributionStatus } from "@/types/Types";
 
 export function ContributionDetailHeader({
@@ -52,38 +49,17 @@ export function ContributionDetailHeader({
             </div>
           </div>
 
-          {onRequestStatus && (contributionStatusTransitions[contribution.status] ?? []).length > 0 ? (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button
-                  type="button"
-                  className={cn(
-                    "inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[11px] sm:text-xs font-semibold transition-all cursor-pointer",
-                    contributionStatusBadge(contribution.status),
-                    "hover:opacity-80 active:scale-95"
-                  )}
-                >
-                  {contributionStatusLabel(contribution.status)}
-                  <ChevronDown className="h-3 w-3" />
-                </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-40 rounded-xl p-1.5">
-                {(
-                  (contributionStatusTransitions[contribution.status] ?? []) as ContributionStatus[]
-                ).map((value) => (
-                  <DropdownMenuItem
-                    key={value}
-                    onSelect={() => onRequestStatus(value)}
-                    className="text-xs font-medium px-2.5 py-2 rounded-lg cursor-pointer"
-                  >
-                    <span className="inline-flex items-center gap-2">
-                      <span className={cn("h-2 w-2 rounded-full", contributionStatusBadge(value))} />
-                      {contributionStatusLabel(value)}
-                    </span>
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
+          {onRequestStatus ? (
+            <StatusBadgeSelect
+              status={contribution.status}
+              options={contributionStatusOptions}
+              transitions={contributionStatusTransitions[contribution.status]}
+              badgeClass={contributionStatusBadge}
+              labelOf={contributionStatusLabel}
+              onRequestStatus={(value) => onRequestStatus(value as ContributionStatus)}
+              size="md"
+              align="end"
+            />
           ) : (
             <AppBadge size="sm" className={contributionStatusBadge(contribution.status)}>
               {contributionStatusLabel(contribution.status)}
@@ -103,19 +79,19 @@ export function ContributionDetailHeader({
         </div>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-4 divide-x divide-border/60 border-t border-border/60">
-        <StatBox label="Type" value={contributionTypeLabel(contribution.type)} />
-        <StatBox label="Amount" value={formatContributionAmount(contribution)} />
-        {isCash ? (
-          <StatBox label="Payment" value={contributionPaymentLabel(contribution.paymentMode)} />
-        ) : (
-          <StatBox
-            label="Quantity"
-            value={contribution.quantity ? String(contribution.quantity) : "—"}
-          />
-        )}
-        <StatBox label="Status" value={contributionStatusLabel(contribution.status)} />
-      </div>
+      <DetailStatsRow
+        stats={[
+          { label: "Type", value: contributionTypeLabel(contribution.type) },
+          { label: "Amount", value: formatContributionAmount(contribution) },
+          isCash
+            ? { label: "Payment", value: contributionPaymentLabel(contribution.paymentMode) }
+            : {
+                label: "Quantity",
+                value: contribution.quantity ? String(contribution.quantity) : "—",
+              },
+          { label: "Status", value: contributionStatusLabel(contribution.status) },
+        ]}
+      />
 
       {!isCash && contribution.itemName && (
         <div className="px-3.5 sm:px-6 pb-3.5 sm:pb-4">
@@ -124,15 +100,6 @@ export function ContributionDetailHeader({
           </AppBadge>
         </div>
       )}
-    </div>
-  );
-}
-
-function StatBox({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="flex flex-col items-center justify-center py-2.5 sm:py-3 px-1.5 sm:px-2 text-center">
-      <span className="text-[10px] sm:text-[11px] text-muted-foreground font-medium">{label}</span>
-      <span className="text-xs sm:text-sm font-bold text-foreground mt-0.5">{value}</span>
     </div>
   );
 }
