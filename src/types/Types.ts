@@ -103,6 +103,19 @@ export type Festival = {
   updatedAt?: string;
 };
 
+export type FestivalStatusCounts = {
+  total: number;
+  UPCOMING: number;
+  ACTIVE: number;
+  COMPLETED: number;
+  ARCHIVED: number;
+};
+
+export type FestivalFacets = {
+  years: number[];
+  locations: string[];
+};
+
 export type CreateFestivalPayload = {
   name: string;
   year: number;

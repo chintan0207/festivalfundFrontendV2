@@ -1,28 +1,47 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { FestivalService } from "./festival.service";
+import {
+  FestivalService,
+  type FestivalQueryParams,
+} from "./festival.service";
 import { useFestivalApiStore } from "./festival.store";
 import type { CreateFestivalPayload, UpdateFestivalPayload } from "@/types/Types";
 
 export const FESTIVAL_QUERY_KEYS = {
-  all: ["festivals"] as const,
+  all: (params?: FestivalQueryParams) =>
+    params ? (["festivals", params] as const) : (["festivals"] as const),
   detail: (id: string) => ["festival", id] as const,
 };
 
-export const useFestivals = () => {
+export const useFestivals = (params?: FestivalQueryParams) => {
   const setFestivals = useFestivalApiStore((s) => s.setFestivals);
+  const setPaginationMeta = useFestivalApiStore((s) => s.setPaginationMeta);
+  const setStatusCounts = useFestivalApiStore((s) => s.setStatusCounts);
+  const setFacets = useFestivalApiStore((s) => s.setFacets);
+
+  const isListQuery = params?.page !== undefined && params?.limit !== undefined;
 
   return useQuery({
-    queryKey: FESTIVAL_QUERY_KEYS.all,
+    queryKey: FESTIVAL_QUERY_KEYS.all(params),
     queryFn: async () => {
-      const res = await FestivalService.getAllFestivals();
+      const res = await FestivalService.getAllFestivals(params);
       if (res.data) {
-        setFestivals(res.data);
+        if (isListQuery) {
+          setFestivals(res.data.festivals);
+          setPaginationMeta({
+            total: res.data.total,
+            page: res.data.page,
+            limit: res.data.limit,
+            totalPages: res.data.totalPages,
+          });
+          setStatusCounts(res.data.statusCounts);
+          setFacets(res.data.facets);
+        }
       }
       return res.data;
     },
-    staleTime: 5 * 60 * 1000,
+    staleTime: 0,
   });
 };
 
@@ -44,7 +63,7 @@ export const useCreateFestival = () => {
   return useMutation({
     mutationFn: (payload: CreateFestivalPayload) => FestivalService.createFestival(payload),
     onSuccess: (res) => {
-      queryClient.invalidateQueries({ queryKey: FESTIVAL_QUERY_KEYS.all });
+      queryClient.invalidateQueries({ queryKey: FESTIVAL_QUERY_KEYS.all() });
       toast.success(res.message || "Festival created successfully");
     },
     onError: (error: any) => {
@@ -65,7 +84,7 @@ export const useUpdateFestival = () => {
       payload: UpdateFestivalPayload;
     }) => FestivalService.updateFestival(festivalId, payload),
     onSuccess: (res, { festivalId }) => {
-      queryClient.invalidateQueries({ queryKey: FESTIVAL_QUERY_KEYS.all });
+      queryClient.invalidateQueries({ queryKey: FESTIVAL_QUERY_KEYS.all() });
       queryClient.invalidateQueries({ queryKey: FESTIVAL_QUERY_KEYS.detail(festivalId) });
       toast.success(res.message || "Festival updated successfully");
     },
@@ -86,7 +105,7 @@ export const useSoftDeleteFestival = () => {
     },
     onSuccess: (res, param) => {
       const festivalId = typeof param === "string" ? param : param.festivalId;
-      queryClient.invalidateQueries({ queryKey: FESTIVAL_QUERY_KEYS.all });
+      queryClient.invalidateQueries({ queryKey: FESTIVAL_QUERY_KEYS.all() });
       if (festivalId) {
         queryClient.invalidateQueries({ queryKey: FESTIVAL_QUERY_KEYS.detail(festivalId) });
       }
@@ -109,7 +128,7 @@ export const useRestoreFestival = () => {
     },
     onSuccess: (res, param) => {
       const festivalId = typeof param === "string" ? param : param.festivalId;
-      queryClient.invalidateQueries({ queryKey: FESTIVAL_QUERY_KEYS.all });
+      queryClient.invalidateQueries({ queryKey: FESTIVAL_QUERY_KEYS.all() });
       if (festivalId) {
         queryClient.invalidateQueries({ queryKey: FESTIVAL_QUERY_KEYS.detail(festivalId) });
       }
@@ -132,7 +151,7 @@ export const useHardDeleteFestival = () => {
     },
     onSuccess: (res, param) => {
       const festivalId = typeof param === "string" ? param : param.festivalId;
-      queryClient.invalidateQueries({ queryKey: FESTIVAL_QUERY_KEYS.all });
+      queryClient.invalidateQueries({ queryKey: FESTIVAL_QUERY_KEYS.all() });
       if (festivalId) {
         queryClient.invalidateQueries({ queryKey: FESTIVAL_QUERY_KEYS.detail(festivalId) });
       }
@@ -143,4 +162,3 @@ export const useHardDeleteFestival = () => {
     },
   });
 };
-

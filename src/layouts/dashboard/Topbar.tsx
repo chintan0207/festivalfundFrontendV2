@@ -20,7 +20,8 @@ import {
 
 const Topbar = () => {
   const { user } = useAuthStore();
-  const { data: festivals = [] } = useFestivals();
+  const { data } = useFestivals();
+  const festivals = data?.festivals ?? [];
   const { activeFestivalId, isAllFestivals, setActiveFestivalId, setActiveFestivalAll } =
     useFestivalApiStore();
 

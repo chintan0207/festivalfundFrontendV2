@@ -1,31 +1,29 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
-import {
-  useFestivals,
-  useCreateFestival,
-  useUpdateFestival,
-  useSoftDeleteFestival,
-} from "@/api/festival/useFestivals";
+import { Outlet, useMatches, useRouter } from "@tanstack/react-router";
+import { useFestivals, useSoftDeleteFestival } from "@/api/festival/useFestivals";
 import { useFestivalApiStore } from "@/api/festival/festival.store";
 import { useFestivalStore as useMockFestivalStore } from "@/store/festivalStore";
+import { useDebounce } from "@/hooks/useDebounce";
 import { gradientColors, getModuleTheme } from "@/theme/colors";
 import {
   AppButton,
   AppBadge,
+  ConfirmDialog,
   PageHeader,
   PageFilterToolbar,
+  RowActionsMenu,
+  DataTablePagination,
 } from "@/components/common";
-import {
-  FestivalFormModal,
-  type FestivalFormValues,
-} from "./components/FestivalFormModal";
+import { Skeleton } from "@/components/ui/skeleton";
+import { festivalCategoryOptions } from "./lib/festivalMeta";
 import {
   Plus,
   Edit,
   Eye,
+  Pin,
   Trash2,
   Calendar,
-  Check,
   Tag,
   MapPin,
   Filter,
@@ -72,224 +70,179 @@ const calculateDaysLeft = (endDateStr?: string) => {
   return diffDays > 0 ? diffDays : 0;
 };
 
+const normalizeFestival = (item: any) => ({
+  id: item._id || item.id,
+  name: item.name,
+  year: item.year || 2026,
+  status: (item.status || "ACTIVE").toUpperCase(),
+  targetAmount: item.targetAmount || 500000,
+  category: item.category || "Religious & Cultural",
+  location: item.location || "Community Grounds",
+  description: item.description || `${item.name} celebration and events.`,
+  startDate: item.startDate || "2026-09-07",
+  endDate: item.endDate || "2026-09-17",
+  stats: {
+    openingBalance: item.stats?.openingBalance || 0,
+    totalCollected: item.stats?.totalCollected || 0,
+    pendingAmount: item.stats?.pendingAmount || 0,
+    totalExpenses: item.stats?.totalExpenses || 0,
+    currentBalance: item.stats?.currentBalance || 0,
+    contributorsCount: item.stats?.contributorsCount || item.contributorsCount || 0,
+  },
+});
+
 export const FestivalsPage = () => {
-  // Module theme colors derived from central theme dictionary
+  const router = useRouter();
+  const matches = useMatches();
+
   const theme = getModuleTheme("festivals");
 
-  // Real API hook
-  const { data: apiFestivals, isLoading: isApiLoading } = useFestivals();
+  // List-state lives in the store (mirrors contributors/contributions)
+  const page = useFestivalApiStore((s) => s.page);
+  const limit = useFestivalApiStore((s) => s.limit);
+  const search = useFestivalApiStore((s) => s.search);
+  const sortField = useFestivalApiStore((s) => s.sortField);
+  const sortOrder = useFestivalApiStore((s) => s.sortOrder);
+  const status = useFestivalApiStore((s) => s.status);
+  const category = useFestivalApiStore((s) => s.category);
+  const year = useFestivalApiStore((s) => s.year);
+  const location = useFestivalApiStore((s) => s.location);
+  const total = useFestivalApiStore((s) => s.total);
+  const totalPages = useFestivalApiStore((s) => s.totalPages);
+  const statusCounts = useFestivalApiStore((s) => s.statusCounts);
+  const facets = useFestivalApiStore((s) => s.facets);
+  const setPage = useFestivalApiStore((s) => s.setPage);
+  const setLimit = useFestivalApiStore((s) => s.setLimit);
+  const setSearch = useFestivalApiStore((s) => s.setSearch);
+  const setSortField = useFestivalApiStore((s) => s.setSortField);
+  const setSortOrder = useFestivalApiStore((s) => s.setSortOrder);
+  const setStatus = useFestivalApiStore((s) => s.setStatus);
+  const setCategory = useFestivalApiStore((s) => s.setCategory);
+  const setYear = useFestivalApiStore((s) => s.setYear);
+  const setLocation = useFestivalApiStore((s) => s.setLocation);
+  const resetFilters = useFestivalApiStore((s) => s.resetFilters);
+
   const activeFestivalId = useFestivalApiStore((s) => s.activeFestivalId);
   const setActiveFestivalId = useFestivalApiStore((s) => s.setActiveFestivalId);
 
-  // Mock store fallback
+  // Debounced local search → store (resets page)
+  const [localSearch, setLocalSearch] = useState(search);
+  const debouncedSearch = useDebounce(localSearch, 400);
+
+  useEffect(() => {
+    setSearch(debouncedSearch);
+  }, [debouncedSearch, setSearch]);
+
   const mockFestivals = useMockFestivalStore((s) => s.festivals);
 
-  const rawList =
-    apiFestivals && apiFestivals.length > 0 ? apiFestivals : mockFestivals;
-
-  // Normalized items
-  const festivals = rawList.map((item: any) => ({
-    id: item._id || item.id,
-    name: item.name,
-    year: item.year || 2026,
-    status: (item.status || "ACTIVE").toUpperCase(),
-    targetAmount: item.targetAmount || 500000,
-    category: item.category || "Religious & Cultural",
-    location: item.location || "Community Grounds",
-    description: item.description || `${item.name} celebration and events.`,
-    startDate: item.startDate || "2026-09-07",
-    endDate: item.endDate || "2026-09-17",
-    stats: {
-      openingBalance: item.stats?.openingBalance || 0,
-      totalCollected: item.stats?.totalCollected || 0,
-      pendingAmount: item.stats?.pendingAmount || 0,
-      totalExpenses: item.stats?.totalExpenses || 0,
-      currentBalance: item.stats?.currentBalance || 0,
-      contributorsCount:
-        item.stats?.contributorsCount || item.contributorsCount || 0,
-    },
-  }));
-
-  const createMutation = useCreateFestival();
-  const updateMutation = useUpdateFestival();
-  const deleteMutation = useSoftDeleteFestival();
-
-  const [filterTab, setFilterTab] = useState<
-    "ACTIVE" | "UPCOMING" | "ARCHIVED" | "ALL"
-  >("ACTIVE");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("ALL");
-  const [selectedYear, setSelectedYear] = useState("ALL");
-  const [selectedLocation, setSelectedLocation] = useState("ALL");
-
-  // Sorting State
-  const [activeSort, setActiveSort] = useState<
-    "name" | "targetAmount" | "totalCollected" | "startDate"
-  >("name");
-  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
-
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingFest, setEditingFest] = useState<any | null>(null);
-
-  const handleOpenCreate = () => {
-    setEditingFest(null);
-    setIsModalOpen(true);
+  const queryParams = {
+    page,
+    limit,
+    search: search || undefined,
+    sortField,
+    sortOrder,
+    ...(status && status !== "ALL" ? { status } : {}),
+    ...(category ? { category } : {}),
+    ...(year && year !== "ALL" ? { year } : {}),
+    ...(location && location !== "ALL" ? { location } : {}),
   };
 
-  // Open the create modal from the mobile FAB
+  const { data, isLoading } = useFestivals(queryParams);
+  const deleteMutation = useSoftDeleteFestival();
+
+  // Mock fallback: only when the server never returned data (dev mode)
+  const serverFetched = data !== undefined;
+  const showMock = !serverFetched && !isLoading && mockFestivals.length > 0;
+
+  const festivals = (serverFetched ? data?.festivals ?? [] : showMock ? mockFestivals : [])
+    .filter((item: any) => !item?.isDeleted)
+    .map(normalizeFestival);
+
+  const counts = statusCounts;
+  const facetData = facets;
+
+  const activeCount = counts.ACTIVE || 0;
+  const upcomingCount = counts.UPCOMING || 0;
+  const archivedCount = (counts.COMPLETED || 0) + (counts.ARCHIVED || 0);
+
+  const yearOptions = [
+    { value: "ALL", label: "All Years" },
+    ...(facetData.years && facetData.years.length
+      ? facetData.years.map((y) => ({ value: String(y), label: String(y) }))
+      : [
+          { value: "2026", label: "2026" },
+          { value: "2025", label: "2025" },
+          { value: "2024", label: "2024" },
+        ]),
+  ];
+
+  const locationOptions = [
+    { value: "ALL", label: "All Locations" },
+    ...(facetData.locations && facetData.locations.length
+      ? facetData.locations.map((loc) => ({ value: loc, label: loc }))
+      : [
+          { value: "Community Grounds", label: "Community Grounds" },
+          { value: "Main Hall", label: "Main Hall" },
+          { value: "Temple Complex", label: "Temple Complex" },
+        ]),
+  ];
+
+  const [deleteTarget, setDeleteTarget] = useState<any | null>(null);
+
+  // Open the create page from the mobile FAB
   useEffect(() => {
     const handler = () => {
-      setEditingFest(null);
-      setIsModalOpen(true);
+      router.navigate({ to: "/dashboard/festivals/new" });
     };
     window.addEventListener("ff:open-add-festivals", handler);
     return () => window.removeEventListener("ff:open-add-festivals", handler);
-  }, []);
-
-  const handleOpenEdit = (fest: any) => {
-    setEditingFest(fest);
-    setIsModalOpen(true);
-  };
-
-  const handleFormSubmit = (values: FestivalFormValues) => {
-    if (editingFest) {
-      updateMutation.mutate(
-        {
-          festivalId: editingFest.id,
-          payload: {
-            name: values.name,
-            year: Number(values.year),
-            targetAmount: Number(values.targetAmount),
-            status: values.status,
-            category: values.category,
-            location: values.location,
-            description: values.description,
-            startDate: values.startDate,
-            endDate: values.endDate,
-          },
-        },
-        {
-          onSuccess: () => {
-            setIsModalOpen(false);
-            setEditingFest(null);
-          },
-        }
-      );
-    } else {
-      createMutation.mutate(
-        {
-          name: values.name,
-          year: Number(values.year),
-          targetAmount: Number(values.targetAmount),
-          status: values.status,
-          category: values.category,
-          location: values.location,
-          description: values.description,
-          startDate: values.startDate,
-          endDate: values.endDate,
-          openingBalance: 0,
-        },
-        {
-          onSuccess: () => {
-            setIsModalOpen(false);
-            setEditingFest(null);
-          },
-        }
-      );
-    }
-  };
+  }, [router]);
 
   const handleSortChange = (sortId: string) => {
-    if (activeSort === sortId) {
-      setSortDirection((prev) => (prev === "asc" ? "desc" : "asc"));
+    if (sortField === sortId) {
+      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
     } else {
-      setActiveSort(sortId as any);
-      setSortDirection("asc");
+      setSortField(sortId);
+      setSortOrder("desc");
     }
   };
 
-  const filteredFestivals = festivals.filter((f) => {
-    const matchesTab =
-      filterTab === "ALL"
-        ? true
-        : filterTab === "ARCHIVED"
-          ? f.status === "COMPLETED" || f.status === "ARCHIVED"
-          : f.status === filterTab;
-
-    const matchesSearch =
-      f.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      f.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      f.category.toLowerCase().includes(searchQuery.toLowerCase());
-
-    const matchesCategory =
-      selectedCategory === "ALL"
-        ? true
-        : f.category.toLowerCase().includes(selectedCategory.toLowerCase());
-
-    const matchesYear =
-      selectedYear === "ALL" ? true : String(f.year) === selectedYear;
-
-    const matchesLocation =
-      selectedLocation === "ALL"
-        ? true
-        : f.location.toLowerCase().includes(selectedLocation.toLowerCase());
-
-    return (
-      matchesTab &&
-      matchesSearch &&
-      matchesCategory &&
-      matchesYear &&
-      matchesLocation
-    );
-  });
-
-  // Apply sorting
-  const sortedFestivals = [...filteredFestivals].sort((a, b) => {
-    let valA = a[activeSort as keyof typeof a];
-    let valB = b[activeSort as keyof typeof b];
-
-    if (activeSort === "totalCollected") {
-      valA = a.stats?.totalCollected || 0;
-      valB = b.stats?.totalCollected || 0;
-    }
-
-    if (typeof valA === "string") {
-      return sortDirection === "asc"
-        ? valA.localeCompare(valB as string)
-        : (valB as string).localeCompare(valA);
-    }
-    return sortDirection === "asc"
-      ? (valA as number) - (valB as number)
-      : (valB as number) - (valA as number);
-  });
-
-  const activeCount = festivals.filter((f) => f.status === "ACTIVE").length;
-  const upcomingCount = festivals.filter((f) => f.status === "UPCOMING").length;
-  const archivedCount = festivals.filter(
-    (f) => f.status === "COMPLETED" || f.status === "ARCHIVED"
-  ).length;
+  const handleResetAll = () => {
+    resetFilters();
+    setLocalSearch("");
+  };
 
   const activeFilterPills = [];
-  if (selectedCategory !== "ALL") {
+  if (category) {
     activeFilterPills.push({
       id: "category",
-      label: `Category: ${selectedCategory}`,
-      onRemove: () => setSelectedCategory("ALL"),
+      label: `Category: ${category}`,
+      onRemove: () => setCategory(""),
     });
   }
-  if (selectedYear !== "ALL") {
+  if (year && year !== "ALL") {
     activeFilterPills.push({
       id: "year",
-      label: `Year: ${selectedYear}`,
-      onRemove: () => setSelectedYear("ALL"),
+      label: `Year: ${year}`,
+      onRemove: () => setYear(""),
     });
   }
-  if (selectedLocation !== "ALL") {
+  if (location && location !== "ALL") {
     activeFilterPills.push({
       id: "location",
-      label: `Location: ${selectedLocation}`,
-      onRemove: () => setSelectedLocation("ALL"),
+      label: `Location: ${location}`,
+      onRemove: () => setLocation(""),
     });
+  }
+
+  if (
+    matches.some((m) =>
+      m.routeId === "/dashboard/festivals/new" ||
+      m.routeId === "/dashboard/festivals/$festivalId" ||
+      m.routeId === "/dashboard/festivals/$festivalId/edit",
+    )
+  ) {
+    return <Outlet />;
   }
 
   return (
@@ -303,10 +256,10 @@ export const FestivalsPage = () => {
           { label: "Home", to: "/dashboard" },
           { label: "Festivals", to: "/dashboard/festivals" },
         ]}
-        badge={<AppBadge className={theme.badgeColor}>{festivals.length} total</AppBadge>}
+        badge={<AppBadge className={theme.badgeColor}>{serverFetched ? total : festivals.length} total</AppBadge>}
         actions={
           <AppButton
-            onClick={handleOpenCreate}
+            onClick={() => router.navigate({ to: "/dashboard/festivals/new" })}
             leftIcon={<Plus className="h-4 w-4" />}
             gradient={theme.gradient}
           >
@@ -318,35 +271,26 @@ export const FestivalsPage = () => {
       {/* CARD-BASED FILTER TOOLBAR WITH INLINE PILL TRACKS & SORTING */}
       <PageFilterToolbar
         module="festivals"
-        searchQuery={searchQuery}
-        onSearchChange={setSearchQuery}
+        searchQuery={localSearch}
+        onSearchChange={setLocalSearch}
         searchPlaceholder="Search festivals by title, location..."
         quickFilters={[
           {
             id: "year",
-            label: "All Years",
+            label: yearOptions.find((o) => o.value === year)?.label || "All Years",
             icon: <Calendar className="h-3.5 w-3.5 text-muted-foreground" />,
-            value: selectedYear,
-            options: [
-              { value: "ALL", label: "All Years" },
-              { value: "2026", label: "2026" },
-              { value: "2025", label: "2025" },
-              { value: "2024", label: "2024" },
-            ],
-            onChange: (val) => setSelectedYear(val),
+            value: year || "ALL",
+            options: yearOptions,
+            onChange: (val) => setYear(val),
           },
           {
             id: "location",
-            label: "All Locations",
+            label:
+              locationOptions.find((o) => o.value === location)?.label || "All Locations",
             icon: <MapPin className="h-3.5 w-3.5 text-muted-foreground" />,
-            value: selectedLocation,
-            options: [
-              { value: "ALL", label: "All Locations" },
-              { value: "Community Grounds", label: "Community Grounds" },
-              { value: "Main Hall", label: "Main Hall" },
-              { value: "Temple Complex", label: "Temple Complex" },
-            ],
-            onChange: (val) => setSelectedLocation(val),
+            value: location || "ALL",
+            options: locationOptions,
+            onChange: (val) => setLocation(val),
           },
         ]}
         pillGroups={[
@@ -354,28 +298,26 @@ export const FestivalsPage = () => {
             id: "status",
             label: "Status",
             icon: <Filter className="h-3.5 w-3.5 text-muted-foreground" />,
-            value: filterTab,
+            value: status || "ALL",
             options: [
               { value: "ACTIVE", label: "Active", count: activeCount },
               { value: "UPCOMING", label: "Upcoming", count: upcomingCount },
               { value: "ARCHIVED", label: "Archived", count: archivedCount },
-              { value: "ALL", label: "All", count: festivals.length },
+              { value: "ALL", label: "All", count: counts.total ?? 0 },
             ],
-            onChange: (val) => setFilterTab(val as any),
+            onChange: (val) => setStatus(val),
             variant: "module",
           },
           {
             id: "category",
             label: "Category",
             icon: <Tag className="h-3.5 w-3.5 text-muted-foreground" />,
-            value: selectedCategory,
+            value: category || "ALL",
             options: [
               { value: "ALL", label: "All" },
-              { value: "Religious & Cultural", label: "Religious & Cultural" },
-              { value: "Social & Community", label: "Social & Community" },
-              { value: "Youth & Sports", label: "Youth & Sports" },
+              ...festivalCategoryOptions,
             ],
-            onChange: (val) => setSelectedCategory(val),
+            onChange: (val) => setCategory(val === "ALL" ? "" : val),
             variant: "emerald",
           },
         ]}
@@ -385,27 +327,34 @@ export const FestivalsPage = () => {
           { id: "totalCollected", label: "Collected" },
           { id: "startDate", label: "Date" },
         ]}
-        activeSort={activeSort}
-        sortDirection={sortDirection}
+        activeSort={sortField}
+        sortDirection={sortOrder}
         onSortChange={handleSortChange}
         activeFilters={activeFilterPills}
-        onResetAll={() => {
-          setSearchQuery("");
-          setSelectedCategory("ALL");
-          setSelectedYear("ALL");
-          setSelectedLocation("ALL");
-          setFilterTab("ACTIVE");
-          setActiveSort("name");
-          setSortDirection("asc");
-        }}
+        onResetAll={handleResetAll}
       />
 
       {/* FESTIVAL CARDS GRID */}
-      {isApiLoading ? (
-        <div className="py-12 text-center text-xs text-muted-foreground animate-pulse">
-          Loading festivals...
+      {isLoading ? (
+        <div
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5"
+          aria-hidden="true"
+        >
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div
+              key={i}
+              className="rounded-2xl bg-card border border-border/80 overflow-hidden"
+            >
+              <Skeleton className="h-24 w-full rounded-none" />
+              <div className="p-3.5 sm:p-4 space-y-3">
+                <Skeleton className="h-4 w-2/3" />
+                <Skeleton className="h-3 w-full" />
+                <Skeleton className="h-8 w-full rounded-lg" />
+              </div>
+            </div>
+          ))}
         </div>
-      ) : sortedFestivals.length === 0 ? (
+      ) : festivals.length === 0 ? (
         <div className="py-14 px-4 text-center rounded-2xl bg-card border border-border/80 space-y-3 flex flex-col items-center justify-center">
           <div className="w-10 h-10 rounded-xl bg-muted/60 flex items-center justify-center text-muted-foreground">
             <Calendar className="h-5 w-5" />
@@ -416,13 +365,7 @@ export const FestivalsPage = () => {
           </p>
           <div className="pt-1 flex justify-center">
             <AppButton
-              onClick={() => {
-                setSearchQuery("");
-                setSelectedCategory("ALL");
-                setSelectedYear("ALL");
-                setSelectedLocation("ALL");
-                setFilterTab("ALL");
-              }}
+              onClick={handleResetAll}
               leftIcon={<Plus className="h-3.5 w-3.5" />}
               gradient={theme.gradient}
             >
@@ -432,14 +375,14 @@ export const FestivalsPage = () => {
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
-          {sortedFestivals.map((fest: any, index: number) => {
+          {festivals.map((fest: any, index: number) => {
             const cardGradient = gradientColors[index % gradientColors.length];
             const isSelected = activeFestivalId === fest.id;
             const collected = fest.stats?.totalCollected || 0;
             const target = fest.targetAmount || 500000;
             const progressPercent = Math.min(
               100,
-              Math.round((collected / (target || 1)) * 100)
+              Math.round((collected / (target || 1)) * 100),
             );
             const daysLeft = calculateDaysLeft(fest.endDate);
             const formattedDates = formatEventDateRange(fest.startDate, fest.endDate);
@@ -555,43 +498,51 @@ export const FestivalsPage = () => {
                 <div className="p-3.5 sm:p-4 pt-0 flex items-center gap-1.5">
                   <AppButton
                     size="sm"
-                    variant={isSelected ? "default" : "outline"}
-                    onClick={() => setActiveFestivalId(fest.id)}
-                    leftIcon={
-                      isSelected ? (
-                        <Check className="h-3.5 w-3.5" />
-                      ) : (
-                        <Eye className="h-3.5 w-3.5 text-muted-foreground" />
-                      )
+                    variant="outline"
+                    onClick={() =>
+                      router.navigate({
+                        to: "/dashboard/festivals/$festivalId",
+                        params: { festivalId: fest.id },
+                      })
                     }
+                    leftIcon={<Eye className="h-3.5 w-3.5 text-muted-foreground" />}
                     className="flex-1 text-xs"
                   >
-                    {isSelected ? "Active Context" : "View Details"}
+                    View Details
                   </AppButton>
 
-                  <AppButton
-                    size="icon"
-                    variant="outline"
-                    onClick={() => handleOpenEdit(fest)}
-                    title="Edit Festival"
-                    className="shrink-0"
-                  >
-                    <Edit className="h-3.5 w-3.5" />
-                  </AppButton>
-
-                  <AppButton
-                    size="icon"
-                    variant="outline"
-                    onClick={() => {
-                      if (confirm(`Are you sure you want to delete ${fest.name}?`)) {
-                        deleteMutation.mutate(fest.id);
-                      }
-                    }}
-                    className="text-muted-foreground hover:bg-rose-500/10 hover:text-rose-500 shrink-0"
-                    title="Delete Festival"
-                  >
-                    <Trash2 className="h-3.5 w-3.5" />
-                  </AppButton>
+                  <RowActionsMenu
+                    title="Festival actions"
+                    actions={[
+                      {
+                        key: "pin",
+                        label: isSelected
+                          ? "Remove from context"
+                          : "Set as context",
+                        icon: <Pin className="h-3.5 w-3.5" />,
+                        onSelect: () =>
+                          setActiveFestivalId(isSelected ? null : fest.id),
+                      },
+                      {
+                        key: "edit",
+                        label: "Edit Festival",
+                        icon: <Edit className="h-3.5 w-3.5" />,
+                        onSelect: () =>
+                          router.navigate({
+                            to: "/dashboard/festivals/$festivalId/edit",
+                            params: { festivalId: fest.id },
+                          }),
+                      },
+                      {
+                        key: "delete",
+                        label: "Delete Festival",
+                        icon: <Trash2 className="h-3.5 w-3.5" />,
+                        variant: "destructive",
+                        separatorBefore: true,
+                        onSelect: () => setDeleteTarget(fest),
+                      },
+                    ]}
+                  />
                 </div>
               </div>
             );
@@ -599,16 +550,40 @@ export const FestivalsPage = () => {
         </div>
       )}
 
-      {/* REACT-HOOK-FORM + ZOD FORM MODAL */}
-      <FestivalFormModal
-        isOpen={isModalOpen}
-        onOpenChange={(open) => {
-          setIsModalOpen(open);
-          if (!open) setEditingFest(null);
+      {/* PAGINATION */}
+      {serverFetched && !isLoading && festivals.length > 0 && (
+        <DataTablePagination
+          page={page}
+          totalPages={totalPages}
+          total={total}
+          limit={limit}
+          onPageChange={setPage}
+          onLimitChange={setLimit}
+          module="festivals"
+        />
+      )}
+
+      {/* DELETE CONFIRMATION */}
+      <ConfirmDialog
+        open={!!deleteTarget}
+        title="Delete Festival"
+        description={
+          deleteTarget
+            ? `Are you sure you want to delete "${deleteTarget.name}"? It will be marked as deleted and can be restored later.`
+            : undefined
+        }
+        confirmLabel="Delete Festival"
+        variant="danger"
+        icon={<Trash2 className="h-4 w-4" />}
+        loading={deleteMutation.isPending}
+        onConfirm={() => {
+          if (deleteTarget) {
+            deleteMutation.mutate(deleteTarget.id, {
+              onSettled: () => setDeleteTarget(null),
+            });
+          }
         }}
-        onSubmit={handleFormSubmit}
-        initialValues={editingFest}
-        isPending={createMutation.isPending || updateMutation.isPending}
+        onCancel={() => setDeleteTarget(null)}
       />
     </div>
   );

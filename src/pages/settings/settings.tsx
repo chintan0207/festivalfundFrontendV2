@@ -15,7 +15,8 @@ import {
 } from "lucide-react";
 
 export const SettingsPage = () => {
-  const { data: festivals = [] } = useFestivals();
+  const { data } = useFestivals();
+  const festivals = data?.festivals ?? [];
   const { activeFestivalId, isAllFestivals, setActiveFestivalId, setActiveFestivalAll } =
     useFestivalApiStore();
 

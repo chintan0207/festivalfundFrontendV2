@@ -18,9 +18,46 @@ export type ApiMessageResponse = {
   message: string;
 };
 
+export type FestivalQueryParams = {
+  page?: number;
+  limit?: number;
+  search?: string;
+  sortField?: string;
+  sortOrder?: "asc" | "desc";
+  status?: string;
+  category?: string;
+  year?: string;
+  location?: string;
+};
+
+export type FestivalStatusCounts = {
+  total: number;
+  UPCOMING: number;
+  ACTIVE: number;
+  COMPLETED: number;
+  ARCHIVED: number;
+};
+
+export type FestivalFacets = {
+  years: number[];
+  locations: string[];
+};
+
+export type FestivalListData = {
+  festivals: Festival[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+  statusCounts: FestivalStatusCounts;
+  facets: FestivalFacets;
+};
+
 export const FestivalService = {
-  getAllFestivals: async () => {
-    const response = await ApiClient.get<ApiResponse<Festival[]>>("/festivals");
+  getAllFestivals: async (params?: FestivalQueryParams) => {
+    const response = await ApiClient.get<ApiResponse<FestivalListData>>("/festivals", {
+      params,
+    });
     return response.data;
   },
 

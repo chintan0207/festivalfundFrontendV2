@@ -47,7 +47,7 @@ export function ContributionDialogs({
 
   const festivalOptions = useMemo(
     () =>
-      (festivalsData || []).map((f) => ({
+      (festivalsData?.festivals ?? []).map((f) => ({
         value: f._id,
         label: `${f.name} (${f.year})`,
       })),
