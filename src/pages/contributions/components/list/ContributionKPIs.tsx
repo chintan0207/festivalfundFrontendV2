@@ -15,7 +15,7 @@ const emptyStats = {
   itemCount: 0,
 };
 
-export function ContributionKPIs({ themeGradient }: ContributionKPIsProps) {
+export function ContributionKPIs(_: ContributionKPIsProps) {
   const { isAllFestivals, activeFestivalId, festivals } = useFestivalApiStore();
 
   const stats = isAllFestivals

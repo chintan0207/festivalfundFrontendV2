@@ -8,6 +8,7 @@ import type { ContributionFormValues } from "./components/dialogs/contributionFo
 import type {
   ContributionListItem,
   CreateContributionPayload,
+  PaymentMode,
   UpdateContributionPayload,
 } from "@/types/Types";
 
@@ -77,7 +78,7 @@ export function useContributionDialogs({
       type: values.type,
       status: values.status,
       date: values.date || new Date().toISOString(),
-      paymentMode: values.paymentMode || "CASH",
+      paymentMode: (values.paymentMode || "CASH") as PaymentMode,
     };
 
     if (values.contributorMode === "existing") {
@@ -105,7 +106,7 @@ export function useContributionDialogs({
     const payload: UpdateContributionPayload = {
       type: values.type,
       date: values.date || new Date().toISOString(),
-      paymentMode: values.paymentMode || "CASH",
+      paymentMode: (values.paymentMode || "CASH") as PaymentMode,
     };
 
     if (values.type === "MONEY") {

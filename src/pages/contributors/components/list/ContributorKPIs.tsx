@@ -7,7 +7,7 @@ interface ContributorKPIsProps {
   themeGradient?: string;
 }
 
-export function ContributorKPIs({ themeGradient }: ContributorKPIsProps) {
+export function ContributorKPIs(_: ContributorKPIsProps) {
   const categoryCounts = useContributorApiStore((s) => s.categoryCounts);
 
   return (

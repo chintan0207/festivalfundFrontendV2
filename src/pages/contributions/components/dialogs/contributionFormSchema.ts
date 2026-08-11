@@ -30,29 +30,29 @@ export function buildContributionSchema(mode: "add" | "edit") {
     .superRefine((data, ctx) => {
       if (mode === "add") {
         if (data.contributorMode === "existing" && !data.contributorId) {
-          ctx.addIssue({ path: ["contributorId"], message: "Select a contributor" });
+          ctx.addIssue({ code: "custom", path: ["contributorId"], message: "Select a contributor" });
         }
         if (data.contributorMode === "new" && (!data.name || data.name.trim().length < 2)) {
-          ctx.addIssue({ path: ["name"], message: "Name must be at least 2 characters" });
+          ctx.addIssue({ code: "custom", path: ["name"], message: "Name must be at least 2 characters" });
         }
         if (data.contributorMode === "new" && !data.category) {
-          ctx.addIssue({ path: ["category"], message: "Category is required" });
+          ctx.addIssue({ code: "custom", path: ["category"], message: "Category is required" });
         }
         if (data.contributorMode === "new" && data.phoneNumber && !/^\d{10}$/.test(data.phoneNumber)) {
-          ctx.addIssue({ path: ["phoneNumber"], message: "Enter a valid 10-digit phone number" });
+          ctx.addIssue({ code: "custom", path: ["phoneNumber"], message: "Enter a valid 10-digit phone number" });
         }
         if (!data.festivalId) {
-          ctx.addIssue({ path: ["festivalId"], message: "Select a festival" });
+          ctx.addIssue({ code: "custom", path: ["festivalId"], message: "Select a festival" });
         }
       }
       if (data.type === "MONEY") {
         if (data.amount === undefined || data.amount <= 0) {
-          ctx.addIssue({ path: ["amount"], message: "Amount is required for cash contributions" });
+          ctx.addIssue({ code: "custom", path: ["amount"], message: "Amount is required for cash contributions" });
         }
       }
       if (data.type === "ITEM") {
         if (!data.itemName || data.itemName.trim().length === 0) {
-          ctx.addIssue({ path: ["itemName"], message: "Item name is required for item contributions" });
+          ctx.addIssue({ code: "custom", path: ["itemName"], message: "Item name is required for item contributions" });
         }
       }
     });

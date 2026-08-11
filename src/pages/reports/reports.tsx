@@ -9,10 +9,9 @@ import {
   Clock,
   Utensils,
   Sparkles,
-  Tent,
-  Volume2,
+  Speaker,
+  MicVocal,
   Package,
-  Calculator,
   Users,
   FileBox,
 } from "lucide-react";
@@ -37,18 +36,18 @@ export const ReportsPage = () => {
   const totalSpent = currentExpenses.reduce((acc, e) => acc + e.amount, 0);
   const currentBalance = openingBalance + totalCollected - totalSpent;
 
-  // Expense breakdown totals matching image4
-  const mahaprasadTotal = currentExpenses
-    .filter((e) => e.category === "MAHAPRASAD")
+  // Expense breakdown totals matching the new generic 5-category taxonomy
+  const foodTotal = currentExpenses
+    .filter((e) => e.category === "FOOD")
     .reduce((acc, e) => acc + e.amount, 0);
   const decorationTotal = currentExpenses
     .filter((e) => e.category === "DECORATION")
     .reduce((acc, e) => acc + e.amount, 0);
-  const mandapTotal = currentExpenses
-    .filter((e) => e.category === "MANDAP")
+  const servicesTotal = currentExpenses
+    .filter((e) => e.category === "SERVICES")
     .reduce((acc, e) => acc + e.amount, 0);
-  const soundTotal = currentExpenses
-    .filter((e) => e.category === "SOUND")
+  const culturalTotal = currentExpenses
+    .filter((e) => e.category === "CULTURAL")
     .reduce((acc, e) => acc + e.amount, 0);
   const otherTotal = currentExpenses
     .filter((e) => e.category === "OTHER")
@@ -225,27 +224,27 @@ export const ReportsPage = () => {
           <div className="space-y-2 pt-2 border-t border-border/60">
             <div className="flex items-center justify-between p-2.5 rounded-lg border border-border/40 text-xs">
               <div className="flex items-center gap-2.5">
-                <div className="h-7 w-7 rounded-lg bg-blue-600 text-white flex items-center justify-center text-xs">
+                <div className="h-7 w-7 rounded-lg bg-gradient-to-r from-rose-500 to-red-600 text-white flex items-center justify-center">
                   <Utensils className="h-3.5 w-3.5" />
                 </div>
                 <div>
-                  <p className="font-bold text-foreground">Mahaprasad</p>
+                  <p className="font-bold text-foreground">Food & Prasad</p>
                   <p className="text-[10px] text-muted-foreground">Food & Prasad expenses</p>
                 </div>
               </div>
               <p className="font-bold text-foreground">
-                ₹{mahaprasadTotal.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
+                ₹{foodTotal.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
               </p>
             </div>
 
             <div className="flex items-center justify-between p-2.5 rounded-lg border border-border/40 text-xs">
               <div className="flex items-center gap-2.5">
-                <div className="h-7 w-7 rounded-lg bg-emerald-500 text-white flex items-center justify-center text-xs">
+                <div className="h-7 w-7 rounded-lg bg-gradient-to-r from-rose-500 to-red-600 text-white flex items-center justify-center">
                   <Sparkles className="h-3.5 w-3.5" />
                 </div>
                 <div>
                   <p className="font-bold text-foreground">Decoration</p>
-                  <p className="text-[10px] text-muted-foreground">Stage & Lighting</p>
+                  <p className="text-[10px] text-muted-foreground">Stage & lighting décor</p>
                 </div>
               </div>
               <p className="font-bold text-foreground">
@@ -255,42 +254,42 @@ export const ReportsPage = () => {
 
             <div className="flex items-center justify-between p-2.5 rounded-lg border border-border/40 text-xs">
               <div className="flex items-center gap-2.5">
-                <div className="h-7 w-7 rounded-lg bg-orange-500 text-white flex items-center justify-center text-xs">
-                  <Tent className="h-3.5 w-3.5" />
+                <div className="h-7 w-7 rounded-lg bg-gradient-to-r from-rose-500 to-red-600 text-white flex items-center justify-center">
+                  <Speaker className="h-3.5 w-3.5" />
                 </div>
                 <div>
-                  <p className="font-bold text-foreground">Mandap</p>
-                  <p className="text-[10px] text-muted-foreground">Stage & Mandap setup</p>
+                  <p className="font-bold text-foreground">Sound & Services</p>
+                  <p className="text-[10px] text-muted-foreground">Sound, mandap & hired services</p>
                 </div>
               </div>
               <p className="font-bold text-foreground">
-                ₹{mandapTotal.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
+                ₹{servicesTotal.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
               </p>
             </div>
 
             <div className="flex items-center justify-between p-2.5 rounded-lg border border-border/40 text-xs">
               <div className="flex items-center gap-2.5">
-                <div className="h-7 w-7 rounded-lg bg-rose-500 text-white flex items-center justify-center text-xs">
-                  <Volume2 className="h-3.5 w-3.5" />
+                <div className="h-7 w-7 rounded-lg bg-gradient-to-r from-rose-500 to-red-600 text-white flex items-center justify-center">
+                  <MicVocal className="h-3.5 w-3.5" />
                 </div>
                 <div>
-                  <p className="font-bold text-foreground">Sound</p>
-                  <p className="text-[10px] text-muted-foreground">Audio arrangements</p>
+                  <p className="font-bold text-foreground">Cultural Program</p>
+                  <p className="text-[10px] text-muted-foreground">Events, artists & programmes</p>
                 </div>
               </div>
               <p className="font-bold text-foreground">
-                ₹{soundTotal.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
+                ₹{culturalTotal.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
               </p>
             </div>
 
             <div className="flex items-center justify-between p-2.5 rounded-lg border border-border/40 text-xs">
               <div className="flex items-center gap-2.5">
-                <div className="h-7 w-7 rounded-lg bg-purple-600 text-white flex items-center justify-center text-xs">
+                <div className="h-7 w-7 rounded-lg bg-gradient-to-r from-rose-500 to-red-600 text-white flex items-center justify-center">
                   <Package className="h-3.5 w-3.5" />
                 </div>
                 <div>
-                  <p className="font-bold text-foreground">Other</p>
-                  <p className="text-[10px] text-muted-foreground">Miscellaneous</p>
+                  <p className="font-bold text-foreground">Other / Admin</p>
+                  <p className="text-[10px] text-muted-foreground">Miscellaneous & admin</p>
                 </div>
               </div>
               <p className="font-bold text-foreground">
@@ -298,17 +297,17 @@ export const ReportsPage = () => {
               </p>
             </div>
 
-            <div className="flex items-center justify-between p-2.5 rounded-lg bg-muted/60 border border-border/80 text-xs">
+            <div className="flex items-center justify-between p-3 rounded-xl bg-gradient-to-r from-rose-500 to-red-600 text-white shadow-sm text-xs">
               <div className="flex items-center gap-2.5">
-                <div className="h-7 w-7 rounded-lg bg-slate-700 text-white flex items-center justify-center text-xs">
-                  <Calculator className="h-3.5 w-3.5" />
+                <div className="h-7 w-7 rounded-lg bg-white/20 text-white flex items-center justify-center text-xs">
+                  ₹
                 </div>
                 <div>
-                  <p className="font-bold text-foreground">Total</p>
-                  <p className="text-[10px] text-muted-foreground">Overall Expenses</p>
+                  <p className="font-bold text-white">Total</p>
+                  <p className="text-[10px] text-white/85">Overall Expenses</p>
                 </div>
               </div>
-              <p className="font-bold text-foreground">
+              <p className="font-bold text-white">
                 ₹{totalSpent.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
               </p>
             </div>

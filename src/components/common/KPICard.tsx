@@ -92,7 +92,7 @@ export function KPICard({
           <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider truncate">
             {label}
           </p>
-          <p className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
+          <p className="text-xl sm:text-2xl font-bold tracking-tight text-foreground min-w-0 break-words tabular-nums">
             {value}
           </p>
         </div>

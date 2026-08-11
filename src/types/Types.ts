@@ -198,7 +198,135 @@ export type UpdateContributorPayload = {
 // Contribution Types
 export type ContributionType = "MONEY" | "ITEM";
 export type ContributionStatus = "PENDING" | "DEPOSITED" | "CANCELLED";
-export type PaymentMode = "CASH" | "UPI" | "BANK_TRANSFER" | "OTHER" | string;
+export type PaymentMode = "CASH" | "UPI" | "BANK_TRANSFER" | "CHEQUE" | "OTHER";
+
+// Expense Types
+export type ExpenseStatus = "PENDING" | "PAID" | "CANCELLED";
+export type ExpenseCategory = "FOOD" | "DECORATION" | "SERVICES" | "CULTURAL" | "OTHER";
+
+export type ExpenseAttachment = {
+  url: string;
+  fileName?: string;
+  mimeType?: string;
+  size?: number;
+  uploadedBy?: string;
+  uploadedAt?: string;
+};
+
+export type ExpenseStatusHistoryEntry = {
+  from?: ExpenseStatus | null;
+  to: ExpenseStatus;
+  changedBy?: string;
+  reason?: string;
+  at?: string;
+};
+
+export type Expense = {
+  _id: string;
+  organizationId: string;
+  festivalId: Festival | string;
+  category: ExpenseCategory;
+  amount: number;
+  description?: string;
+  status: ExpenseStatus;
+  date: string;
+  vendorName?: string;
+  vendorPhone?: string;
+  invoiceNumber?: string;
+  paymentMode: PaymentMode;
+  paymentReference?: string;
+  paymentDate?: string;
+  recordedBy?: User | string;
+  approvedBy?: string;
+  approvedAt?: string;
+  expenseCode: string;
+  attachments?: ExpenseAttachment[];
+  statusHistory?: ExpenseStatusHistoryEntry[];
+  isBalanceApplied: boolean;
+  isDeleted: boolean;
+  deletedAt?: string;
+  createdAt?: string;
+  updatedAt?: string;
+};
+
+export type CreateExpensePayload = {
+  festivalId: string;
+  category: ExpenseCategory;
+  amount: number;
+  description?: string;
+  date?: string | Date;
+  vendorName?: string;
+  vendorPhone?: string;
+  invoiceNumber?: string;
+  paymentMode?: PaymentMode;
+  paymentReference?: string;
+  paymentDate?: string | Date;
+  attachments?: ExpenseAttachment[];
+  status?: ExpenseStatus;
+};
+
+export type UpdateExpensePayload = {
+  festivalId?: string;
+  category?: ExpenseCategory;
+  amount?: number;
+  description?: string;
+  date?: string | Date;
+  vendorName?: string;
+  vendorPhone?: string;
+  invoiceNumber?: string;
+  paymentMode?: PaymentMode;
+  paymentReference?: string;
+  paymentDate?: string | Date;
+  attachments?: ExpenseAttachment[];
+};
+
+export type ExpenseListItem = {
+  _id: string;
+  expenseCode: string;
+  category: ExpenseCategory;
+  amount: number;
+  description?: string;
+  date: string;
+  vendorName?: string;
+  vendorPhone?: string;
+  invoiceNumber?: string;
+  paymentMode: PaymentMode;
+  paymentReference?: string;
+  paymentDate?: string;
+  status: ExpenseStatus;
+  isBalanceApplied: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+  recordedBy?: { _id: string; name?: string };
+  festival?: { _id: string; name?: string; year?: number };
+};
+
+export type ExpenseStatusCounts = {
+  total: number;
+  PENDING: number;
+  PAID: number;
+  CANCELLED: number;
+};
+
+export type ExpenseStatusAmounts = {
+  total: number;
+  PENDING: number;
+  PAID: number;
+  CANCELLED: number;
+};
+
+export type ExpenseCategoryTotals = Record<ExpenseCategory | string, number>;
+
+export type ExpenseListData = {
+  expenses: ExpenseListItem[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+  statusCounts: ExpenseStatusCounts;
+  statusAmounts: ExpenseStatusAmounts;
+  categoryTotals: ExpenseCategoryTotals;
+};
 
 export type ContributionStatusHistoryEntry = {
   from?: ContributionStatus | null;

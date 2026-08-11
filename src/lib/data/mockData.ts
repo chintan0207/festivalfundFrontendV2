@@ -58,7 +58,7 @@ export interface Expense {
   voucherNo: string;
   festivalId: string;
   title: string;
-  category: "MAHAPRASAD" | "DECORATION" | "MANDAP" | "SOUND" | "OTHER";
+  category: "FOOD" | "DECORATION" | "SERVICES" | "CULTURAL" | "OTHER";
   amount: number;
   paidTo: string;
   paymentMode: "UPI" | "CASH";
@@ -235,7 +235,7 @@ export const INITIAL_EXPENSES: Expense[] = [
     voucherNo: "VOU-2025-001",
     festivalId: "fest-1",
     title: "Mahaprasad",
-    category: "MAHAPRASAD",
+    category: "FOOD",
     amount: 20448,
     paidTo: "Shree Krishna Caterers",
     paymentMode: "UPI",
@@ -263,7 +263,7 @@ export const INITIAL_EXPENSES: Expense[] = [
     voucherNo: "VOU-2025-003",
     festivalId: "fest-1",
     title: "Mandap",
-    category: "MANDAP",
+    category: "SERVICES",
     amount: 10320,
     paidTo: "Shree Ram Decorators",
     paymentMode: "CASH",
@@ -277,7 +277,7 @@ export const INITIAL_EXPENSES: Expense[] = [
     voucherNo: "VOU-2025-004",
     festivalId: "fest-1",
     title: "Sound",
-    category: "SOUND",
+    category: "SERVICES",
     amount: 22710,
     paidTo: "Swar Beats Audio",
     paymentMode: "UPI",
@@ -298,5 +298,19 @@ export const INITIAL_EXPENSES: Expense[] = [
     date: "2025-08-29",
     status: "Paid",
     notes: "Miscellaneous expenses",
+  },
+  {
+    id: "exp-6",
+    expenseCode: "EXP-006",
+    voucherNo: "VOU-2025-006",
+    festivalId: "fest-1",
+    title: "Cultural Program",
+    category: "CULTURAL",
+    amount: 7850,
+    paidTo: "Rhythm Cultural Troupe",
+    paymentMode: "UPI",
+    date: "2025-08-30",
+    status: "Paid",
+    notes: "Artists & programme expenses",
   },
 ];

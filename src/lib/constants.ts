@@ -39,10 +39,10 @@ export const PaymentMethodEnum = {
 export const AvailablePaymentMethods = Object.values(PaymentMethodEnum);
 
 export const ExpenseCategoryEnum = {
-  MAHAPRASAD: "MAHAPRASAD",
+  FOOD: "FOOD",
   DECORATION: "DECORATION",
-  MANDAP: "MANDAP",
-  SOUND: "SOUND",
+  SERVICES: "SERVICES",
+  CULTURAL: "CULTURAL",
   OTHER: "OTHER",
 };
 

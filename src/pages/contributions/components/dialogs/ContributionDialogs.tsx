@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -131,7 +132,7 @@ function ContributionFormDialog({
     setValue,
     formState: { errors },
   } = useForm<ContributionFormValues>({
-    resolver: zodResolver(buildContributionSchema(mode)),
+    resolver: zodResolver(buildContributionSchema(mode)) as any,
     defaultValues: {
       contributorMode: "existing",
       contributorId: "",
