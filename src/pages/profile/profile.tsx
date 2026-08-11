@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent } from "react";
+import { useState, type FormEvent } from "react";
 import { useAuthStore } from "@/api/auth/auth.store";
 import { useUpdateProfile } from "@/api/auth/useAuth";
 import { AppButton } from "@/components/common/AppButton";
@@ -15,16 +15,18 @@ export const ProfilePage = () => {
 
   const [name, setName] = useState(user?.name ?? "");
   const [email, setEmail] = useState(user?.email ?? "");
+  const [prevUser, setPrevUser] = useState(user);
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isSaved, setIsSaved] = useState(false);
   const [passError, setPassError] = useState("");
 
-  useEffect(() => {
+  if (user !== prevUser) {
+    setPrevUser(user);
     setName(user?.name ?? "");
     setEmail(user?.email ?? "");
-  }, [user]);
+  }
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -67,7 +69,7 @@ export const ProfilePage = () => {
   const role = (user?.role as UserRole) ?? "ORG_VIEWER";
 
   return (
-    <div className="space-y-6 pb-12 max-w-2xl">
+    <div className="space-y-6 pb-40 md:pb-12 max-w-2xl px-2 sm:px-0">
       {/* HEADER */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -158,7 +160,12 @@ export const ProfilePage = () => {
         </div>
 
         <div className="flex justify-end">
-          <AppButton type="submit" size="lg" className="rounded-xl px-8 shadow-md" loading={isPending}>
+          <AppButton
+            type="submit"
+            size="lg"
+            className="rounded-xl px-8 shadow-md w-full sm:w-auto"
+            loading={isPending}
+          >
             Save Changes
           </AppButton>
         </div>

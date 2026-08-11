@@ -184,7 +184,7 @@ export const SettingsPage = () => {
   const currentUserIs = (m: User) => user?._id === m._id;
 
   return (
-    <div className="space-y-6 pb-12 max-w-4xl">
+    <div className="space-y-6 pb-40 md:pb-12 max-w-4xl px-2 sm:px-0">
       {/* HEADER */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -441,15 +441,16 @@ export const SettingsPage = () => {
 
           {/* TEAM MEMBERS & ACCESS */}
           <div className="p-5 rounded-2xl bg-card border border-border shadow-sm space-y-4">
-            <div className="flex items-center justify-between border-b border-border pb-3">
+            <div className="flex flex-col gap-3 border-b border-border pb-3 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-center gap-2">
-                <Users className="h-5 w-5 text-primary" />
+                <Users className="h-5 w-5 text-primary shrink-0" />
                 <h2 className="text-base font-bold text-foreground">Team Members & Access</h2>
               </div>
-              <div className="flex gap-2">
+              <div className="grid grid-cols-2 gap-2 w-full sm:w-auto sm:flex">
                 <AppButton
                   variant="outline"
                   size="sm"
+                  className="w-full sm:w-auto"
                   leftIcon={<Send className="h-4 w-4" />}
                   onClick={() => setMemberModal({ open: true, mode: "invite", member: null })}
                 >
@@ -457,6 +458,7 @@ export const SettingsPage = () => {
                 </AppButton>
                 <AppButton
                   size="sm"
+                  className="w-full sm:w-auto"
                   leftIcon={<Plus className="h-4 w-4" />}
                   onClick={() => setMemberModal({ open: true, mode: "create", member: null })}
                 >

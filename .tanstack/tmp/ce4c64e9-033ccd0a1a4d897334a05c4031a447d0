@@ -16,6 +16,7 @@ import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
 import { Route as MarketingIndexRouteImport } from './routes/_marketing/index'
 import { Route as DashboardSettingsRouteImport } from './routes/dashboard/settings'
 import { Route as DashboardReportsRouteImport } from './routes/dashboard/reports'
+import { Route as DashboardProfileRouteImport } from './routes/dashboard/profile'
 import { Route as DashboardFestivalsRouteImport } from './routes/dashboard/festivals'
 import { Route as DashboardExpensesRouteImport } from './routes/dashboard/expenses'
 import { Route as DashboardContributorsRouteImport } from './routes/dashboard/contributors'
@@ -35,6 +36,7 @@ import { Route as AuthSignupRouteImport } from './routes/_auth/signup'
 import { Route as AuthResetPasswordRouteImport } from './routes/_auth/reset-password'
 import { Route as AuthLoginRouteImport } from './routes/_auth/login'
 import { Route as AuthForgotPasswordRouteImport } from './routes/_auth/forgot-password'
+import { Route as AuthAcceptInviteRouteImport } from './routes/_auth/accept-invite'
 import { Route as DashboardFestivalsNewRouteImport } from './routes/dashboard/festivals.new'
 import { Route as DashboardFestivalsFestivalIdRouteImport } from './routes/dashboard/festivals.$festivalId'
 import { Route as DashboardContributorsContributorIdRouteImport } from './routes/dashboard/contributors.$contributorId'
@@ -72,6 +74,11 @@ const DashboardSettingsRoute = DashboardSettingsRouteImport.update({
 const DashboardReportsRoute = DashboardReportsRouteImport.update({
   id: '/reports',
   path: '/reports',
+  getParentRoute: () => DashboardRouteRoute,
+} as any)
+const DashboardProfileRoute = DashboardProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
   getParentRoute: () => DashboardRouteRoute,
 } as any)
 const DashboardFestivalsRoute = DashboardFestivalsRouteImport.update({
@@ -169,6 +176,11 @@ const AuthForgotPasswordRoute = AuthForgotPasswordRouteImport.update({
   path: '/forgot-password',
   getParentRoute: () => AuthRouteRoute,
 } as any)
+const AuthAcceptInviteRoute = AuthAcceptInviteRouteImport.update({
+  id: '/accept-invite',
+  path: '/accept-invite',
+  getParentRoute: () => AuthRouteRoute,
+} as any)
 const DashboardFestivalsNewRoute = DashboardFestivalsNewRouteImport.update({
   id: '/new',
   path: '/new',
@@ -202,6 +214,7 @@ const DashboardFestivalsFestivalIdEditRoute =
 export interface FileRoutesByFullPath {
   '/': typeof MarketingIndexRoute
   '/dashboard': typeof DashboardRouteRouteWithChildren
+  '/accept-invite': typeof AuthAcceptInviteRoute
   '/forgot-password': typeof AuthForgotPasswordRoute
   '/login': typeof AuthLoginRoute
   '/reset-password': typeof AuthResetPasswordRoute
@@ -221,6 +234,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/contributors': typeof DashboardContributorsRouteWithChildren
   '/dashboard/expenses': typeof DashboardExpensesRoute
   '/dashboard/festivals': typeof DashboardFestivalsRouteWithChildren
+  '/dashboard/profile': typeof DashboardProfileRoute
   '/dashboard/reports': typeof DashboardReportsRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
   '/dashboard/': typeof DashboardIndexRoute
@@ -232,6 +246,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof MarketingIndexRoute
+  '/accept-invite': typeof AuthAcceptInviteRoute
   '/forgot-password': typeof AuthForgotPasswordRoute
   '/login': typeof AuthLoginRoute
   '/reset-password': typeof AuthResetPasswordRoute
@@ -251,6 +266,7 @@ export interface FileRoutesByTo {
   '/dashboard/contributors': typeof DashboardContributorsRouteWithChildren
   '/dashboard/expenses': typeof DashboardExpensesRoute
   '/dashboard/festivals': typeof DashboardFestivalsRouteWithChildren
+  '/dashboard/profile': typeof DashboardProfileRoute
   '/dashboard/reports': typeof DashboardReportsRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
   '/dashboard': typeof DashboardIndexRoute
@@ -265,6 +281,7 @@ export interface FileRoutesById {
   '/_auth': typeof AuthRouteRouteWithChildren
   '/_marketing': typeof MarketingRouteRouteWithChildren
   '/dashboard': typeof DashboardRouteRouteWithChildren
+  '/_auth/accept-invite': typeof AuthAcceptInviteRoute
   '/_auth/forgot-password': typeof AuthForgotPasswordRoute
   '/_auth/login': typeof AuthLoginRoute
   '/_auth/reset-password': typeof AuthResetPasswordRoute
@@ -284,6 +301,7 @@ export interface FileRoutesById {
   '/dashboard/contributors': typeof DashboardContributorsRouteWithChildren
   '/dashboard/expenses': typeof DashboardExpensesRoute
   '/dashboard/festivals': typeof DashboardFestivalsRouteWithChildren
+  '/dashboard/profile': typeof DashboardProfileRoute
   '/dashboard/reports': typeof DashboardReportsRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
   '/_marketing/': typeof MarketingIndexRoute
@@ -299,6 +317,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/dashboard'
+    | '/accept-invite'
     | '/forgot-password'
     | '/login'
     | '/reset-password'
@@ -318,6 +337,7 @@ export interface FileRouteTypes {
     | '/dashboard/contributors'
     | '/dashboard/expenses'
     | '/dashboard/festivals'
+    | '/dashboard/profile'
     | '/dashboard/reports'
     | '/dashboard/settings'
     | '/dashboard/'
@@ -329,6 +349,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/accept-invite'
     | '/forgot-password'
     | '/login'
     | '/reset-password'
@@ -348,6 +369,7 @@ export interface FileRouteTypes {
     | '/dashboard/contributors'
     | '/dashboard/expenses'
     | '/dashboard/festivals'
+    | '/dashboard/profile'
     | '/dashboard/reports'
     | '/dashboard/settings'
     | '/dashboard'
@@ -361,6 +383,7 @@ export interface FileRouteTypes {
     | '/_auth'
     | '/_marketing'
     | '/dashboard'
+    | '/_auth/accept-invite'
     | '/_auth/forgot-password'
     | '/_auth/login'
     | '/_auth/reset-password'
@@ -380,6 +403,7 @@ export interface FileRouteTypes {
     | '/dashboard/contributors'
     | '/dashboard/expenses'
     | '/dashboard/festivals'
+    | '/dashboard/profile'
     | '/dashboard/reports'
     | '/dashboard/settings'
     | '/_marketing/'
@@ -446,6 +470,13 @@ declare module '@tanstack/react-router' {
       path: '/reports'
       fullPath: '/dashboard/reports'
       preLoaderRoute: typeof DashboardReportsRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
+    '/dashboard/profile': {
+      id: '/dashboard/profile'
+      path: '/profile'
+      fullPath: '/dashboard/profile'
+      preLoaderRoute: typeof DashboardProfileRouteImport
       parentRoute: typeof DashboardRouteRoute
     }
     '/dashboard/festivals': {
@@ -581,6 +612,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthForgotPasswordRouteImport
       parentRoute: typeof AuthRouteRoute
     }
+    '/_auth/accept-invite': {
+      id: '/_auth/accept-invite'
+      path: '/accept-invite'
+      fullPath: '/accept-invite'
+      preLoaderRoute: typeof AuthAcceptInviteRouteImport
+      parentRoute: typeof AuthRouteRoute
+    }
     '/dashboard/festivals/new': {
       id: '/dashboard/festivals/new'
       path: '/new'
@@ -620,6 +658,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthRouteRouteChildren {
+  AuthAcceptInviteRoute: typeof AuthAcceptInviteRoute
   AuthForgotPasswordRoute: typeof AuthForgotPasswordRoute
   AuthLoginRoute: typeof AuthLoginRoute
   AuthResetPasswordRoute: typeof AuthResetPasswordRoute
@@ -627,6 +666,7 @@ interface AuthRouteRouteChildren {
 }
 
 const AuthRouteRouteChildren: AuthRouteRouteChildren = {
+  AuthAcceptInviteRoute: AuthAcceptInviteRoute,
   AuthForgotPasswordRoute: AuthForgotPasswordRoute,
   AuthLoginRoute: AuthLoginRoute,
   AuthResetPasswordRoute: AuthResetPasswordRoute,
@@ -734,6 +774,7 @@ interface DashboardRouteRouteChildren {
   DashboardContributorsRoute: typeof DashboardContributorsRouteWithChildren
   DashboardExpensesRoute: typeof DashboardExpensesRoute
   DashboardFestivalsRoute: typeof DashboardFestivalsRouteWithChildren
+  DashboardProfileRoute: typeof DashboardProfileRoute
   DashboardReportsRoute: typeof DashboardReportsRoute
   DashboardSettingsRoute: typeof DashboardSettingsRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
@@ -744,6 +785,7 @@ const DashboardRouteRouteChildren: DashboardRouteRouteChildren = {
   DashboardContributorsRoute: DashboardContributorsRouteWithChildren,
   DashboardExpensesRoute: DashboardExpensesRoute,
   DashboardFestivalsRoute: DashboardFestivalsRouteWithChildren,
+  DashboardProfileRoute: DashboardProfileRoute,
   DashboardReportsRoute: DashboardReportsRoute,
   DashboardSettingsRoute: DashboardSettingsRoute,
   DashboardIndexRoute: DashboardIndexRoute,

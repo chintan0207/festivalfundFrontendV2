@@ -36,7 +36,7 @@ function ResetPassword() {
 
   if (!token) {
     return (
-      <div className="h-screen w-screen overflow-hidden bg-background flex items-center justify-center p-4">
+      <div className="min-h-[100dvh] w-full overflow-hidden bg-background flex items-center justify-center p-4">
         <AppCard className="w-full max-w-md p-5 sm:p-6 text-center">
           <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-destructive/10 text-destructive mb-3 border border-destructive/20">
             <Shield className="h-7 w-7 text-destructive" />
@@ -56,8 +56,8 @@ function ResetPassword() {
   }
 
   return (
-    <div className="min-h-screen w-screen bg-background flex flex-col justify-center py-6 sm:py-0 overflow-y-auto sm:overflow-hidden">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl h-full flex items-center justify-center">
+    <div className="min-h-[100dvh] w-full bg-background flex flex-col py-6 overflow-y-auto sm:py-0">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl h-full flex items-center justify-center my-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-14 items-center w-full">
           {/* Left Side Info */}
           <div className="hidden md:block space-y-6 max-w-lg mx-auto lg:mx-0">

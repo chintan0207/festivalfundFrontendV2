@@ -75,8 +75,8 @@ const AcceptInvitePage = ({ token }: { token: string }) => {
   };
 
   return (
-    <div className="min-h-screen w-screen bg-background flex flex-col justify-center py-6 sm:py-0 overflow-y-auto sm:overflow-hidden">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl h-full flex items-center justify-center">
+    <div className="min-h-[100dvh] w-full bg-background flex flex-col py-6 overflow-y-auto sm:py-0">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl h-full flex items-center justify-center my-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-14 items-center w-full">
           {/* Left Side Feature Showcase */}
           <div className="hidden md:block space-y-6 max-w-lg mx-auto lg:mx-0">
