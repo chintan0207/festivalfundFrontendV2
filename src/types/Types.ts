@@ -1,4 +1,4 @@
-export type UserRole = "SUPER_ADMIN" | "ORG_ADMIN" | "MEMBER";
+export type UserRole = "SUPER_ADMIN" | "ORG_ADMIN" | "ORG_VIEWER";
 
 export type User = {
   _id: string;
@@ -6,6 +6,8 @@ export type User = {
   name: string;
   email: string;
   role: UserRole;
+  avatarUrl?: string;
+  phoneNumber?: string | null;
   isDeleted: boolean;
   isActive: boolean;
   createdAt: string;
@@ -17,11 +19,12 @@ export type Organization = {
   name: string;
   logoUrl: string;
   address: string;
+  phone?: string;
   email: string;
   description: string;
   website: string;
   registeredBy: string | null;
-  plan: "FREE" | "PRO" | "ENTERPRISE";
+  plan: "FREE" | "STANDARD" | "PREMIUM";
   limits: {
     festivalsPerYear: number;
     contributors: number;
@@ -35,6 +38,7 @@ export type Organization = {
   currency: string;
   isActive: boolean;
   isDeleted: boolean;
+  planExpiry?: string;
   createdAt: string;
   updatedAt: string;
 };
@@ -53,6 +57,13 @@ export type SignupPayload = {
   adminName: string;
   phone: string;
   address?: string;
+};
+
+export type UpdateProfilePayload = {
+  name?: string;
+  email?: string;
+  currentPassword?: string;
+  newPassword?: string;
 };
 
 export type LoginPayload = {
@@ -282,6 +293,47 @@ export type ContributionListItem = {
     name?: string;
     year?: number;
   };
+};
+
+export type InvitationStatus = "PENDING" | "ACCEPTED" | "EXPIRED" | "REVOKED";
+
+export type Invitation = {
+  _id: string;
+  organizationId: string;
+  email: string;
+  name: string;
+  role: UserRole;
+  invitedBy: string;
+  status: InvitationStatus;
+  expiresAt: string;
+  acceptedAt?: string;
+  revokedAt?: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type CreateInvitationPayload = {
+  email: string;
+  name: string;
+  role: UserRole;
+};
+
+export type InvitationVerification = {
+  token: string;
+  email: string;
+  name: string;
+  role: UserRole;
+  organization: {
+    _id: string;
+    name: string;
+    logoUrl?: string;
+  } | null;
+};
+
+export type AcceptInvitationPayload = {
+  token: string;
+  name?: string;
+  password?: string;
 };
 
 

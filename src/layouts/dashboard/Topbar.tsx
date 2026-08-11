@@ -19,7 +19,7 @@ import {
 } from "lucide-react";
 
 const Topbar = () => {
-  const { user } = useAuthStore();
+  const { user, organization } = useAuthStore();
   const { data } = useFestivals();
   const festivals = data?.festivals ?? [];
   const { activeFestivalId, isAllFestivals, setActiveFestivalId, setActiveFestivalAll } =
@@ -98,14 +98,24 @@ const Topbar = () => {
 
         {/* User Profile Summary */}
         <div className="flex items-center gap-2 pl-2 border-l border-border">
-          <div className="h-8 w-8 rounded-full bg-primary/20 text-primary font-bold flex items-center justify-center text-xs ring-2 ring-primary/30">
-            {user?.name ? user.name.charAt(0).toUpperCase() : "R"}
+          <div className="relative h-8 w-8 rounded-full bg-primary/20 text-primary font-bold flex items-center justify-center text-xs ring-2 ring-primary/30 overflow-hidden">
+            {organization?.logoUrl ? (
+              <img
+                src={organization.logoUrl}
+                alt={organization.name || "org"}
+                className="h-full w-full object-cover"
+              />
+            ) : user?.name ? (
+              user.name.charAt(0).toUpperCase()
+            ) : (
+              "R"
+            )}
           </div>
           <div className="hidden lg:flex flex-col text-left">
             <span className="text-xs font-semibold text-foreground leading-tight">
-              {user?.name || "Rajesh Patel"}
+              {user?.name || "Org Admin"}
             </span>
-            <span className="text-2xs text-muted-foreground">Org Admin</span>
+            <span className="text-2xs text-muted-foreground">{organization?.name || "Org Admin"}</span>
           </div>
         </div>
       </div>

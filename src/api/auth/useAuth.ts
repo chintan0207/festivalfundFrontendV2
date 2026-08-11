@@ -9,6 +9,7 @@ import type {
   LoginPayload,
   ForgotPasswordPayload,
   ResetPasswordPayload,
+  UpdateProfilePayload,
 } from "@/types/Types";
 
 export const useLogin = () => {
@@ -23,8 +24,8 @@ export const useLogin = () => {
         toast.error("Invalid response from server");
         return;
       }
-      const { accessToken, refreshToken, loggedInUser } = data;
-      setAuth({ user: loggedInUser, accessToken, refreshToken });
+      const { accessToken, refreshToken, loggedInUser, organization } = data;
+      setAuth({ user: loggedInUser, organization, accessToken, refreshToken });
       toast.success(res.message || "Login successful");
       navigate({ to: "/dashboard", replace: true });
     },
@@ -74,6 +75,26 @@ export const useCurrentUser = () => {
     enabled: !!accessToken,
     retry: false,
     staleTime: 5 * 60 * 1000,
+  });
+};
+
+export const useUpdateProfile = () => {
+  const queryClient = useQueryClient();
+  const user = useAuthStore((s) => s.user);
+  const setAuth = useAuthStore((s) => s.setAuth);
+
+  return useMutation({
+    mutationFn: (payload: UpdateProfilePayload) => AuthService.updateProfile(payload),
+    onSuccess: (res) => {
+      queryClient.invalidateQueries({ queryKey: ["current-user"] });
+      if (user && res.data) {
+        setAuth({ user: res.data });
+      }
+      toast.success(res.message || "Profile updated successfully");
+    },
+    onError: (error: any) => {
+      toast.error(error?.response?.data?.message || "Failed to update profile");
+    },
   });
 };
 
@@ -128,7 +149,11 @@ export const useGoogleAuth = () => {
   const navigate = useNavigate();
 
   return useMutation({
-    mutationFn: (payload: { credential?: string; accessToken?: string } | string) =>
+    mutationFn: (payload: {
+      credential?: string;
+      accessToken?: string;
+      inviteToken?: string;
+    } | string) =>
       AuthService.googleAuth(payload),
     onSuccess: (res) => {
       const data = res.data;

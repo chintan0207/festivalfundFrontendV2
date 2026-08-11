@@ -9,7 +9,10 @@ export const Route = createFileRoute("/dashboard")({
     if (!isAuthenticated) {
       throw redirect({ to: "/login" });
     }
-    if (user?.role !== GlobalRoleEnum.ORG_ADMIN) {
+    if (
+      user?.role !== GlobalRoleEnum.ORG_ADMIN &&
+      user?.role !== GlobalRoleEnum.ORG_VIEWER
+    ) {
       throw redirect({ to: "/" });
     }
   },

@@ -4,6 +4,7 @@ import type {
   LoginPayload,
   ForgotPasswordPayload,
   ResetPasswordPayload,
+  UpdateProfilePayload,
   User,
 } from "@/types/Types";
 import ApiClient from "../apiClient";
@@ -37,6 +38,11 @@ export const AuthService = {
 
   getMe: async () => {
     const response = await ApiClient.get<ApiResponse<User>>("/auth/me");
+    return response.data;
+  },
+
+  updateProfile: async (payload: UpdateProfilePayload) => {
+    const response = await ApiClient.patch<ApiResponse<User>>("/auth/profile", payload);
     return response.data;
   },
 

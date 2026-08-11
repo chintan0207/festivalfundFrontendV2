@@ -1,5 +1,7 @@
 import { Outlet } from "@tanstack/react-router";
 import { useCurrentUser } from "@/api/auth/useAuth";
+import { useAuthStore } from "@/api/auth/auth.store";
+import { useOrganization } from "@/api/organization/useOrganization";
 import Sidebar from "./Sidebar";
 import Topbar from "./Topbar";
 import MobileBottomNav from "./MobileBottomNav";
@@ -10,6 +12,8 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 
 const DashboardLayout = () => {
   useCurrentUser();
+  const organizationId = useAuthStore((s) => s.user?.organizationId);
+  useOrganization(organizationId || "");
 
   return (
     <TooltipProvider>
