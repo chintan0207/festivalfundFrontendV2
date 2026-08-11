@@ -47,7 +47,8 @@ import {
 } from "lucide-react";
 import { useFestivalApiStore } from "@/api/festival/festival.store";
 import { useFestivals } from "@/api/festival/useFestivals";
-import { cn } from "@/lib/utils";
+import { getModuleTheme, gradientColors } from "@/theme/colors";
+import { cn, initials } from "@/lib/utils";
 import type { Invitation, User } from "@/types/Types";
 
 const planStyles: Record<string, string> = {
@@ -56,18 +57,26 @@ const planStyles: Record<string, string> = {
   PREMIUM: "bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/20",
 };
 
+function avatarGradient(name: string): string {
+  let hash = 0;
+  for (let i = 0; i < name.length; i += 1) {
+    hash = (hash * 31 + name.charCodeAt(i)) % 995;
+  }
+  return gradientColors[hash % gradientColors.length];
+}
+
 export const SettingsPage = () => {
   const { user } = useAuthStore();
   const orgId = user?.organizationId ?? "";
+  const theme = getModuleTheme("settings");
 
   const { data: orgData, isLoading: orgLoading } = useOrganization(orgId);
   const { data: members = [], isLoading: membersLoading } = useOrgUsers(orgId);
-  const { data: invitations = [], isLoading: invitationsLoading } = useOrgInvitations(orgId);
+  const { data: invitations = [], isLoading: invitationsLoading } =
+    useOrgInvitations(orgId);
   const pendingInvitations = invitations.filter((inv) => inv.status === "PENDING");
 
-  const profileOrg = orgData as
-    | (typeof orgData & { users?: User[] })
-    | undefined;
+  const profileOrg = orgData as (typeof orgData & { users?: User[] }) | undefined;
 
   // Profile form state
   const [orgName, setOrgName] = useState("");
@@ -106,14 +115,20 @@ export const SettingsPage = () => {
     }
   }, [profileOrg]);
 
-  const { mutateAsync: saveProfile, isPending: savingProfile } = useUpdateOrganization(orgId);
-  const { mutateAsync: createMember, isPending: creatingMember } = useCreateOrgUser(orgId);
+  const { mutateAsync: saveProfile, isPending: savingProfile } =
+    useUpdateOrganization(orgId);
+  const { mutateAsync: createMember, isPending: creatingMember } =
+    useCreateOrgUser(orgId);
   const { mutateAsync: saveMember, isPending: updatingMember } = useUpdateOrgUser(orgId);
-  const { mutateAsync: removeMember, isPending: removingMember } = useDeleteOrgUser(orgId);
+  const { mutateAsync: removeMember, isPending: removingMember } =
+    useDeleteOrgUser(orgId);
   const { mutateAsync: uploadLogo, isPending: uploadingLogo } = useUploadOrgLogo(orgId);
-  const { mutateAsync: sendInvite, isPending: sendingInvite } = useCreateInvitation(orgId);
-  const { mutateAsync: revokeInvite, isPending: revokingInvite } = useRevokeInvitation(orgId);
-  const { mutateAsync: resendInvite, isPending: resendingInvite } = useResendInvitation(orgId);
+  const { mutateAsync: sendInvite, isPending: sendingInvite } =
+    useCreateInvitation(orgId);
+  const { mutateAsync: revokeInvite, isPending: revokingInvite } =
+    useRevokeInvitation(orgId);
+  const { mutateAsync: resendInvite, isPending: resendingInvite } =
+    useResendInvitation(orgId);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -225,13 +240,17 @@ export const SettingsPage = () => {
             className="p-5 rounded-2xl bg-card border border-border shadow-sm space-y-4"
           >
             <div className="flex items-center gap-2 border-b border-border pb-3">
-              <Building className="h-5 w-5 text-primary" />
-              <h2 className="text-base font-bold text-foreground">Organization Details</h2>
+              <Building className={`h-5 w-5 ${theme.iconColor}`} />
+              <h2 className="text-base font-bold text-foreground">
+                Organization Details
+              </h2>
             </div>
 
             {/* Logo */}
             <div className="flex items-center gap-4">
-              <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-white text-xl font-bold overflow-hidden shrink-0">
+              <div
+                className={`h-16 w-16 rounded-2xl ${theme.gradient} flex items-center justify-center text-white text-xl font-bold overflow-hidden shrink-0`}
+              >
                 {profileOrg?.logoUrl ? (
                   <img
                     src={profileOrg.logoUrl}
@@ -239,7 +258,7 @@ export const SettingsPage = () => {
                     className="h-full w-full object-cover"
                   />
                 ) : (
-                  (profileOrg?.name || "SG").slice(0, 2).toUpperCase()
+                  initials(profileOrg?.name || "SG")
                 )}
               </div>
               <div className="space-y-1">
@@ -277,9 +296,7 @@ export const SettingsPage = () => {
                     Remove Logo
                   </AppButton>
                 )}
-                <p className="text-2xs text-muted-foreground">
-                  PNG or JPG, max 2MB
-                </p>
+                <p className="text-2xs text-muted-foreground">PNG or JPG, max 2MB</p>
               </div>
             </div>
 
@@ -340,7 +357,13 @@ export const SettingsPage = () => {
             </div>
 
             <div className="flex justify-end">
-              <AppButton type="submit" size="lg" className="rounded-xl px-8 shadow-md" loading={savingProfile}>
+              <AppButton
+                type="submit"
+                size="lg"
+                className="px-8 shadow-md"
+                loading={savingProfile}
+                gradient={theme.gradient}
+              >
                 Save Profile
               </AppButton>
             </div>
@@ -349,7 +372,7 @@ export const SettingsPage = () => {
           {/* PLAN & LIMITS CARD */}
           <div className="p-5 rounded-2xl bg-card border border-border shadow-sm space-y-4">
             <div className="flex items-center gap-2 border-b border-border pb-3">
-              <CreditCard className="h-5 w-5 text-primary" />
+              <CreditCard className={`h-5 w-5 ${theme.iconColor}`} />
               <h2 className="text-base font-bold text-foreground">Plan & Limits</h2>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
@@ -385,8 +408,10 @@ export const SettingsPage = () => {
           {/* DEFAULT FESTIVAL SELECTION */}
           <div className="p-5 rounded-2xl bg-card border border-border shadow-sm space-y-4">
             <div className="flex items-center gap-2 border-b border-border pb-3">
-              <Sliders className="h-5 w-5 text-primary" />
-              <h2 className="text-base font-bold text-foreground">Active Festival Context</h2>
+              <Sliders className={`h-5 w-5 ${theme.iconColor}`} />
+              <h2 className="text-base font-bold text-foreground">
+                Active Festival Context
+              </h2>
             </div>
 
             <div className="space-y-3 text-xs">
@@ -411,23 +436,26 @@ export const SettingsPage = () => {
               />
             </div>
             <p className="text-2xs text-muted-foreground">
-              This setting updates the active festival context across the entire application
-              workspace.
+              This setting updates the active festival context across the entire
+              application workspace.
             </p>
           </div>
 
           {/* RECEIPT & VOUCHER SEQUENCES (read-only) */}
           <div className="p-5 rounded-2xl bg-card border border-border shadow-sm space-y-4">
             <div className="flex items-center gap-2 border-b border-border pb-3">
-              <Hash className="h-5 w-5 text-primary" />
+              <Hash className={`h-5 w-5 ${theme.iconColor}`} />
               <h2 className="text-base font-bold text-foreground">Document Numbering</h2>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
-              {(
-                ["contributor", "receipt", "expense", "festival"] as const
-              ).map((key) => (
-                <div key={key} className="p-4 rounded-xl bg-muted/40 border border-border">
-                  <p className="text-2xs text-muted-foreground capitalize mb-1">{key} Counter</p>
+              {(["contributor", "receipt", "expense", "festival"] as const).map((key) => (
+                <div
+                  key={key}
+                  className="p-4 rounded-xl bg-muted/40 border border-border"
+                >
+                  <p className="text-2xs text-muted-foreground capitalize mb-1">
+                    {key} Counter
+                  </p>
                   <p className="text-lg font-bold text-foreground">
                     {profileOrg?.sequences?.[key] ?? "0"}
                   </p>
@@ -435,7 +463,8 @@ export const SettingsPage = () => {
               ))}
             </div>
             <p className="text-2xs text-muted-foreground">
-              Auto-generated sequential counters (CTR / CON / EXP / FES) are managed by the system.
+              Auto-generated sequential counters (CTR / CON / EXP / FES) are managed by
+              the system.
             </p>
           </div>
 
@@ -443,24 +472,29 @@ export const SettingsPage = () => {
           <div className="p-5 rounded-2xl bg-card border border-border shadow-sm space-y-4">
             <div className="flex flex-col gap-3 border-b border-border pb-3 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-center gap-2">
-                <Users className="h-5 w-5 text-primary shrink-0" />
-                <h2 className="text-base font-bold text-foreground">Team Members & Access</h2>
+                <Users className={`h-5 w-5 ${theme.iconColor} shrink-0`} />
+                <h2 className="text-base font-bold text-foreground">
+                  Team Members & Access
+                </h2>
               </div>
               <div className="grid grid-cols-2 gap-2 w-full sm:w-auto sm:flex">
                 <AppButton
                   variant="outline"
-                  size="sm"
                   className="w-full sm:w-auto"
                   leftIcon={<Send className="h-4 w-4" />}
-                  onClick={() => setMemberModal({ open: true, mode: "invite", member: null })}
+                  onClick={() =>
+                    setMemberModal({ open: true, mode: "invite", member: null })
+                  }
                 >
                   Invite Member
                 </AppButton>
                 <AppButton
-                  size="sm"
                   className="w-full sm:w-auto"
                   leftIcon={<Plus className="h-4 w-4" />}
-                  onClick={() => setMemberModal({ open: true, mode: "create", member: null })}
+                  gradient={theme.gradient}
+                  onClick={() =>
+                    setMemberModal({ open: true, mode: "create", member: null })
+                  }
                 >
                   Create Member
                 </AppButton>
@@ -489,11 +523,16 @@ export const SettingsPage = () => {
                         </div>
                         <div className="min-w-0">
                           <p className="font-bold text-foreground truncate">{inv.name}</p>
-                          <p className="text-2xs text-muted-foreground truncate">{inv.email}</p>
+                          <p className="text-2xs text-muted-foreground truncate">
+                            {inv.email}
+                          </p>
                         </div>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
-                        <Badge variant="outline" className="text-2xs border-amber-500/30 text-amber-600">
+                        <Badge
+                          variant="outline"
+                          className="text-2xs border-amber-500/30 text-amber-600"
+                        >
                           Pending
                         </Badge>
                         <AppButton
@@ -539,20 +578,36 @@ export const SettingsPage = () => {
                     className="flex items-center justify-between p-3 rounded-xl bg-muted/40 border border-border"
                   >
                     <div className="flex items-center gap-3 min-w-0">
-                      <div className={cn("h-8 w-8 rounded-full font-bold flex items-center justify-center shrink-0", roleStyles[m.role] || roleStyles.ORG_VIEWER)}>
-                        {m.name.charAt(0).toUpperCase()}
+                      <div
+                        className={cn(
+                          "h-8 w-8 rounded-full font-bold flex items-center justify-center shrink-0 text-white",
+                          avatarGradient(m.name),
+                        )}
+                      >
+                        {initials(m.name)}
                       </div>
                       <div className="min-w-0">
                         <p className="font-bold text-foreground truncate">{m.name}</p>
-                        <p className="text-2xs text-muted-foreground truncate">{m.email}</p>
+                        <p className="text-2xs text-muted-foreground truncate">
+                          {m.email}
+                        </p>
                       </div>
                     </div>
                     <div className="flex items-center gap-2 shrink-0">
-                      <Badge variant="outline" className={cn("text-2xs", roleStyles[m.role] || roleStyles.ORG_VIEWER)}>
+                      <Badge
+                        variant="outline"
+                        className={cn(
+                          "text-2xs",
+                          roleStyles[m.role] || roleStyles.ORG_VIEWER,
+                        )}
+                      >
                         {m.role.replace("_", " ")}
                       </Badge>
                       {!m.isActive && (
-                        <Badge variant="outline" className="text-2xs border-rose-500/30 text-rose-500">
+                        <Badge
+                          variant="outline"
+                          className="text-2xs border-rose-500/30 text-rose-500"
+                        >
                           Inactive
                         </Badge>
                       )}
@@ -594,6 +649,7 @@ export const SettingsPage = () => {
           mode={memberModal.mode === "edit" ? "create" : memberModal.mode}
           member={memberModal.member}
           loading={sendingInvite || creatingMember || updatingMember}
+          gradient={theme.gradient}
           onClose={() => setMemberModal({ open: false, mode: "invite", member: null })}
           onSubmit={memberModal.mode === "edit" ? handleUpdateMember : handleCreateMember}
         />

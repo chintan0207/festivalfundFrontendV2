@@ -6,12 +6,14 @@ import { AppInput } from "@/components/common/AppInput";
 import { AppBadge } from "@/components/common/AppBadge";
 import { Badge } from "@/components/ui/badge";
 import { roleStyles } from "@/pages/settings/settingsRoleStyles";
+import { getModuleTheme } from "@/theme/colors";
 import { User as UserIcon, Mail, Lock, CheckCircle } from "lucide-react";
 import type { UserRole } from "@/types/Types";
 
 export const ProfilePage = () => {
   const { user } = useAuthStore();
   const { mutateAsync: updateProfile, isPending } = useUpdateProfile();
+  const theme = getModuleTheme("settings");
 
   const [name, setName] = useState(user?.name ?? "");
   const [email, setEmail] = useState(user?.email ?? "");
@@ -163,8 +165,9 @@ export const ProfilePage = () => {
           <AppButton
             type="submit"
             size="lg"
-            className="rounded-xl px-8 shadow-md w-full sm:w-auto"
+            className="px-8 shadow-md w-full sm:w-auto"
             loading={isPending}
+            gradient={theme.gradient}
           >
             Save Changes
           </AppButton>

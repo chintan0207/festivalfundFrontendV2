@@ -11,7 +11,7 @@ import { AppCard } from "@/components/common/AppCard";
 import { AppInput } from "@/components/common/AppInput";
 import { AppBadge } from "@/components/common/AppBadge";
 import { AppLogo } from "@/components/common";
-import { gradientColors } from "@/theme/colors";
+import { gradientColors, getModuleTheme } from "@/theme/colors";
 import {
   acceptInvitationSchema,
   type AcceptInvitationFormData,
@@ -23,6 +23,7 @@ import { useAuthStore } from "@/api/auth/auth.store";
 const AcceptInvitePage = ({ token }: { token: string }) => {
   const navigate = useNavigate();
   const setAuth = useAuthStore((s) => s.setAuth);
+  const theme = getModuleTheme("settings");
   const { data: verification, isLoading, isError, error } = useVerifyInvitation(token);
   const { mutateAsync: accept, isPending } = useAcceptInvitation();
   const googleAuthMutation = useGoogleAuth();
@@ -169,7 +170,7 @@ const AcceptInvitePage = ({ token }: { token: string }) => {
                   <>
                     {/* Compact org invitation header */}
                     <div className="flex items-center gap-3 mb-5">
-                      <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-white overflow-hidden shrink-0">
+                      <div className={`h-10 w-10 rounded-xl ${theme.gradient} flex items-center justify-center text-white overflow-hidden shrink-0`}>
                         {verification.organization?.logoUrl ? (
                           <img
                             src={verification.organization.logoUrl}

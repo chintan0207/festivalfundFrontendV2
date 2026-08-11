@@ -20,6 +20,7 @@ interface TeamMemberFormDialogProps {
   mode: TeamMemberFormMode;
   member?: User | null;
   loading?: boolean;
+  gradient?: string;
   onClose: () => void;
   onSubmit: (values: TeamMemberFormValues) => void;
 }
@@ -33,6 +34,7 @@ export function TeamMemberFormDialog({
   mode,
   member,
   loading,
+  gradient,
   onClose,
   onSubmit,
 }: TeamMemberFormDialogProps) {
@@ -91,6 +93,7 @@ export function TeamMemberFormDialog({
       }
       submitLabel={mode === "invite" ? "Send Invite" : isEdit ? "Save Changes" : "Create Member"}
       loading={loading}
+      gradient={gradient}
       onSubmit={handleSubmit(onSubmit)}
       contentClassName="sm:max-w-lg"
     >
