@@ -9,6 +9,7 @@ import {
 } from "@/api/contribution/useContributions";
 import { useFestivalApiStore } from "@/api/festival/festival.store";
 import { useDebounce } from "@/hooks/useDebounce";
+import { useIsOrgAdmin } from "@/hooks/useIsOrgAdmin";
 import { getModuleTheme } from "@/theme/colors";
 import { PageHeader } from "@/components/common/PageHeader";
 import { PageFilterToolbar } from "@/components/common/PageFilterToolbar";
@@ -69,16 +70,18 @@ export default function ContributionsPage() {
 
   const navigate = useNavigate();
   const matches = useMatches();
+  const isAdmin = useIsOrgAdmin();
 
   const dialogs = useContributionDialogs({ themeGradient: theme.gradient });
   const { openAdd } = dialogs;
 
   // Open the add dialog from the mobile FAB
   useEffect(() => {
+    if (!isAdmin) return;
     const handler = () => openAdd();
     window.addEventListener("ff:open-add-contributions", handler);
     return () => window.removeEventListener("ff:open-add-contributions", handler);
-  }, [openAdd]);
+  }, [openAdd, isAdmin]);
 
   const handleRowClick = useCallback(
     (contribution: ContributionListItem) => {
@@ -182,13 +185,15 @@ export default function ContributionsPage() {
         ]}
         badge={<AppBadge className={theme.badgeColor}>{total} total</AppBadge>}
         actions={
-          <AppButton
-            onClick={dialogs.openAdd}
-            leftIcon={<Plus className="h-4 w-4" />}
-            gradient={theme.gradient}
-          >
-            Add Contribution
-          </AppButton>
+          isAdmin && (
+            <AppButton
+              onClick={dialogs.openAdd}
+              leftIcon={<Plus className="h-4 w-4" />}
+              gradient={theme.gradient}
+            >
+              Add Contribution
+            </AppButton>
+          )
         }
       />
 

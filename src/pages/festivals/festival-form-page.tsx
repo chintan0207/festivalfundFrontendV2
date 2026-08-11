@@ -194,10 +194,20 @@ export function FestivalFormPage({ festivalId }: FestivalFormPageProps) {
             ? "Update the festival details. Opening balance is managed at creation."
             : "Set up a new festival with budget, timeline, and venue details."
         }
-        breadcrumbs={[
-          { label: "Home", to: "/dashboard" },
-          { label: "Festivals", to: "/dashboard/festivals" },
-        ]}
+        breadcrumbs={
+          isEditing
+            ? [
+                { label: "Home", to: "/dashboard" },
+                { label: "Festivals", to: "/dashboard/festivals" },
+                ...(festival ? [{ label: festival.name }] : []),
+                { label: "Edit Festival" },
+              ]
+            : [
+                { label: "Home", to: "/dashboard" },
+                { label: "Festivals", to: "/dashboard/festivals" },
+                { label: "Create Festival" },
+              ]
+        }
       />
 
       <div className="rounded-2xl bg-card border border-border/80 p-4 sm:p-6">

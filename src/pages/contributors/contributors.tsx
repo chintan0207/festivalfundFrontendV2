@@ -4,6 +4,7 @@ import { Outlet, useNavigate, useMatches } from "@tanstack/react-router";
 import { useContributorApiStore } from "@/api/contributor/contributor.store";
 import { useContributors, useDownloadContributorsPdf } from "@/api/contributor/useContributors";
 import { useDebounce } from "@/hooks/useDebounce";
+import { useIsOrgAdmin } from "@/hooks/useIsOrgAdmin";
 import { getModuleTheme } from "@/theme/colors";
 import { PageHeader } from "@/components/common/PageHeader";
 import { PageFilterToolbar } from "@/components/common/PageFilterToolbar";
@@ -54,6 +55,7 @@ export default function ContributorsPage() {
 
   const navigate = useNavigate();
   const matches = useMatches();
+  const isAdmin = useIsOrgAdmin();
 
   const dialogs = useContributorDialogs({ themeGradient: theme.gradient });
   const { openAdd } = dialogs;
@@ -62,10 +64,11 @@ export default function ContributorsPage() {
 
   // Open the add dialog from the mobile FAB
   useEffect(() => {
+    if (!isAdmin) return;
     const handler = () => openAdd();
     window.addEventListener("ff:open-add-contributors", handler);
     return () => window.removeEventListener("ff:open-add-contributors", handler);
-  }, [openAdd]);
+  }, [openAdd, isAdmin]);
 
   const handleRowClick = useCallback((contributor: Contributor) => {
     navigate({ to: "/dashboard/contributors/$contributorId", params: { contributorId: contributor._id } });
@@ -146,13 +149,15 @@ export default function ContributorsPage() {
             >
               Download PDF
             </AppButton>
-            <AppButton
-              onClick={dialogs.openAdd}
-              leftIcon={<Plus className="h-4 w-4" />}
-              gradient={theme.gradient}
-            >
-              Add Contributor
-            </AppButton>
+            {isAdmin && (
+              <AppButton
+                onClick={dialogs.openAdd}
+                leftIcon={<Plus className="h-4 w-4" />}
+                gradient={theme.gradient}
+              >
+                Add Contributor
+              </AppButton>
+            )}
           </>
         }
       />

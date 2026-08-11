@@ -6,6 +6,7 @@ import { getModuleTheme } from "@/theme/colors";
 import { AppBadge } from "@/components/common/AppBadge";
 import { RowActionsMenu } from "@/components/common/RowActionsMenu";
 import { StatusBadgeSelect } from "@/components/common/StatusBadgeSelect";
+import { useIsOrgAdmin } from "@/hooks/useIsOrgAdmin";
 import {
   contributionStatusBadge,
   contributionStatusLabel,
@@ -49,6 +50,7 @@ export function ContributionTable({
   isSlipPending,
 }: ContributionTableProps) {
   const theme = getModuleTheme("contributions");
+  const isAdmin = useIsOrgAdmin();
   const [statusTarget, setStatusTarget] = useState<{
     contribution: ContributionListItem;
     status: ContributionStatus;
@@ -119,18 +121,24 @@ export function ContributionTable({
       sortable: true,
       render: (c) => (
         <div onClick={(e) => e.stopPropagation()}>
-          <StatusBadgeSelect
-            status={c.status}
-            options={contributionStatusOptions}
-            transitions={contributionStatusTransitions[c.status]}
-            badgeClass={contributionStatusBadge}
-            labelOf={contributionStatusLabel}
-            onRequestStatus={(value) =>
-              setStatusTarget({ contribution: c, status: value as ContributionStatus })
-            }
-            disabled={isStatusPending}
-            align="start"
-          />
+          {isAdmin ? (
+            <StatusBadgeSelect
+              status={c.status}
+              options={contributionStatusOptions}
+              transitions={contributionStatusTransitions[c.status]}
+              badgeClass={contributionStatusBadge}
+              labelOf={contributionStatusLabel}
+              onRequestStatus={(value) =>
+                setStatusTarget({ contribution: c, status: value as ContributionStatus })
+              }
+              disabled={isStatusPending}
+              align="start"
+            />
+          ) : (
+            <AppBadge size="sm" className={contributionStatusBadge(c.status)}>
+              {contributionStatusLabel(c.status)}
+            </AppBadge>
+          )}
         </div>
       ),
     },
@@ -166,7 +174,7 @@ export function ContributionTable({
                 key: "edit",
                 label: "Edit",
                 icon: <Pencil className="h-3.5 w-3.5" />,
-                show: c.status === "PENDING",
+                show: isAdmin && c.status === "PENDING",
                 onSelect: () => onEdit(c),
               },
               {
@@ -183,7 +191,7 @@ export function ContributionTable({
                 icon: <Trash2 className="h-3.5 w-3.5" />,
                 variant: "destructive",
                 separatorBefore: true,
-                show: c.status !== "DEPOSITED",
+                show: isAdmin && c.status !== "DEPOSITED",
                 onSelect: () => onDelete(c._id),
               },
             ]}

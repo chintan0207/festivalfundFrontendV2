@@ -2,6 +2,7 @@ import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { useAuthStore } from "@/api/auth/auth.store";
 import { useLogout } from "@/api/auth/useAuth";
 import { useFestivalStore } from "@/store/festivalStore";
+import { GlobalRoleEnum } from "@/lib/constants";
 import { AppButton } from "@/components/common/AppButton";
 import { AppLogo } from "@/components/common/AppLogo";
 import {
@@ -39,15 +40,18 @@ import {
   Settings,
   ChevronDown,
   LogOut,
+  User,
 } from "lucide-react";
 
 export const Sidebar = () => {
-  const { user } = useAuthStore();
+  const { user, organization } = useAuthStore();
   const logout = useLogout();
   const location = useLocation();
   const navigate = useNavigate();
 
   const { festivals } = useFestivalStore();
+
+  const isAdmin = user?.role === GlobalRoleEnum.ORG_ADMIN;
 
   const navSections = [
     {
@@ -92,17 +96,21 @@ export const Sidebar = () => {
         },
       ],
     },
-    {
-      group: "System",
-      items: [
-        {
-          title: "Settings",
-          icon: Settings,
-          href: "/dashboard/settings",
-          module: "settings",
-        },
-      ],
-    },
+    ...(isAdmin
+      ? [
+          {
+            group: "System",
+            items: [
+              {
+                title: "Settings",
+                icon: Settings,
+                href: "/dashboard/settings",
+                module: "settings",
+              },
+            ],
+          },
+        ]
+      : []),
   ];
 
   return (
@@ -191,15 +199,25 @@ export const Sidebar = () => {
               className="w-full h-auto py-2 px-2.5 flex items-center gap-2.5 rounded-xl hover:bg-muted cursor-pointer
               group-data-[collapsible=icon]:w-9 group-data-[collapsible=icon]:h-9 group-data-[collapsible=icon]:p-0 group-data-[collapsible=icon]:mx-auto group-data-[collapsible=icon]:justify-center"
             >
-              <div className="h-8 w-8 rounded-full bg-primary/20 text-primary font-bold flex items-center justify-center text-xs shrink-0 ring-2 ring-primary/30">
-                {user?.name ? user.name.charAt(0).toUpperCase() : "A"}
+              <div className="h-8 w-8 rounded-full bg-primary/20 text-primary font-bold flex items-center justify-center text-xs shrink-0 ring-2 ring-primary/30 overflow-hidden">
+                {organization?.logoUrl ? (
+                  <img
+                    src={organization.logoUrl}
+                    alt={organization.name || "org"}
+                    className="h-full w-full object-cover"
+                  />
+                ) : user?.name ? (
+                  user.name.charAt(0).toUpperCase()
+                ) : (
+                  "A"
+                )}
               </div>
               <div className="flex flex-col text-left min-w-0 flex-1 group-data-[collapsible=icon]:hidden">
                 <span className="text-xs font-semibold text-foreground truncate">
-                  {user?.name || "Rajesh Patel"}
+                  {user?.name || "Org Admin"}
                 </span>
                 <span className="text-2xs text-muted-foreground truncate">
-                  {user?.email || "admin@festivalfund.org"}
+                  {organization?.name || user?.email || "admin@festivalfund.org"}
                 </span>
               </div>
               <ChevronDown className="h-4 w-4 text-muted-foreground shrink-0 group-data-[collapsible=icon]:hidden" />
@@ -217,12 +235,26 @@ export const Sidebar = () => {
             <DropdownMenuSeparator className="my-1" />
 
             <DropdownMenuItem
-              onClick={() => navigate({ to: "/dashboard/settings" })}
+              onClick={() => navigate({ to: "/dashboard/profile" })}
               className="flex items-center gap-2 cursor-pointer rounded-lg px-2.5 py-2 text-xs"
             >
-              <Settings className="h-4 w-4" />
-              <span>Settings</span>
+              <User className="h-4 w-4" />
+              <span>My Account</span>
             </DropdownMenuItem>
+
+            {isAdmin && (
+              <>
+                <DropdownMenuSeparator className="my-1" />
+
+                <DropdownMenuItem
+                  onClick={() => navigate({ to: "/dashboard/settings" })}
+                  className="flex items-center gap-2 cursor-pointer rounded-lg px-2.5 py-2 text-xs"
+                >
+                  <Settings className="h-4 w-4" />
+                  <span>Organization Settings</span>
+                </DropdownMenuItem>
+              </>
+            )}
 
             <DropdownMenuSeparator className="my-1" />
 

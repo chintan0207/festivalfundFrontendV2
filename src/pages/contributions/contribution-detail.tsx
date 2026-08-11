@@ -7,6 +7,7 @@ import {
   useUpdateContributionStatus,
 } from "@/api/contribution/useContributions";
 import { getModuleTheme } from "@/theme/colors";
+import { useIsOrgAdmin } from "@/hooks/useIsOrgAdmin";
 import { AppButton } from "@/components/common/AppButton";
 import { PageHeader } from "@/components/common/PageHeader";
 import { PageContainer } from "@/components/common/PageContainer";
@@ -25,6 +26,7 @@ export default function ContributionDetailPage() {
   });
   const router = useRouter();
   const theme = getModuleTheme("contributions");
+  const isAdmin = useIsOrgAdmin();
 
   const { data: contribution, isLoading } = useContribution(contributionId);
   const downloadSlip = useDownloadContributionSlip();
@@ -60,46 +62,48 @@ export default function ContributionDetailPage() {
           { label: contribution.contributionCode },
         ]}
         actions={
-          <>
-            {isDeposited && (
-              <AppButton
-                variant="outline"
-                leftIcon={<FileDown className="h-3.5 w-3.5" />}
-                className="h-8 text-xs rounded-full"
-                onClick={() => downloadSlip.mutate(contribution._id)}
-                loading={downloadSlip.isPending}
-              >
-                <span className="hidden sm:inline">Download Slip</span>
-                <span className="sm:hidden">Slip</span>
-              </AppButton>
-            )}
-            {status === "PENDING" && (
-              <AppButton
-                variant="outline"
-                leftIcon={<Pencil className="h-3.5 w-3.5" />}
-                className="h-8 text-xs rounded-full"
-                onClick={() => dialogs.openEdit(contribution)}
-              >
-                <span className="hidden sm:inline">Edit</span>
-              </AppButton>
-            )}
-            {!isDeposited && (
-              <AppButton
-                variant="outline"
-                leftIcon={<Trash2 className="h-3.5 w-3.5" />}
-                className="h-8 text-xs rounded-full text-rose-600 border-rose-200 hover:bg-rose-50 dark:border-rose-800 dark:hover:bg-rose-950"
-                onClick={() => dialogs.openDelete(contribution._id)}
-              >
-                <span className="hidden sm:inline">Delete</span>
-              </AppButton>
-            )}
-          </>
+          isAdmin && (
+            <>
+              {isDeposited && (
+                <AppButton
+                  variant="outline"
+                  leftIcon={<FileDown className="h-3.5 w-3.5" />}
+                  className="h-8 text-xs rounded-full"
+                  onClick={() => downloadSlip.mutate(contribution._id)}
+                  loading={downloadSlip.isPending}
+                >
+                  <span className="hidden sm:inline">Download Slip</span>
+                  <span className="sm:hidden">Slip</span>
+                </AppButton>
+              )}
+              {status === "PENDING" && (
+                <AppButton
+                  variant="outline"
+                  leftIcon={<Pencil className="h-3.5 w-3.5" />}
+                  className="h-8 text-xs rounded-full"
+                  onClick={() => dialogs.openEdit(contribution)}
+                >
+                  <span className="hidden sm:inline">Edit</span>
+                </AppButton>
+              )}
+              {!isDeposited && (
+                <AppButton
+                  variant="outline"
+                  leftIcon={<Trash2 className="h-3.5 w-3.5" />}
+                  className="h-8 text-xs rounded-full text-rose-600 border-rose-200 hover:bg-rose-50 dark:border-rose-800 dark:hover:bg-rose-950"
+                  onClick={() => dialogs.openDelete(contribution._id)}
+                >
+                  <span className="hidden sm:inline">Delete</span>
+                </AppButton>
+              )}
+            </>
+          )
         }
       />
 
       <ContributionDetailHeader
         contribution={contribution}
-        onRequestStatus={setStatusTarget}
+        onRequestStatus={isAdmin ? setStatusTarget : undefined}
       />
 
       <ContributionStatusHistory contribution={contribution} />

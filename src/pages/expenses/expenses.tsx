@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useFestivalStore } from "@/store/festivalStore";
+import { useIsOrgAdmin } from "@/hooks/useIsOrgAdmin";
 import { AppButton } from "@/components/common/AppButton";
 import { AppSelect } from "@/components/common/AppSelect";
 import { Input } from "@/components/ui/input";
@@ -31,13 +32,15 @@ export const ExpensesPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState<string>("ALL");
   const [isAddOpen, setIsAddOpen] = useState(false);
+  const isAdmin = useIsOrgAdmin();
 
   // Open the add dialog from the mobile FAB
   useEffect(() => {
+    if (!isAdmin) return;
     const handler = () => setIsAddOpen(true);
     window.addEventListener("ff:open-add-expenses", handler);
     return () => window.removeEventListener("ff:open-add-expenses", handler);
-  }, []);
+  }, [isAdmin]);
 
   // Form state
   const [targetFestId, setTargetFestId] = useState(
@@ -123,13 +126,14 @@ export const ExpensesPage = () => {
         </div>
 
         {/* ADD EXPENSE PINK/ROSE GRADIENT BUTTON */}
-        <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
-          <DialogTrigger asChild>
-            <button className="px-5 py-2.5 rounded-full bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white text-xs font-bold shadow-md hover:shadow-lg transition-all inline-flex items-center gap-2 cursor-pointer">
-              <Plus className="h-4 w-4" />
-              <span>Add Expense</span>
-            </button>
-          </DialogTrigger>
+        {isAdmin ? (
+          <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
+            <DialogTrigger asChild>
+              <button className="px-5 py-2.5 rounded-full bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white text-xs font-bold shadow-md hover:shadow-lg transition-all inline-flex items-center gap-2 cursor-pointer">
+                <Plus className="h-4 w-4" />
+                <span>Add Expense</span>
+              </button>
+            </DialogTrigger>
           <DialogContent className="sm:max-w-md rounded-2xl">
             <form onSubmit={handleAddSubmit}>
               <DialogHeader>
@@ -234,6 +238,7 @@ export const ExpensesPage = () => {
             </form>
           </DialogContent>
         </Dialog>
+        ) : null}
       </div>
 
       {/* CATEGORY BREAKDOWN LIST CARDS MATCHING IMAGE 3 */}

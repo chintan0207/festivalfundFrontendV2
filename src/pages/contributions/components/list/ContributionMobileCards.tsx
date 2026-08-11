@@ -13,6 +13,8 @@ import { EmptyState } from "@/components/common/EmptyState";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { RowActionsMenu } from "@/components/common/RowActionsMenu";
 import { StatusBadgeSelect } from "@/components/common/StatusBadgeSelect";
+import { AppBadge } from "@/components/common/AppBadge";
+import { useIsOrgAdmin } from "@/hooks/useIsOrgAdmin";
 import { CardListSkeleton } from "@/components/common/CardListSkeleton";
 import { getModuleTheme } from "@/theme/colors";
 import { categoryAvatarGradient } from "@/lib/categoryMeta";
@@ -65,13 +67,14 @@ function ContributionCard({
   isSlipPending?: boolean;
 }) {
   const theme = getModuleTheme("contributions");
+  const isAdmin = useIsOrgAdmin();
   const isCash = contribution.type === "MONEY";
   const category = contribution.contributor?.category;
   const amount = formatContributionAmount(contribution);
   const valueLabel =
     minimal && amount === "—" && contribution.itemName ? contribution.itemName : amount;
 
-  const statusSelect = (
+  const statusSelect = isAdmin ? (
     <StatusBadgeSelect
       status={contribution.status}
       options={contributionStatusOptions}
@@ -82,6 +85,10 @@ function ContributionCard({
       disabled={isStatusPending}
       align="end"
     />
+  ) : (
+    <AppBadge size="sm" className={contributionStatusBadge(contribution.status)}>
+      {contributionStatusLabel(contribution.status)}
+    </AppBadge>
   );
 
   const actionsMenu = (
@@ -97,7 +104,7 @@ function ContributionCard({
           key: "edit",
           label: "Edit",
           icon: <Pencil className="h-3.5 w-3.5" />,
-          show: contribution.status === "PENDING",
+          show: isAdmin && contribution.status === "PENDING",
           onSelect: () => onEdit(contribution),
         },
         {
@@ -114,7 +121,7 @@ function ContributionCard({
           icon: <Trash2 className="h-3.5 w-3.5" />,
           variant: "destructive",
           separatorBefore: true,
-          show: contribution.status !== "DEPOSITED",
+          show: isAdmin && contribution.status !== "DEPOSITED",
           onSelect: () => onDelete(contribution._id),
         },
       ]}

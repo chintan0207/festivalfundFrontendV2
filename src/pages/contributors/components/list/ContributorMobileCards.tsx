@@ -1,6 +1,7 @@
 import { MapPin, Phone, Mail, Search, Pencil, Trash2, Eye } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { cn, initials, formatDate } from "@/lib/utils";
+import { useIsOrgAdmin } from "@/hooks/useIsOrgAdmin";
 import { AppBadge } from "@/components/common/AppBadge";
 import { EmptyState } from "@/components/common/EmptyState";
 import { RowActionsMenu } from "@/components/common/RowActionsMenu";
@@ -30,6 +31,7 @@ function ContributorCard({
   onDelete: (id: string) => void;
   onRowClick: (c: Contributor) => void;
 }) {
+  const isAdmin = useIsOrgAdmin();
   const actionsMenu = (
     <RowActionsMenu
       actions={[
@@ -43,6 +45,7 @@ function ContributorCard({
           key: "edit",
           label: "Edit",
           icon: <Pencil className="h-3.5 w-3.5" />,
+          show: isAdmin,
           onSelect: () => onEdit(contributor),
         },
         {
@@ -51,6 +54,7 @@ function ContributorCard({
           icon: <Trash2 className="h-3.5 w-3.5" />,
           variant: "destructive",
           separatorBefore: true,
+          show: isAdmin,
           onSelect: () => onDelete(contributor._id),
         },
       ]}

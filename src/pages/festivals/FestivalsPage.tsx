@@ -5,6 +5,7 @@ import { useFestivals, useSoftDeleteFestival } from "@/api/festival/useFestivals
 import { useFestivalApiStore } from "@/api/festival/festival.store";
 import { useFestivalStore as useMockFestivalStore } from "@/store/festivalStore";
 import { useDebounce } from "@/hooks/useDebounce";
+import { useIsOrgAdmin } from "@/hooks/useIsOrgAdmin";
 import { gradientColors, getModuleTheme } from "@/theme/colors";
 import {
   AppButton,
@@ -189,14 +190,17 @@ export const FestivalsPage = () => {
 
   const [deleteTarget, setDeleteTarget] = useState<any | null>(null);
 
+  const isAdmin = useIsOrgAdmin();
+
   // Open the create page from the mobile FAB
   useEffect(() => {
+    if (!isAdmin) return;
     const handler = () => {
       router.navigate({ to: "/dashboard/festivals/new" });
     };
     window.addEventListener("ff:open-add-festivals", handler);
     return () => window.removeEventListener("ff:open-add-festivals", handler);
-  }, [router]);
+  }, [router, isAdmin]);
 
   const handleSortChange = (sortId: string) => {
     if (sortField === sortId) {
@@ -258,13 +262,15 @@ export const FestivalsPage = () => {
         ]}
         badge={<AppBadge className={theme.badgeColor}>{serverFetched ? total : festivals.length} total</AppBadge>}
         actions={
-          <AppButton
-            onClick={() => router.navigate({ to: "/dashboard/festivals/new" })}
-            leftIcon={<Plus className="h-4 w-4" />}
-            gradient={theme.gradient}
-          >
-            Create Festival
-          </AppButton>
+          isAdmin && (
+            <AppButton
+              onClick={() => router.navigate({ to: "/dashboard/festivals/new" })}
+              leftIcon={<Plus className="h-4 w-4" />}
+              gradient={theme.gradient}
+            >
+              Create Festival
+            </AppButton>
+          )
         }
       />
 
@@ -527,6 +533,7 @@ export const FestivalsPage = () => {
                         key: "edit",
                         label: "Edit Festival",
                         icon: <Edit className="h-3.5 w-3.5" />,
+                        show: isAdmin,
                         onSelect: () =>
                           router.navigate({
                             to: "/dashboard/festivals/$festivalId/edit",
@@ -539,6 +546,7 @@ export const FestivalsPage = () => {
                         icon: <Trash2 className="h-3.5 w-3.5" />,
                         variant: "destructive",
                         separatorBefore: true,
+                        show: isAdmin,
                         onSelect: () => setDeleteTarget(fest),
                       },
                     ]}

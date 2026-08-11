@@ -43,3 +43,16 @@ export const resetPasswordSchema = z
   });
 
 export type ResetPasswordFormData = z.infer<typeof resetPasswordSchema>;
+
+export const acceptInvitationSchema = z
+  .object({
+    name: z.string().min(2, "Name required"),
+    password: z.string().min(6, "Minimum 6 characters"),
+    confirmPassword: z.string(),
+  })
+  .refine((d) => d.password === d.confirmPassword, {
+    path: ["confirmPassword"],
+    message: "Passwords do not match",
+  });
+
+export type AcceptInvitationFormData = z.infer<typeof acceptInvitationSchema>;

@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from "@tanstack/react-router";
 import { Plus } from "lucide-react";
 import { getModuleTheme } from "@/theme/colors";
 import { cn } from "@/lib/utils";
+import { useIsOrgAdmin } from "@/hooks/useIsOrgAdmin";
 
 const MODULE_ROUTES = [
   "/dashboard/contributors",
@@ -21,6 +22,9 @@ const FAB_LABELS: Record<string, string> = {
 const FloatingActionButton = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const isAdmin = useIsOrgAdmin();
+
+  if (!isAdmin) return null;
 
   const moduleRoute = MODULE_ROUTES.find(
     (route) => location.pathname === route,

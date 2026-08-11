@@ -9,6 +9,7 @@ import {
 } from "@/api/festival/useFestivals";
 import { useFestivalApiStore } from "@/api/festival/festival.store";
 import { getModuleTheme } from "@/theme/colors";
+import { useIsOrgAdmin } from "@/hooks/useIsOrgAdmin";
 import { AppButton } from "@/components/common/AppButton";
 import { PageHeader } from "@/components/common/PageHeader";
 import { PageContainer } from "@/components/common/PageContainer";
@@ -16,6 +17,7 @@ import { DetailPageSkeleton } from "@/components/common/DetailPageSkeleton";
 import { DetailStatsRow, type DetailStat } from "@/components/common/DetailStatsRow";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { StatusBadgeSelect } from "@/components/common/StatusBadgeSelect";
+import { AppBadge } from "@/components/common/AppBadge";
 import { cn } from "@/lib/utils";
 import {
   festivalCategoryBadge,
@@ -55,6 +57,7 @@ export function FestivalDetailPage() {
   const { festivalId } = useParams({ from: "/dashboard/festivals/$festivalId" });
   const router = useRouter();
   const theme = getModuleTheme("festivals");
+  const isAdmin = useIsOrgAdmin();
 
   const { data: festival, isLoading } = useFestival(festivalId);
   const updateMutation = useUpdateFestival();
@@ -124,7 +127,7 @@ export function FestivalDetailPage() {
             >
               <ArrowLeft className="h-4 w-4" />
             </AppButton>
-            {!isDeleted && (
+            {isAdmin && !isDeleted && (
               <AppButton
                 variant="outline"
                 leftIcon={<Edit className="h-3.5 w-3.5" />}
@@ -139,7 +142,7 @@ export function FestivalDetailPage() {
                 <span className="hidden sm:inline">Edit</span>
               </AppButton>
             )}
-            {isDeleted ? (
+            {isAdmin && isDeleted ? (
               <AppButton
                 variant="outline"
                 leftIcon={<RotateCcw className="h-3.5 w-3.5" />}
@@ -148,7 +151,7 @@ export function FestivalDetailPage() {
               >
                 Restore
               </AppButton>
-            ) : (
+            ) : isAdmin ? (
               <AppButton
                 variant="outline"
                 leftIcon={<Trash2 className="h-3.5 w-3.5" />}
@@ -157,7 +160,7 @@ export function FestivalDetailPage() {
               >
                 <span className="hidden sm:inline">Delete</span>
               </AppButton>
-            )}
+            ) : null}
           </>
         }
       />
@@ -200,16 +203,22 @@ export function FestivalDetailPage() {
               <span className="text-[11px] text-muted-foreground font-semibold">
                 Status
               </span>
-              <StatusBadgeSelect
-                status={status}
-                options={festivalStatusOptions}
-                transitions={festivalStatusTransition[status] ?? []}
-                badgeClass={festivalStatusBadge}
-                labelOf={festivalStatusLabel}
-                onRequestStatus={(next) => setStatusTarget(next as FestivalStatus)}
-                size="md"
-                disabled={isDeleted}
-              />
+              {isAdmin ? (
+                <StatusBadgeSelect
+                  status={status}
+                  options={festivalStatusOptions}
+                  transitions={festivalStatusTransition[status] ?? []}
+                  badgeClass={festivalStatusBadge}
+                  labelOf={festivalStatusLabel}
+                  onRequestStatus={(next) => setStatusTarget(next as FestivalStatus)}
+                  size="md"
+                  disabled={isDeleted}
+                />
+              ) : (
+                <AppBadge size="md" className={festivalStatusBadge(status)}>
+                  {festivalStatusLabel(status)}
+                </AppBadge>
+              )}
             </div>
 
             <AppButton

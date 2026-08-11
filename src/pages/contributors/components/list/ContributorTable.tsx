@@ -2,6 +2,7 @@ import { Phone, Pencil, Trash2, Eye } from "lucide-react";
 import { DataTable, type Column } from "@/components/common/DataTable";
 import { formatDate } from "@/lib/utils";
 import { getModuleTheme } from "@/theme/colors";
+import { useIsOrgAdmin } from "@/hooks/useIsOrgAdmin";
 import { AppBadge } from "@/components/common/AppBadge";
 import { RowActionsMenu } from "@/components/common/RowActionsMenu";
 import { categoryBadge, categoryLabel } from "@/lib/categoryMeta";
@@ -29,6 +30,7 @@ export function ContributorTable({
   onRowClick,
 }: ContributorTableProps) {
   const theme = getModuleTheme("contributors");
+  const isAdmin = useIsOrgAdmin();
 
   const columns: Column<Contributor>[] = [
     {
@@ -96,6 +98,7 @@ export function ContributorTable({
                 key: "edit",
                 label: "Edit",
                 icon: <Pencil className="h-3.5 w-3.5" />,
+                show: isAdmin,
                 onSelect: () => onEdit(c),
               },
               {
@@ -104,6 +107,7 @@ export function ContributorTable({
                 icon: <Trash2 className="h-3.5 w-3.5" />,
                 variant: "destructive",
                 separatorBefore: true,
+                show: isAdmin,
                 onSelect: () => onDelete(c._id),
               },
             ]}
