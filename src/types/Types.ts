@@ -204,15 +204,6 @@ export type PaymentMode = "CASH" | "UPI" | "BANK_TRANSFER" | "CHEQUE" | "OTHER";
 export type ExpenseStatus = "PENDING" | "PAID" | "CANCELLED";
 export type ExpenseCategory = "FOOD" | "DECORATION" | "SERVICES" | "CULTURAL" | "OTHER";
 
-export type ExpenseAttachment = {
-  url: string;
-  fileName?: string;
-  mimeType?: string;
-  size?: number;
-  uploadedBy?: string;
-  uploadedAt?: string;
-};
-
 export type ExpenseStatusHistoryEntry = {
   from?: ExpenseStatus | null;
   to: ExpenseStatus;
@@ -231,16 +222,11 @@ export type Expense = {
   status: ExpenseStatus;
   date: string;
   vendorName?: string;
-  vendorPhone?: string;
   invoiceNumber?: string;
   paymentMode: PaymentMode;
-  paymentReference?: string;
-  paymentDate?: string;
   recordedBy?: User | string;
-  approvedBy?: string;
-  approvedAt?: string;
   expenseCode: string;
-  attachments?: ExpenseAttachment[];
+  attachments?: string[];
   statusHistory?: ExpenseStatusHistoryEntry[];
   isBalanceApplied: boolean;
   isDeleted: boolean;
@@ -256,12 +242,9 @@ export type CreateExpensePayload = {
   description?: string;
   date?: string | Date;
   vendorName?: string;
-  vendorPhone?: string;
   invoiceNumber?: string;
   paymentMode?: PaymentMode;
-  paymentReference?: string;
-  paymentDate?: string | Date;
-  attachments?: ExpenseAttachment[];
+  attachments?: string[];
   status?: ExpenseStatus;
 };
 
@@ -272,12 +255,9 @@ export type UpdateExpensePayload = {
   description?: string;
   date?: string | Date;
   vendorName?: string;
-  vendorPhone?: string;
   invoiceNumber?: string;
   paymentMode?: PaymentMode;
-  paymentReference?: string;
-  paymentDate?: string | Date;
-  attachments?: ExpenseAttachment[];
+  attachments?: string[];
 };
 
 export type ExpenseListItem = {
@@ -288,11 +268,8 @@ export type ExpenseListItem = {
   description?: string;
   date: string;
   vendorName?: string;
-  vendorPhone?: string;
   invoiceNumber?: string;
   paymentMode: PaymentMode;
-  paymentReference?: string;
-  paymentDate?: string;
   status: ExpenseStatus;
   isBalanceApplied: boolean;
   createdAt?: string;

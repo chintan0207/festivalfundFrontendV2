@@ -17,10 +17,6 @@ import { Route as MarketingIndexRouteImport } from './routes/_marketing/index'
 import { Route as DashboardSettingsRouteImport } from './routes/dashboard/settings'
 import { Route as DashboardReportsRouteImport } from './routes/dashboard/reports'
 import { Route as DashboardProfileRouteImport } from './routes/dashboard/profile'
-import { Route as DashboardFestivalsRouteImport } from './routes/dashboard/festivals'
-import { Route as DashboardExpensesRouteImport } from './routes/dashboard/expenses'
-import { Route as DashboardContributorsRouteImport } from './routes/dashboard/contributors'
-import { Route as DashboardContributionsRouteImport } from './routes/dashboard/contributions'
 import { Route as MarketingThemeRouteImport } from './routes/_marketing/theme'
 import { Route as MarketingTermsOfServiceRouteImport } from './routes/_marketing/terms-of-service'
 import { Route as MarketingSupportRouteImport } from './routes/_marketing/support'
@@ -37,8 +33,13 @@ import { Route as AuthResetPasswordRouteImport } from './routes/_auth/reset-pass
 import { Route as AuthLoginRouteImport } from './routes/_auth/login'
 import { Route as AuthForgotPasswordRouteImport } from './routes/_auth/forgot-password'
 import { Route as AuthAcceptInviteRouteImport } from './routes/_auth/accept-invite'
+import { Route as DashboardFestivalsIndexRouteImport } from './routes/dashboard/festivals.index'
+import { Route as DashboardExpensesIndexRouteImport } from './routes/dashboard/expenses.index'
+import { Route as DashboardContributorsIndexRouteImport } from './routes/dashboard/contributors.index'
+import { Route as DashboardContributionsIndexRouteImport } from './routes/dashboard/contributions.index'
 import { Route as DashboardFestivalsNewRouteImport } from './routes/dashboard/festivals.new'
 import { Route as DashboardFestivalsFestivalIdRouteImport } from './routes/dashboard/festivals.$festivalId'
+import { Route as DashboardExpensesExpenseIdRouteImport } from './routes/dashboard/expenses.$expenseId'
 import { Route as DashboardContributorsContributorIdRouteImport } from './routes/dashboard/contributors.$contributorId'
 import { Route as DashboardContributionsContributionIdRouteImport } from './routes/dashboard/contributions.$contributionId'
 import { Route as DashboardFestivalsFestivalIdEditRouteImport } from './routes/dashboard/festivals.$festivalId.edit'
@@ -79,26 +80,6 @@ const DashboardReportsRoute = DashboardReportsRouteImport.update({
 const DashboardProfileRoute = DashboardProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
-  getParentRoute: () => DashboardRouteRoute,
-} as any)
-const DashboardFestivalsRoute = DashboardFestivalsRouteImport.update({
-  id: '/festivals',
-  path: '/festivals',
-  getParentRoute: () => DashboardRouteRoute,
-} as any)
-const DashboardExpensesRoute = DashboardExpensesRouteImport.update({
-  id: '/expenses',
-  path: '/expenses',
-  getParentRoute: () => DashboardRouteRoute,
-} as any)
-const DashboardContributorsRoute = DashboardContributorsRouteImport.update({
-  id: '/contributors',
-  path: '/contributors',
-  getParentRoute: () => DashboardRouteRoute,
-} as any)
-const DashboardContributionsRoute = DashboardContributionsRouteImport.update({
-  id: '/contributions',
-  path: '/contributions',
   getParentRoute: () => DashboardRouteRoute,
 } as any)
 const MarketingThemeRoute = MarketingThemeRouteImport.update({
@@ -181,28 +162,56 @@ const AuthAcceptInviteRoute = AuthAcceptInviteRouteImport.update({
   path: '/accept-invite',
   getParentRoute: () => AuthRouteRoute,
 } as any)
+const DashboardFestivalsIndexRoute = DashboardFestivalsIndexRouteImport.update({
+  id: '/festivals/',
+  path: '/festivals/',
+  getParentRoute: () => DashboardRouteRoute,
+} as any)
+const DashboardExpensesIndexRoute = DashboardExpensesIndexRouteImport.update({
+  id: '/expenses/',
+  path: '/expenses/',
+  getParentRoute: () => DashboardRouteRoute,
+} as any)
+const DashboardContributorsIndexRoute =
+  DashboardContributorsIndexRouteImport.update({
+    id: '/contributors/',
+    path: '/contributors/',
+    getParentRoute: () => DashboardRouteRoute,
+  } as any)
+const DashboardContributionsIndexRoute =
+  DashboardContributionsIndexRouteImport.update({
+    id: '/contributions/',
+    path: '/contributions/',
+    getParentRoute: () => DashboardRouteRoute,
+  } as any)
 const DashboardFestivalsNewRoute = DashboardFestivalsNewRouteImport.update({
-  id: '/new',
-  path: '/new',
-  getParentRoute: () => DashboardFestivalsRoute,
+  id: '/festivals/new',
+  path: '/festivals/new',
+  getParentRoute: () => DashboardRouteRoute,
 } as any)
 const DashboardFestivalsFestivalIdRoute =
   DashboardFestivalsFestivalIdRouteImport.update({
-    id: '/$festivalId',
-    path: '/$festivalId',
-    getParentRoute: () => DashboardFestivalsRoute,
+    id: '/festivals/$festivalId',
+    path: '/festivals/$festivalId',
+    getParentRoute: () => DashboardRouteRoute,
+  } as any)
+const DashboardExpensesExpenseIdRoute =
+  DashboardExpensesExpenseIdRouteImport.update({
+    id: '/expenses/$expenseId',
+    path: '/expenses/$expenseId',
+    getParentRoute: () => DashboardRouteRoute,
   } as any)
 const DashboardContributorsContributorIdRoute =
   DashboardContributorsContributorIdRouteImport.update({
-    id: '/$contributorId',
-    path: '/$contributorId',
-    getParentRoute: () => DashboardContributorsRoute,
+    id: '/contributors/$contributorId',
+    path: '/contributors/$contributorId',
+    getParentRoute: () => DashboardRouteRoute,
   } as any)
 const DashboardContributionsContributionIdRoute =
   DashboardContributionsContributionIdRouteImport.update({
-    id: '/$contributionId',
-    path: '/$contributionId',
-    getParentRoute: () => DashboardContributionsRoute,
+    id: '/contributions/$contributionId',
+    path: '/contributions/$contributionId',
+    getParentRoute: () => DashboardRouteRoute,
   } as any)
 const DashboardFestivalsFestivalIdEditRoute =
   DashboardFestivalsFestivalIdEditRouteImport.update({
@@ -230,18 +239,19 @@ export interface FileRoutesByFullPath {
   '/support': typeof MarketingSupportRoute
   '/terms-of-service': typeof MarketingTermsOfServiceRoute
   '/theme': typeof MarketingThemeRoute
-  '/dashboard/contributions': typeof DashboardContributionsRouteWithChildren
-  '/dashboard/contributors': typeof DashboardContributorsRouteWithChildren
-  '/dashboard/expenses': typeof DashboardExpensesRoute
-  '/dashboard/festivals': typeof DashboardFestivalsRouteWithChildren
   '/dashboard/profile': typeof DashboardProfileRoute
   '/dashboard/reports': typeof DashboardReportsRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/dashboard/contributions/$contributionId': typeof DashboardContributionsContributionIdRoute
   '/dashboard/contributors/$contributorId': typeof DashboardContributorsContributorIdRoute
+  '/dashboard/expenses/$expenseId': typeof DashboardExpensesExpenseIdRoute
   '/dashboard/festivals/$festivalId': typeof DashboardFestivalsFestivalIdRouteWithChildren
   '/dashboard/festivals/new': typeof DashboardFestivalsNewRoute
+  '/dashboard/contributions/': typeof DashboardContributionsIndexRoute
+  '/dashboard/contributors/': typeof DashboardContributorsIndexRoute
+  '/dashboard/expenses/': typeof DashboardExpensesIndexRoute
+  '/dashboard/festivals/': typeof DashboardFestivalsIndexRoute
   '/dashboard/festivals/$festivalId/edit': typeof DashboardFestivalsFestivalIdEditRoute
 }
 export interface FileRoutesByTo {
@@ -262,18 +272,19 @@ export interface FileRoutesByTo {
   '/support': typeof MarketingSupportRoute
   '/terms-of-service': typeof MarketingTermsOfServiceRoute
   '/theme': typeof MarketingThemeRoute
-  '/dashboard/contributions': typeof DashboardContributionsRouteWithChildren
-  '/dashboard/contributors': typeof DashboardContributorsRouteWithChildren
-  '/dashboard/expenses': typeof DashboardExpensesRoute
-  '/dashboard/festivals': typeof DashboardFestivalsRouteWithChildren
   '/dashboard/profile': typeof DashboardProfileRoute
   '/dashboard/reports': typeof DashboardReportsRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
   '/dashboard': typeof DashboardIndexRoute
   '/dashboard/contributions/$contributionId': typeof DashboardContributionsContributionIdRoute
   '/dashboard/contributors/$contributorId': typeof DashboardContributorsContributorIdRoute
+  '/dashboard/expenses/$expenseId': typeof DashboardExpensesExpenseIdRoute
   '/dashboard/festivals/$festivalId': typeof DashboardFestivalsFestivalIdRouteWithChildren
   '/dashboard/festivals/new': typeof DashboardFestivalsNewRoute
+  '/dashboard/contributions': typeof DashboardContributionsIndexRoute
+  '/dashboard/contributors': typeof DashboardContributorsIndexRoute
+  '/dashboard/expenses': typeof DashboardExpensesIndexRoute
+  '/dashboard/festivals': typeof DashboardFestivalsIndexRoute
   '/dashboard/festivals/$festivalId/edit': typeof DashboardFestivalsFestivalIdEditRoute
 }
 export interface FileRoutesById {
@@ -297,10 +308,6 @@ export interface FileRoutesById {
   '/_marketing/support': typeof MarketingSupportRoute
   '/_marketing/terms-of-service': typeof MarketingTermsOfServiceRoute
   '/_marketing/theme': typeof MarketingThemeRoute
-  '/dashboard/contributions': typeof DashboardContributionsRouteWithChildren
-  '/dashboard/contributors': typeof DashboardContributorsRouteWithChildren
-  '/dashboard/expenses': typeof DashboardExpensesRoute
-  '/dashboard/festivals': typeof DashboardFestivalsRouteWithChildren
   '/dashboard/profile': typeof DashboardProfileRoute
   '/dashboard/reports': typeof DashboardReportsRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
@@ -308,8 +315,13 @@ export interface FileRoutesById {
   '/dashboard/': typeof DashboardIndexRoute
   '/dashboard/contributions/$contributionId': typeof DashboardContributionsContributionIdRoute
   '/dashboard/contributors/$contributorId': typeof DashboardContributorsContributorIdRoute
+  '/dashboard/expenses/$expenseId': typeof DashboardExpensesExpenseIdRoute
   '/dashboard/festivals/$festivalId': typeof DashboardFestivalsFestivalIdRouteWithChildren
   '/dashboard/festivals/new': typeof DashboardFestivalsNewRoute
+  '/dashboard/contributions/': typeof DashboardContributionsIndexRoute
+  '/dashboard/contributors/': typeof DashboardContributorsIndexRoute
+  '/dashboard/expenses/': typeof DashboardExpensesIndexRoute
+  '/dashboard/festivals/': typeof DashboardFestivalsIndexRoute
   '/dashboard/festivals/$festivalId/edit': typeof DashboardFestivalsFestivalIdEditRoute
 }
 export interface FileRouteTypes {
@@ -333,18 +345,19 @@ export interface FileRouteTypes {
     | '/support'
     | '/terms-of-service'
     | '/theme'
-    | '/dashboard/contributions'
-    | '/dashboard/contributors'
-    | '/dashboard/expenses'
-    | '/dashboard/festivals'
     | '/dashboard/profile'
     | '/dashboard/reports'
     | '/dashboard/settings'
     | '/dashboard/'
     | '/dashboard/contributions/$contributionId'
     | '/dashboard/contributors/$contributorId'
+    | '/dashboard/expenses/$expenseId'
     | '/dashboard/festivals/$festivalId'
     | '/dashboard/festivals/new'
+    | '/dashboard/contributions/'
+    | '/dashboard/contributors/'
+    | '/dashboard/expenses/'
+    | '/dashboard/festivals/'
     | '/dashboard/festivals/$festivalId/edit'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -365,18 +378,19 @@ export interface FileRouteTypes {
     | '/support'
     | '/terms-of-service'
     | '/theme'
-    | '/dashboard/contributions'
-    | '/dashboard/contributors'
-    | '/dashboard/expenses'
-    | '/dashboard/festivals'
     | '/dashboard/profile'
     | '/dashboard/reports'
     | '/dashboard/settings'
     | '/dashboard'
     | '/dashboard/contributions/$contributionId'
     | '/dashboard/contributors/$contributorId'
+    | '/dashboard/expenses/$expenseId'
     | '/dashboard/festivals/$festivalId'
     | '/dashboard/festivals/new'
+    | '/dashboard/contributions'
+    | '/dashboard/contributors'
+    | '/dashboard/expenses'
+    | '/dashboard/festivals'
     | '/dashboard/festivals/$festivalId/edit'
   id:
     | '__root__'
@@ -399,10 +413,6 @@ export interface FileRouteTypes {
     | '/_marketing/support'
     | '/_marketing/terms-of-service'
     | '/_marketing/theme'
-    | '/dashboard/contributions'
-    | '/dashboard/contributors'
-    | '/dashboard/expenses'
-    | '/dashboard/festivals'
     | '/dashboard/profile'
     | '/dashboard/reports'
     | '/dashboard/settings'
@@ -410,8 +420,13 @@ export interface FileRouteTypes {
     | '/dashboard/'
     | '/dashboard/contributions/$contributionId'
     | '/dashboard/contributors/$contributorId'
+    | '/dashboard/expenses/$expenseId'
     | '/dashboard/festivals/$festivalId'
     | '/dashboard/festivals/new'
+    | '/dashboard/contributions/'
+    | '/dashboard/contributors/'
+    | '/dashboard/expenses/'
+    | '/dashboard/festivals/'
     | '/dashboard/festivals/$festivalId/edit'
   fileRoutesById: FileRoutesById
 }
@@ -477,34 +492,6 @@ declare module '@tanstack/react-router' {
       path: '/profile'
       fullPath: '/dashboard/profile'
       preLoaderRoute: typeof DashboardProfileRouteImport
-      parentRoute: typeof DashboardRouteRoute
-    }
-    '/dashboard/festivals': {
-      id: '/dashboard/festivals'
-      path: '/festivals'
-      fullPath: '/dashboard/festivals'
-      preLoaderRoute: typeof DashboardFestivalsRouteImport
-      parentRoute: typeof DashboardRouteRoute
-    }
-    '/dashboard/expenses': {
-      id: '/dashboard/expenses'
-      path: '/expenses'
-      fullPath: '/dashboard/expenses'
-      preLoaderRoute: typeof DashboardExpensesRouteImport
-      parentRoute: typeof DashboardRouteRoute
-    }
-    '/dashboard/contributors': {
-      id: '/dashboard/contributors'
-      path: '/contributors'
-      fullPath: '/dashboard/contributors'
-      preLoaderRoute: typeof DashboardContributorsRouteImport
-      parentRoute: typeof DashboardRouteRoute
-    }
-    '/dashboard/contributions': {
-      id: '/dashboard/contributions'
-      path: '/contributions'
-      fullPath: '/dashboard/contributions'
-      preLoaderRoute: typeof DashboardContributionsRouteImport
       parentRoute: typeof DashboardRouteRoute
     }
     '/_marketing/theme': {
@@ -619,33 +606,68 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthAcceptInviteRouteImport
       parentRoute: typeof AuthRouteRoute
     }
+    '/dashboard/festivals/': {
+      id: '/dashboard/festivals/'
+      path: '/festivals'
+      fullPath: '/dashboard/festivals/'
+      preLoaderRoute: typeof DashboardFestivalsIndexRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
+    '/dashboard/expenses/': {
+      id: '/dashboard/expenses/'
+      path: '/expenses'
+      fullPath: '/dashboard/expenses/'
+      preLoaderRoute: typeof DashboardExpensesIndexRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
+    '/dashboard/contributors/': {
+      id: '/dashboard/contributors/'
+      path: '/contributors'
+      fullPath: '/dashboard/contributors/'
+      preLoaderRoute: typeof DashboardContributorsIndexRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
+    '/dashboard/contributions/': {
+      id: '/dashboard/contributions/'
+      path: '/contributions'
+      fullPath: '/dashboard/contributions/'
+      preLoaderRoute: typeof DashboardContributionsIndexRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
     '/dashboard/festivals/new': {
       id: '/dashboard/festivals/new'
-      path: '/new'
+      path: '/festivals/new'
       fullPath: '/dashboard/festivals/new'
       preLoaderRoute: typeof DashboardFestivalsNewRouteImport
-      parentRoute: typeof DashboardFestivalsRoute
+      parentRoute: typeof DashboardRouteRoute
     }
     '/dashboard/festivals/$festivalId': {
       id: '/dashboard/festivals/$festivalId'
-      path: '/$festivalId'
+      path: '/festivals/$festivalId'
       fullPath: '/dashboard/festivals/$festivalId'
       preLoaderRoute: typeof DashboardFestivalsFestivalIdRouteImport
-      parentRoute: typeof DashboardFestivalsRoute
+      parentRoute: typeof DashboardRouteRoute
+    }
+    '/dashboard/expenses/$expenseId': {
+      id: '/dashboard/expenses/$expenseId'
+      path: '/expenses/$expenseId'
+      fullPath: '/dashboard/expenses/$expenseId'
+      preLoaderRoute: typeof DashboardExpensesExpenseIdRouteImport
+      parentRoute: typeof DashboardRouteRoute
     }
     '/dashboard/contributors/$contributorId': {
       id: '/dashboard/contributors/$contributorId'
-      path: '/$contributorId'
+      path: '/contributors/$contributorId'
       fullPath: '/dashboard/contributors/$contributorId'
       preLoaderRoute: typeof DashboardContributorsContributorIdRouteImport
-      parentRoute: typeof DashboardContributorsRoute
+      parentRoute: typeof DashboardRouteRoute
     }
     '/dashboard/contributions/$contributionId': {
       id: '/dashboard/contributions/$contributionId'
-      path: '/$contributionId'
+      path: '/contributions/$contributionId'
       fullPath: '/dashboard/contributions/$contributionId'
       preLoaderRoute: typeof DashboardContributionsContributionIdRouteImport
-      parentRoute: typeof DashboardContributionsRoute
+      parentRoute: typeof DashboardRouteRoute
     }
     '/dashboard/festivals/$festivalId/edit': {
       id: '/dashboard/festivals/$festivalId/edit'
@@ -711,35 +733,6 @@ const MarketingRouteRouteWithChildren = MarketingRouteRoute._addFileChildren(
   MarketingRouteRouteChildren,
 )
 
-interface DashboardContributionsRouteChildren {
-  DashboardContributionsContributionIdRoute: typeof DashboardContributionsContributionIdRoute
-}
-
-const DashboardContributionsRouteChildren: DashboardContributionsRouteChildren =
-  {
-    DashboardContributionsContributionIdRoute:
-      DashboardContributionsContributionIdRoute,
-  }
-
-const DashboardContributionsRouteWithChildren =
-  DashboardContributionsRoute._addFileChildren(
-    DashboardContributionsRouteChildren,
-  )
-
-interface DashboardContributorsRouteChildren {
-  DashboardContributorsContributorIdRoute: typeof DashboardContributorsContributorIdRoute
-}
-
-const DashboardContributorsRouteChildren: DashboardContributorsRouteChildren = {
-  DashboardContributorsContributorIdRoute:
-    DashboardContributorsContributorIdRoute,
-}
-
-const DashboardContributorsRouteWithChildren =
-  DashboardContributorsRoute._addFileChildren(
-    DashboardContributorsRouteChildren,
-  )
-
 interface DashboardFestivalsFestivalIdRouteChildren {
   DashboardFestivalsFestivalIdEditRoute: typeof DashboardFestivalsFestivalIdEditRoute
 }
@@ -755,40 +748,39 @@ const DashboardFestivalsFestivalIdRouteWithChildren =
     DashboardFestivalsFestivalIdRouteChildren,
   )
 
-interface DashboardFestivalsRouteChildren {
-  DashboardFestivalsFestivalIdRoute: typeof DashboardFestivalsFestivalIdRouteWithChildren
-  DashboardFestivalsNewRoute: typeof DashboardFestivalsNewRoute
-}
-
-const DashboardFestivalsRouteChildren: DashboardFestivalsRouteChildren = {
-  DashboardFestivalsFestivalIdRoute:
-    DashboardFestivalsFestivalIdRouteWithChildren,
-  DashboardFestivalsNewRoute: DashboardFestivalsNewRoute,
-}
-
-const DashboardFestivalsRouteWithChildren =
-  DashboardFestivalsRoute._addFileChildren(DashboardFestivalsRouteChildren)
-
 interface DashboardRouteRouteChildren {
-  DashboardContributionsRoute: typeof DashboardContributionsRouteWithChildren
-  DashboardContributorsRoute: typeof DashboardContributorsRouteWithChildren
-  DashboardExpensesRoute: typeof DashboardExpensesRoute
-  DashboardFestivalsRoute: typeof DashboardFestivalsRouteWithChildren
   DashboardProfileRoute: typeof DashboardProfileRoute
   DashboardReportsRoute: typeof DashboardReportsRoute
   DashboardSettingsRoute: typeof DashboardSettingsRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
+  DashboardContributionsContributionIdRoute: typeof DashboardContributionsContributionIdRoute
+  DashboardContributorsContributorIdRoute: typeof DashboardContributorsContributorIdRoute
+  DashboardExpensesExpenseIdRoute: typeof DashboardExpensesExpenseIdRoute
+  DashboardFestivalsFestivalIdRoute: typeof DashboardFestivalsFestivalIdRouteWithChildren
+  DashboardFestivalsNewRoute: typeof DashboardFestivalsNewRoute
+  DashboardContributionsIndexRoute: typeof DashboardContributionsIndexRoute
+  DashboardContributorsIndexRoute: typeof DashboardContributorsIndexRoute
+  DashboardExpensesIndexRoute: typeof DashboardExpensesIndexRoute
+  DashboardFestivalsIndexRoute: typeof DashboardFestivalsIndexRoute
 }
 
 const DashboardRouteRouteChildren: DashboardRouteRouteChildren = {
-  DashboardContributionsRoute: DashboardContributionsRouteWithChildren,
-  DashboardContributorsRoute: DashboardContributorsRouteWithChildren,
-  DashboardExpensesRoute: DashboardExpensesRoute,
-  DashboardFestivalsRoute: DashboardFestivalsRouteWithChildren,
   DashboardProfileRoute: DashboardProfileRoute,
   DashboardReportsRoute: DashboardReportsRoute,
   DashboardSettingsRoute: DashboardSettingsRoute,
   DashboardIndexRoute: DashboardIndexRoute,
+  DashboardContributionsContributionIdRoute:
+    DashboardContributionsContributionIdRoute,
+  DashboardContributorsContributorIdRoute:
+    DashboardContributorsContributorIdRoute,
+  DashboardExpensesExpenseIdRoute: DashboardExpensesExpenseIdRoute,
+  DashboardFestivalsFestivalIdRoute:
+    DashboardFestivalsFestivalIdRouteWithChildren,
+  DashboardFestivalsNewRoute: DashboardFestivalsNewRoute,
+  DashboardContributionsIndexRoute: DashboardContributionsIndexRoute,
+  DashboardContributorsIndexRoute: DashboardContributorsIndexRoute,
+  DashboardExpensesIndexRoute: DashboardExpensesIndexRoute,
+  DashboardFestivalsIndexRoute: DashboardFestivalsIndexRoute,
 }
 
 const DashboardRouteRouteWithChildren = DashboardRouteRoute._addFileChildren(

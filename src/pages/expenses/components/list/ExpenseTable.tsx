@@ -1,4 +1,4 @@
-import { Calendar, Pencil, Trash2 } from "lucide-react";
+import { Eye, Pencil, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { DataTable, type Column } from "@/components/common/DataTable";
 import { cn, formatDate } from "@/lib/utils";
@@ -27,6 +27,7 @@ interface ExpenseTableProps {
   sortField?: string;
   sortOrder?: "asc" | "desc";
   onSort: (field: string) => void;
+  onRowClick: (expense: ExpenseListItem) => void;
   onEdit: (expense: ExpenseListItem) => void;
   onDelete: (id: string) => void;
   onStatusChange: (id: string, status: ExpenseStatus, reason?: string) => Promise<unknown> | void;
@@ -39,6 +40,7 @@ export function ExpenseTable({
   sortField,
   sortOrder,
   onSort,
+  onRowClick,
   onEdit,
   onDelete,
   onStatusChange,
@@ -82,7 +84,9 @@ export function ExpenseTable({
               )}
             </span>
             <div className="min-w-0">
-              <p className="font-bold text-foreground truncate">{e.description || "—"}</p>
+              <p className="font-bold text-foreground truncate">
+                {e.description || expenseCategoryLabel(e.category)}
+              </p>
               {e.vendorName && (
                 <p className="text-[11px] text-muted-foreground truncate">
                   Paid to: {e.vendorName}
@@ -101,19 +105,6 @@ export function ExpenseTable({
         <AppBadge size="xs" className={expenseCategoryBadge(e.category)}>
           {expenseCategoryLabel(e.category)}
         </AppBadge>
-      ),
-    },
-    {
-      id: "festival",
-      label: "Festival",
-      sortable: false,
-      render: (e) => (
-        <div className="flex items-center gap-1.5 text-muted-foreground">
-          <Calendar className="h-3 w-3 shrink-0" />
-          <span className="truncate">
-            {e.festival ? `${e.festival.name} ${e.festival.year || ""}` : "—"}
-          </span>
-        </div>
       ),
     },
     {
@@ -175,6 +166,12 @@ export function ExpenseTable({
             <RowActionsMenu
               actions={[
                 {
+                  key: "view",
+                  label: "View",
+                  icon: <Eye className="h-3.5 w-3.5" />,
+                  onSelect: () => onRowClick(e),
+                },
+                {
                   key: "edit",
                   label: "Edit",
                   icon: <Pencil className="h-3.5 w-3.5" />,
@@ -208,6 +205,7 @@ export function ExpenseTable({
         sortOrder={sortOrder}
         onSort={onSort}
         isLoading={isLoading}
+        onRowClick={onRowClick}
         emptyTitle="No expenses found"
         emptyDescription="Try adjusting your search or filters"
         module="expenses"

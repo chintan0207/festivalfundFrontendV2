@@ -7,6 +7,7 @@ import {
 import type { ExpenseFormValues } from "./components/dialogs/expenseFormSchema";
 import type {
   CreateExpensePayload,
+  Expense,
   ExpenseListItem,
   UpdateExpensePayload,
 } from "@/types/Types";
@@ -37,10 +38,18 @@ export function useExpenseDialogs({
 
   const openAdd = useCallback(() => setIsAddOpen(true), []);
 
-  const openEdit = useCallback((expense: ExpenseListItem) => {
+  const openEdit = useCallback((expense: ExpenseListItem | Expense) => {
     setEditId(expense._id);
+    const listItem = expense as ExpenseListItem;
+    const fullItem = expense as Expense;
+    const festivalId =
+      listItem.festival?._id ||
+      (typeof fullItem.festivalId === "object"
+        ? fullItem.festivalId?._id
+        : fullItem.festivalId) ||
+      "";
     setEditInitialValues({
-      festivalId: expense.festival?._id || "",
+      festivalId,
       description: expense.description || "",
       amount: expense.amount,
       category: expense.category,
@@ -48,7 +57,6 @@ export function useExpenseDialogs({
       vendorName: expense.vendorName || "",
       invoiceNumber: expense.invoiceNumber || "",
       paymentMode: expense.paymentMode || "CASH",
-      paymentReference: expense.paymentReference || "",
       status: expense.status,
     });
     setIsEditOpen(true);
@@ -81,7 +89,6 @@ export function useExpenseDialogs({
         vendorName: values.vendorName?.trim() || "",
         invoiceNumber: values.invoiceNumber?.trim() || "",
         paymentMode: values.paymentMode || "CASH",
-        paymentReference: values.paymentReference?.trim() || "",
         status: values.status || "PENDING",
       };
     },
@@ -98,7 +105,6 @@ export function useExpenseDialogs({
         vendorName: values.vendorName?.trim() || "",
         invoiceNumber: values.invoiceNumber?.trim() || "",
         paymentMode: values.paymentMode || "CASH",
-        paymentReference: values.paymentReference?.trim() || "",
       };
     },
     [],

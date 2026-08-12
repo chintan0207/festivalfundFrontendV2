@@ -139,7 +139,6 @@ function ExpenseFormDialog({
       vendorName: "",
       invoiceNumber: "",
       paymentMode: "UPI",
-      paymentReference: "",
       status: "PENDING",
     },
   });
@@ -158,7 +157,6 @@ function ExpenseFormDialog({
         vendorName: "",
         invoiceNumber: "",
         paymentMode: "UPI",
-        paymentReference: "",
         status: "PENDING",
       });
     }

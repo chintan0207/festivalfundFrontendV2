@@ -7,10 +7,8 @@ const baseShape = {
   category: z.enum(["FOOD", "DECORATION", "SERVICES", "CULTURAL", "OTHER"]).optional(),
   date: z.string().optional(),
   vendorName: z.string().optional(),
-  vendorPhone: z.string().optional(),
   invoiceNumber: z.string().optional(),
   paymentMode: z.enum(["CASH", "UPI", "BANK_TRANSFER", "CHEQUE", "OTHER"]).optional(),
-  paymentReference: z.string().optional(),
   status: z.enum(["PENDING", "PAID", "CANCELLED"]).optional(),
 } as const;
 

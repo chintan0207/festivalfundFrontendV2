@@ -1,4 +1,4 @@
-import { Pencil, Search, Trash2, Building2, Calendar } from "lucide-react";
+import { Pencil, Search, Trash2, Building2 } from "lucide-react";
 import { useState } from "react";
 import { cn, formatDate } from "@/lib/utils";
 import { EmptyState } from "@/components/common/EmptyState";
@@ -26,6 +26,7 @@ interface ExpenseMobileCardsProps {
   expenses: ExpenseListItem[];
   isLoading: boolean;
   minimal?: boolean;
+  onRowClick: (expense: ExpenseListItem) => void;
   onEdit: (expense: ExpenseListItem) => void;
   onDelete: (id: string) => void;
   onStatusChange: (
@@ -39,6 +40,7 @@ interface ExpenseMobileCardsProps {
 function ExpenseCard({
   expense,
   minimal,
+  onRowClick,
   onEdit,
   onDelete,
   onRequestStatus,
@@ -46,6 +48,7 @@ function ExpenseCard({
 }: {
   expense: ExpenseListItem;
   minimal?: boolean;
+  onRowClick: (e: ExpenseListItem) => void;
   onEdit: (e: ExpenseListItem) => void;
   onDelete: (id: string) => void;
   onRequestStatus: (status: ExpenseStatus) => void;
@@ -114,7 +117,10 @@ function ExpenseCard({
 
   if (minimal) {
     return (
-      <div className="rounded-2xl bg-card border border-border/80 shadow-xs transition-transform overflow-hidden">
+      <div
+        className="rounded-2xl bg-card border border-border/80 shadow-xs transition-transform overflow-hidden"
+        onClick={() => onRowClick(expense)}
+      >
         <div className="p-2">
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2.5 min-w-0 flex-1">
@@ -145,13 +151,16 @@ function ExpenseCard({
   }
 
   return (
-    <div className="rounded-2xl bg-card border border-border/80 shadow-xs transition-transform overflow-hidden">
+    <div
+      className="rounded-2xl bg-card border border-border/80 shadow-xs transition-transform overflow-hidden"
+      onClick={() => onRowClick(expense)}
+    >
       <div className="p-3.5 space-y-2.5">
         <div className="flex items-center gap-2.5">
           {avatar}
           <div className="flex-1 min-w-0">
             <p className="text-sm font-bold text-foreground truncate">
-              {expense.description || "Expense"}
+              {expense.description || expenseCategoryLabel(expense.category)}
             </p>
             <p className="font-mono text-[11px] text-muted-foreground">{expense.expenseCode}</p>
           </div>
@@ -188,15 +197,6 @@ function ExpenseCard({
               {statusSelect}
             </div>
           </div>
-
-          {expense.festival && (
-            <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
-              <Calendar className="h-3 w-3" />
-              <span>
-                {expense.festival.name} {expense.festival.year || ""}
-              </span>
-            </div>
-          )}
         </div>
       </div>
     </div>
@@ -207,6 +207,7 @@ export function ExpenseMobileCards({
   expenses,
   isLoading,
   minimal,
+  onRowClick,
   onEdit,
   onDelete,
   onStatusChange,
@@ -241,6 +242,7 @@ export function ExpenseMobileCards({
             key={e._id}
             expense={e}
             minimal={minimal}
+            onRowClick={onRowClick}
             onEdit={onEdit}
             onDelete={onDelete}
             onRequestStatus={(status) => setStatusTarget({ expense: e, status })}

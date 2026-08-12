@@ -49,16 +49,6 @@ export function ExpenseFormFields({
       )}
 
       <div className="col-span-1 min-[360px]:col-span-2">
-        <AppInput
-          id={`${prefix}-description`}
-          label="Expense Description"
-          placeholder="e.g. Catering, decoration labour, sound system"
-          {...register("description")}
-          error={errors.description?.message}
-        />
-      </div>
-
-      <div className="col-span-1 min-[360px]:col-span-2">
         <label
           htmlFor={`${prefix}-category`}
           className="mb-1.5 block text-xs font-semibold text-foreground"
@@ -114,7 +104,9 @@ export function ExpenseFormFields({
         </div>
       ) : (
         <div className="col-span-1 min-[360px]:col-span-2 rounded-xl border border-border/60 bg-muted/40 px-3 py-2.5">
-          <span className="block text-[11px] font-semibold text-muted-foreground">Status</span>
+          <span className="block text-[11px] font-semibold text-muted-foreground">
+            Status
+          </span>
           <span className="block text-sm font-bold text-foreground mt-0.5">
             {expenseStatusLabel(watch("status"))}
           </span>
@@ -149,16 +141,6 @@ export function ExpenseFormFields({
         {...register("invoiceNumber")}
         error={errors.invoiceNumber?.message}
       />
-
-      <div className="col-span-1 min-[360px]:col-span-2">
-        <AppInput
-          id={`${prefix}-paymentReference`}
-          label="Payment Reference (UPI txn / Cheque no)"
-          placeholder="e.g. UPI 4100 2212 9983"
-          {...register("paymentReference")}
-          error={errors.paymentReference?.message}
-        />
-      </div>
     </div>
   );
 }

@@ -5,7 +5,12 @@ import { AppButton } from "@/components/common/AppButton";
 import { AppTextArea } from "@/components/common/AppTextArea";
 import { expenseStatusLabel, formatExpenseAmount } from "../lib/expenseMeta";
 import { cn } from "@/lib/utils";
-import type { ExpenseListItem, ExpenseStatus } from "@/types/Types";
+import type { Expense, ExpenseListItem, ExpenseStatus } from "@/types/Types";
+
+export type ExpenseStatusTarget = Pick<
+  Expense | ExpenseListItem,
+  "expenseCode" | "status" | "amount" | "description" | "vendorName" | "invoiceNumber"
+>;
 
 const PRESET_REASONS = [
   "Wrong amount entered",
@@ -24,7 +29,7 @@ export function ExpenseStatusConfirmDialog({
   onCancel,
 }: {
   open: boolean;
-  expense: ExpenseListItem | null;
+  expense: ExpenseStatusTarget | null;
   nextStatus: ExpenseStatus;
   loading?: boolean;
   onConfirm: (reason?: string) => void;

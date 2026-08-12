@@ -94,7 +94,6 @@ export function StatusBadgeSelect({
             key={opt.value}
             disabled={opt.value === status}
             onSelect={(event) => {
-              event.preventDefault();
               event.stopPropagation();
               onRequestStatus(opt.value);
             }}

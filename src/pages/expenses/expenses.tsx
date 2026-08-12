@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { Plus } from "lucide-react";
+import { useNavigate } from "@tanstack/react-router";
 import { useExpenseApiStore } from "@/api/expense/expense.store";
 import {
   useExpenses,
@@ -29,10 +30,11 @@ import {
   expenseCategoryShortLabel,
   expenseStatusLabel,
 } from "./lib/expenseMeta";
-import type { ExpenseStatus } from "@/types/Types";
+import type { ExpenseListItem, ExpenseStatus } from "@/types/Types";
 
 export default function ExpensesPage() {
   const theme = getModuleTheme("expenses");
+  const navigate = useNavigate();
   // Store
   const page = useExpenseApiStore((s) => s.page);
   const limit = useExpenseApiStore((s) => s.limit);
@@ -84,6 +86,16 @@ export default function ExpensesPage() {
     resetFilters();
     setLocalSearch("");
   }, [resetFilters]);
+
+  const handleRowClick = useCallback(
+    (expense: ExpenseListItem) => {
+      navigate({
+        to: "/dashboard/expenses/$expenseId",
+        params: { expenseId: expense._id },
+      });
+    },
+    [navigate],
+  );
 
   // Query
   const queryParams = {
@@ -264,6 +276,7 @@ export default function ExpensesPage() {
         expenses={expenses}
         isLoading={isLoading}
         minimal={minimalView}
+        onRowClick={handleRowClick}
         onEdit={dialogs.openEdit}
         onDelete={dialogs.openDelete}
         onStatusChange={handleStatusChange}
@@ -278,6 +291,7 @@ export default function ExpensesPage() {
           sortField={sortField}
           sortOrder={sortOrder}
           onSort={handleSort}
+          onRowClick={handleRowClick}
           onEdit={dialogs.openEdit}
           onDelete={dialogs.openDelete}
           onStatusChange={handleStatusChange}
