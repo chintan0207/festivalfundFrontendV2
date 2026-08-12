@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
 import { useAuthStore } from "@/api/auth/auth.store";
 import {
   useCreateOrgUser,
@@ -151,6 +152,10 @@ export const SettingsPage = () => {
 
   const handleLogoChange = async (file: File | undefined) => {
     if (!file) return;
+    if (file.size > 3 * 1024 * 1024) {
+      toast.error(`File "${file.name}" exceeds the maximum allowed size of 3 MB.`);
+      return;
+    }
     setLogoUploading(true);
     try {
       await uploadLogo(file);

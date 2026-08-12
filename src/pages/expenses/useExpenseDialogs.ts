@@ -58,6 +58,7 @@ export function useExpenseDialogs({
       invoiceNumber: expense.invoiceNumber || "",
       paymentMode: expense.paymentMode || "CASH",
       status: expense.status,
+      attachments: expense.attachments || [],
     });
     setIsEditOpen(true);
   }, []);
@@ -90,6 +91,7 @@ export function useExpenseDialogs({
         invoiceNumber: values.invoiceNumber?.trim() || "",
         paymentMode: values.paymentMode || "CASH",
         status: values.status || "PENDING",
+        attachments: values.attachments || [],
       };
     },
     [],
@@ -105,6 +107,7 @@ export function useExpenseDialogs({
         vendorName: values.vendorName?.trim() || "",
         invoiceNumber: values.invoiceNumber?.trim() || "",
         paymentMode: values.paymentMode || "CASH",
+        attachments: values.attachments || [],
       };
     },
     [],

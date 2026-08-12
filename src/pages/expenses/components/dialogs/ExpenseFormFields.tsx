@@ -1,12 +1,8 @@
 import { AppInput } from "@/components/common/AppInput";
 import { AppSelect, type AppSelectOption } from "@/components/common/AppSelect";
 import { CategoryQuickPick } from "../CategoryQuickPick";
-import {
-  expenseCategoryMeta,
-  expensePaymentOptions,
-  expenseStatusCreateOptions,
-  expenseStatusLabel,
-} from "../../lib/expenseMeta";
+import { ExpenseAttachmentsInput } from "./ExpenseAttachmentsInput";
+import { expenseCategoryMeta, expensePaymentOptions } from "../../lib/expenseMeta";
 
 export function ExpenseFormFields({
   mode,
@@ -17,6 +13,7 @@ export function ExpenseFormFields({
   prefix,
   festivalOptions,
   hideFestival,
+  disabled,
 }: {
   mode: "add" | "edit";
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -31,6 +28,7 @@ export function ExpenseFormFields({
   festivalOptions: AppSelectOption[];
   /** When true the festival is auto-selected and its field is hidden. */
   hideFestival: boolean;
+  disabled?: boolean;
 }) {
   return (
     <div className="grid grid-cols-1 min-[360px]:grid-cols-2 gap-2.5 sm:gap-4">
@@ -44,6 +42,7 @@ export function ExpenseFormFields({
             options={festivalOptions}
             placeholder="Select festival..."
             error={errors.festivalId?.message}
+            disabled={disabled}
           />
         </div>
       )}
@@ -80,6 +79,7 @@ export function ExpenseFormFields({
         placeholder="e.g. 15000"
         {...register("amount")}
         error={errors.amount?.message}
+        disabled={disabled}
       />
 
       <AppSelect
@@ -89,32 +89,8 @@ export function ExpenseFormFields({
         onChange={(val) => setValue("paymentMode", val, { shouldValidate: true })}
         options={expensePaymentOptions}
         error={errors.paymentMode?.message}
+        disabled={disabled}
       />
-
-      {mode === "add" ? (
-        <div className="col-span-1 min-[360px]:col-span-2">
-          <AppSelect
-            id={`${prefix}-status`}
-            label="Status"
-            value={watch("status") || "PENDING"}
-            onChange={(val) => setValue("status", val, { shouldValidate: true })}
-            options={expenseStatusCreateOptions}
-            error={errors.status?.message}
-          />
-        </div>
-      ) : (
-        <div className="col-span-1 min-[360px]:col-span-2 rounded-xl border border-border/60 bg-muted/40 px-3 py-2.5">
-          <span className="block text-[11px] font-semibold text-muted-foreground">
-            Status
-          </span>
-          <span className="block text-sm font-bold text-foreground mt-0.5">
-            {expenseStatusLabel(watch("status"))}
-          </span>
-          <span className="block text-[11px] text-muted-foreground mt-0.5">
-            Status changes use the status menu, not this form.
-          </span>
-        </div>
-      )}
 
       <div className="col-span-1 min-[360px]:col-span-2">
         <AppInput
@@ -123,6 +99,15 @@ export function ExpenseFormFields({
           placeholder="e.g. Shree Ram Decorators"
           {...register("vendorName")}
           error={errors.vendorName?.message}
+          disabled={disabled}
+        />
+      </div>
+
+      <div className="col-span-1 min-[360px]:col-span-2">
+        <ExpenseAttachmentsInput
+          value={watch("attachments") || []}
+          onChange={(urls) => setValue("attachments", urls, { shouldValidate: true })}
+          disabled={disabled}
         />
       </div>
 
@@ -132,6 +117,7 @@ export function ExpenseFormFields({
         type="date"
         {...register("date")}
         error={errors.date?.message}
+        disabled={disabled}
       />
 
       <AppInput
@@ -140,6 +126,7 @@ export function ExpenseFormFields({
         placeholder="e.g. INV-2041"
         {...register("invoiceNumber")}
         error={errors.invoiceNumber?.message}
+        disabled={disabled}
       />
     </div>
   );

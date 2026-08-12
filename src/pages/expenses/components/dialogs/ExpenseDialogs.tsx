@@ -140,6 +140,7 @@ function ExpenseFormDialog({
       invoiceNumber: "",
       paymentMode: "UPI",
       status: "PENDING",
+      attachments: [],
     },
   });
 
@@ -158,6 +159,7 @@ function ExpenseFormDialog({
         invoiceNumber: "",
         paymentMode: "UPI",
         status: "PENDING",
+        attachments: [],
       });
     }
   }, [isOpen, isEdit, initialValues, reset, defaultFestivalId]);
@@ -191,6 +193,7 @@ function ExpenseFormDialog({
         prefix={mode}
         festivalOptions={festivalOptions}
         hideFestival={hideFestival}
+        disabled={isPending}
       />
     </FormDialog>
   );

@@ -1,12 +1,12 @@
 import { FileText, Paperclip } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, getFileUrl } from "@/lib/utils";
 import type { Expense } from "@/types/Types";
 
 const IMAGE_EXT = [".jpg", ".jpeg", ".png", ".gif", ".webp", ".svg", ".bmp", ".avif"];
 
 function looksLikeImage(url: string): boolean {
   try {
-    const path = new URL(url).pathname.toLowerCase();
+    const path = new URL(url, "http://localhost").pathname.toLowerCase();
     return IMAGE_EXT.some((ext) => path.endsWith(ext));
   } catch {
     return /\.(jpe?g|png|gif|webp|svg|bmp|avif)([?#].*)?$/i.test(url);
@@ -30,11 +30,14 @@ export function ExpenseAttachments({ expense }: { expense: Expense }) {
       </div>
 
       <div className="p-3.5 sm:p-5 grid grid-cols-2 min-[460px]:grid-cols-3 sm:grid-cols-4 gap-3">
-        {attachments.map((url, index) =>
-          looksLikeImage(url) ? (
+        {attachments.map((url, index) => {
+          const resolvedUrl = getFileUrl(url);
+          const isImg = looksLikeImage(resolvedUrl);
+
+          return isImg ? (
             <a
               key={index}
-              href={url}
+              href={resolvedUrl}
               target="_blank"
               rel="noopener noreferrer"
               className={cn(
@@ -44,7 +47,7 @@ export function ExpenseAttachments({ expense }: { expense: Expense }) {
               title={url}
             >
               <img
-                src={url}
+                src={resolvedUrl}
                 alt={`Attachment ${index + 1}`}
                 loading="lazy"
                 className="h-full w-full object-cover"
@@ -56,7 +59,7 @@ export function ExpenseAttachments({ expense }: { expense: Expense }) {
           ) : (
             <a
               key={index}
-              href={url}
+              href={resolvedUrl}
               target="_blank"
               rel="noopener noreferrer"
               title={url}
@@ -70,8 +73,8 @@ export function ExpenseAttachments({ expense }: { expense: Expense }) {
                 {url.split("/").pop() || "File"}
               </span>
             </a>
-          ),
-        )}
+          );
+        })}
       </div>
     </div>
   );

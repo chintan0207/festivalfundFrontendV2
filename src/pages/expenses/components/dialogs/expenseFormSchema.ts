@@ -10,6 +10,7 @@ const baseShape = {
   invoiceNumber: z.string().optional(),
   paymentMode: z.enum(["CASH", "UPI", "BANK_TRANSFER", "CHEQUE", "OTHER"]).optional(),
   status: z.enum(["PENDING", "PAID", "CANCELLED"]).optional(),
+  attachments: z.array(z.string()).optional().default([]),
 } as const;
 
 export function buildExpenseSchema(mode: "add" | "edit") {

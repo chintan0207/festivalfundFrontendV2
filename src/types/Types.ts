@@ -271,6 +271,7 @@ export type ExpenseListItem = {
   invoiceNumber?: string;
   paymentMode: PaymentMode;
   status: ExpenseStatus;
+  attachments?: string[];
   isBalanceApplied: boolean;
   createdAt?: string;
   updatedAt?: string;

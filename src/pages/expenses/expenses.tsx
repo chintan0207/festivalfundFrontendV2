@@ -27,7 +27,6 @@ import { useExpenseDialogs } from "./useExpenseDialogs";
 import {
   expenseCategoryLabel,
   expenseCategoryMeta,
-  expenseCategoryShortLabel,
   expenseStatusLabel,
 } from "./lib/expenseMeta";
 import type { ExpenseListItem, ExpenseStatus } from "@/types/Types";
@@ -231,23 +230,13 @@ export default function ExpensesPage() {
               { value: "ALL", label: "All", count: statusCounts.total ?? total },
               { value: "PENDING", label: "Pending", count: statusCounts.PENDING ?? 0 },
               { value: "PAID", label: "Paid", count: statusCounts.PAID ?? 0 },
-              { value: "CANCELLED", label: "Cancelled", count: statusCounts.CANCELLED ?? 0 },
+              {
+                value: "CANCELLED",
+                label: "Cancelled",
+                count: statusCounts.CANCELLED ?? 0,
+              },
             ],
             onChange: (val) => setStatus(val === "ALL" ? "" : val),
-            variant: "module",
-          },
-          {
-            id: "category",
-            label: "Category",
-            value: category || "ALL",
-            options: [
-              { value: "ALL", label: "All" },
-              ...expenseCategoryMeta.map((m) => ({
-                value: m.key,
-                label: expenseCategoryShortLabel(m.key),
-              })),
-            ],
-            onChange: (val) => setCategory(val === "ALL" ? "" : val),
             variant: "module",
           },
         ]}
