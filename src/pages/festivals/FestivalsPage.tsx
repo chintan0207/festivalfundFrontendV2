@@ -22,7 +22,6 @@ import {
   Plus,
   Edit,
   Eye,
-  Pin,
   Trash2,
   Calendar,
   Tag,
@@ -124,7 +123,6 @@ export const FestivalsPage = () => {
   const resetFilters = useFestivalApiStore((s) => s.resetFilters);
 
   const activeFestivalId = useFestivalApiStore((s) => s.activeFestivalId);
-  const setActiveFestivalId = useFestivalApiStore((s) => s.setActiveFestivalId);
 
   // Debounced local search → store (resets page)
   const [localSearch, setLocalSearch] = useState(search);
@@ -520,15 +518,6 @@ export const FestivalsPage = () => {
                   <RowActionsMenu
                     title="Festival actions"
                     actions={[
-                      {
-                        key: "pin",
-                        label: isSelected
-                          ? "Remove from context"
-                          : "Set as context",
-                        icon: <Pin className="h-3.5 w-3.5" />,
-                        onSelect: () =>
-                          setActiveFestivalId(isSelected ? null : fest.id),
-                      },
                       {
                         key: "edit",
                         label: "Edit Festival",

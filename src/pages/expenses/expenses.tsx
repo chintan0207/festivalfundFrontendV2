@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { Plus } from "lucide-react";
 import { useNavigate } from "@tanstack/react-router";
 import { useExpenseApiStore } from "@/api/expense/expense.store";
@@ -53,11 +53,26 @@ export default function ExpensesPage() {
   const setSortOrder = useExpenseApiStore((s) => s.setSortOrder);
   const setCategory = useExpenseApiStore((s) => s.setCategory);
   const setStatus = useExpenseApiStore((s) => s.setStatus);
+  const setStatusCounts = useExpenseApiStore((s) => s.setStatusCounts);
+  const setStatusAmounts = useExpenseApiStore((s) => s.setStatusAmounts);
+  const setCategoryTotals = useExpenseApiStore((s) => s.setCategoryTotals);
   const resetFilters = useExpenseApiStore((s) => s.resetFilters);
 
-  // Festivals (for filter)
-  const { isAllFestivals, activeFestivalId } = useFestivalApiStore();
-  const festivalId = isAllFestivals || !activeFestivalId ? "" : activeFestivalId;
+  // Festivals (single source of truth is the top navbar selector)
+  const { activeFestivalId } = useFestivalApiStore();
+  const festivalId = activeFestivalId || "";
+
+  // Reset page-specific stale data when the selected festival changes
+  const prevFestivalRef = useRef(activeFestivalId);
+  useEffect(() => {
+    if (prevFestivalRef.current !== activeFestivalId) {
+      setPage(1);
+      setStatusCounts({ total: 0, PENDING: 0, PAID: 0, CANCELLED: 0 });
+      setStatusAmounts({ total: 0, PENDING: 0, PAID: 0, CANCELLED: 0 });
+      setCategoryTotals({});
+      prevFestivalRef.current = activeFestivalId;
+    }
+  }, [activeFestivalId, setPage, setStatusCounts, setStatusAmounts, setCategoryTotals]);
 
   // Local UI
   const [localSearch, setLocalSearch] = useState(search);

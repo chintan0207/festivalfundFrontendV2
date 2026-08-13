@@ -2,6 +2,7 @@
 import { CheckCircle, Clock, Wallet, Package } from "lucide-react";
 import { KPICard, KPIGrid } from "@/components/common/KPICard";
 import { useFestivalApiStore } from "@/api/festival/festival.store";
+import { useFestivals } from "@/api/festival/useFestivals";
 
 interface ContributionKPIsProps {
   themeGradient?: string;
@@ -16,24 +17,16 @@ const emptyStats = {
 };
 
 export function ContributionKPIs(_: ContributionKPIsProps) {
-  const { isAllFestivals, activeFestivalId, festivals } = useFestivalApiStore();
+  const { activeFestivalId } = useFestivalApiStore();
+  const { data } = useFestivals();
+  const festivals = data?.festivals ?? [];
 
-  const stats = isAllFestivals
-    ? festivals
-        .filter((f) => !f.isDeleted)
-        .reduce(
-          (acc, f) => ({
-            totalCollected: acc.totalCollected + (f.stats?.totalCollected || 0),
-            pendingAmount: acc.pendingAmount + (f.stats?.pendingAmount || 0),
-            itemCount: acc.itemCount + (f.stats?.itemCount || 0),
-          }),
-          emptyStats,
-        )
-    : festivals.find((f) => f._id === activeFestivalId)?.stats || emptyStats;
+  const activeFest =
+    festivals.find((f) => f._id === activeFestivalId) ?? festivals[0] ?? null;
+  const stats = activeFest?.stats || emptyStats;
 
   const deposited = stats.totalCollected;
   const pending = stats.pendingAmount;
-
   return (
     <KPIGrid columns={4}>
       <KPICard

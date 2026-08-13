@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { useFestivalApiStore } from "@/api/festival/festival.store";
 import { useFestivals } from "@/api/festival/useFestivals";
@@ -22,10 +23,20 @@ const Topbar = () => {
   const { user, organization } = useAuthStore();
   const { data } = useFestivals();
   const festivals = data?.festivals ?? [];
-  const { activeFestivalId, isAllFestivals, setActiveFestivalId, setActiveFestivalAll } =
-    useFestivalApiStore();
+  const { activeFestivalId, setActiveFestivalId } = useFestivalApiStore();
 
   const activeFest = festivals.find((f) => f._id === activeFestivalId);
+
+  // Single festival selection: fall back to the first festival whenever no
+  // (or a stale) festival is active, so the app never operates in an "All
+  // Festivals" combined mode.
+  useEffect(() => {
+    const list = data?.festivals ?? [];
+    if (list.length === 0) return;
+    if (!list.some((f) => f._id === activeFestivalId)) {
+      setActiveFestivalId(list[0]._id);
+    }
+  }, [data, activeFestivalId, setActiveFestivalId]);
 
   return (
     <header className="sticky top-0 z-40 bg-card border-b border-border h-14 flex items-center px-4 justify-between gap-3">
@@ -40,7 +51,7 @@ const Topbar = () => {
             <button className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-primary/10 border border-primary/20 hover:bg-primary/15 transition-colors cursor-pointer">
               <Calendar className="h-4 w-4 text-primary" />
               <span className="text-xs font-semibold text-primary truncate max-w-[150px] sm:max-w-[220px]">
-                {isAllFestivals ? "All Festivals (Overall)" : activeFest?.name}
+                {activeFest?.name}
               </span>
               <ChevronDown className="h-3.5 w-3.5 text-primary/70" />
             </button>
@@ -50,15 +61,6 @@ const Topbar = () => {
               Select Active Festival
             </DropdownMenuLabel>
             <DropdownMenuSeparator className="my-1" />
-            <DropdownMenuItem
-              onClick={() => setActiveFestivalAll()}
-              className={`flex items-center justify-between cursor-pointer rounded-lg px-2.5 py-2 ${
-                isAllFestivals ? "bg-primary/10 text-primary font-semibold" : ""
-              }`}
-            >
-              <span className="text-xs font-medium">All Festivals</span>
-              {isAllFestivals && <Check className="h-4 w-4 text-primary" />}
-            </DropdownMenuItem>
             {festivals.map((f) => (
               <DropdownMenuItem
                 key={f._id}
@@ -77,7 +79,7 @@ const Topbar = () => {
           </DropdownMenuContent>
         </DropdownMenu>
 
-        {!isAllFestivals && activeFest && (
+        {activeFest && (
           <Badge
             variant="outline"
             className={`hidden sm:inline-flex text-2xs font-medium border ${

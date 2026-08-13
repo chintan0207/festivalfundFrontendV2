@@ -1,12 +1,5 @@
-import { useFestivalStore } from "@/store/festivalStore";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { useFestivalApiStore } from "@/api/festival/festival.store";
+import { useFestivals } from "@/api/festival/useFestivals";
 import {
   TrendingUp,
   TrendingDown,
@@ -14,41 +7,25 @@ import {
   Clock,
   Banknote,
   Calendar,
-  ChevronDown,
-  Check,
   Zap,
 } from "lucide-react";
 
 const Dashboard = () => {
-  const { activeFestivalId, festivals, setActiveFestival } = useFestivalStore();
+  const { activeFestivalId } = useFestivalApiStore();
+  const { data } = useFestivals();
+  const festivals = (data?.festivals ?? []).filter((f) => !f.isDeleted);
 
-  const activeFest = festivals.find((f) => f.id === activeFestivalId) || festivals[0];
+  const activeFest =
+    festivals.find((f) => f._id === activeFestivalId) ?? festivals[0] ?? null;
 
-  // Calculated stats based on backend data structure
-  const openingBalance =
-    activeFestivalId === "ALL"
-      ? festivals.reduce((acc, f) => acc + (f.stats?.openingBalance || 0), 0)
-      : activeFest?.stats?.openingBalance || 25000;
-
-  const totalCollected =
-    activeFestivalId === "ALL"
-      ? festivals.reduce((acc, f) => acc + (f.stats?.totalCollected || 0), 0)
-      : activeFest?.stats?.totalCollected || 107748;
-
-  const totalSpent =
-    activeFestivalId === "ALL"
-      ? festivals.reduce((acc, f) => acc + (f.stats?.totalExpenses || 0), 0)
-      : activeFest?.stats?.totalExpenses || 104139;
-
+  // Derived stats based on backend data structure
+  const stats = activeFest?.stats;
+  const openingBalance = stats?.openingBalance ?? 0;
+  const totalCollected = stats?.totalCollected ?? 0;
+  const totalSpent = stats?.totalExpenses ?? 0;
   const currentBalance =
-    activeFestivalId === "ALL"
-      ? festivals.reduce((acc, f) => acc + (f.stats?.currentBalance || 0), 0)
-      : activeFest?.stats?.currentBalance || openingBalance + totalCollected - totalSpent;
-
-  const pendingAmount =
-    activeFestivalId === "ALL"
-      ? festivals.reduce((acc, f) => acc + (f.stats?.pendingAmount || 0), 0)
-      : activeFest?.stats?.pendingAmount || 0;
+    stats?.currentBalance ?? openingBalance + totalCollected - totalSpent;
+  const pendingAmount = stats?.pendingAmount ?? 0;
 
   return (
     <div className="space-y-6 pb-12">
@@ -63,58 +40,20 @@ const Dashboard = () => {
           </p>
         </div>
 
-        {/* FESTIVAL SELECTOR DROPDOWN CARD */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <button className="flex items-center gap-3 px-4 py-2.5 rounded-2xl bg-card border border-border/80 shadow-xs hover:border-primary/40 transition-all cursor-pointer">
-              <div className="h-9 w-9 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold shrink-0 shadow-xs">
-                <Calendar className="h-5 w-5" />
-              </div>
-              <div className="text-left min-w-[130px]">
-                <p className="text-xs font-bold text-foreground truncate">
-                  {activeFestivalId === "ALL" ? "All Festivals" : activeFest?.name}
-                </p>
-                <p className="text-2xs text-muted-foreground font-medium">
-                  {activeFestivalId === "ALL" ? "Combined View" : activeFest?.year}
-                </p>
-              </div>
-              <ChevronDown className="h-4 w-4 text-muted-foreground ml-auto" />
-            </button>
-          </DropdownMenuTrigger>
-
-          <DropdownMenuContent align="end" className="w-64 p-2 rounded-xl shadow-xl">
-            <DropdownMenuLabel className="text-2xs font-semibold text-muted-foreground uppercase tracking-wider px-2 py-1.5">
-              Switch Active Festival
-            </DropdownMenuLabel>
-            <DropdownMenuSeparator className="my-1" />
-
-            <DropdownMenuItem
-              onClick={() => setActiveFestival("ALL")}
-              className={`flex items-center justify-between cursor-pointer rounded-lg px-2.5 py-2 ${
-                activeFestivalId === "ALL" ? "bg-primary/10 text-primary font-semibold" : ""
-              }`}
-            >
-              <span className="text-xs font-medium">All Festivals</span>
-              {activeFestivalId === "ALL" && <Check className="h-4 w-4 text-primary" />}
-            </DropdownMenuItem>
-
-            {festivals.map((fest) => (
-              <DropdownMenuItem
-                key={fest.id}
-                onClick={() => setActiveFestival(fest.id)}
-                className={`flex items-center justify-between cursor-pointer rounded-lg px-2.5 py-2 ${
-                  activeFestivalId === fest.id ? "bg-primary/10 text-primary font-semibold" : ""
-                }`}
-              >
-                <div className="flex flex-col">
-                  <span className="text-xs font-medium">{fest.name}</span>
-                  <span className="text-2xs text-muted-foreground">{fest.year}</span>
-                </div>
-                {activeFestivalId === fest.id && <Check className="h-4 w-4 text-primary" />}
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
+        {/* ACTIVE FESTIVAL CHIP (selection lives in the top navbar) */}
+        <div className="flex items-center gap-3 px-4 py-2.5 rounded-2xl bg-card border border-border/80 shadow-xs">
+          <div className="h-9 w-9 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold shrink-0 shadow-xs">
+            <Calendar className="h-5 w-5" />
+          </div>
+          <div className="text-left min-w-[130px]">
+            <p className="text-xs font-bold text-foreground truncate">
+              {activeFest?.name ?? "Select Festival"}
+            </p>
+            <p className="text-2xs text-muted-foreground font-medium">
+              {activeFest?.year ?? ""}
+            </p>
+          </div>
+        </div>
       </div>
 
       {/* 4 PRIMARY STAT CARDS */}

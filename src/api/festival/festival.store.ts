@@ -101,17 +101,21 @@ export const useFestivalApiStore = create<FestivalState>()(
       },
 
       setFestivals: (festivals) => {
-        if (get().isAllFestivals) {
-          set({ festivals, activeFestival: null, activeFestivalId: null });
+        const currentActiveId = get().activeFestivalId;
+        if (currentActiveId) {
+          const contained = festivals.find((f) => f._id === currentActiveId);
+          if (contained) {
+            set({ festivals, activeFestival: contained, isAllFestivals: false });
+            return;
+          }
+          set({ festivals, isAllFestivals: false });
           return;
         }
-        const currentActiveId = get().activeFestivalId;
-        const currentActive =
-          festivals.find((f) => f._id === currentActiveId) || festivals[0] || null;
+        const first = festivals[0] || null;
         set({
           festivals,
-          activeFestival: currentActive,
-          activeFestivalId: currentActive ? currentActive._id : null,
+          activeFestival: first,
+          activeFestivalId: first ? first._id : null,
           isAllFestivals: false,
         });
       },

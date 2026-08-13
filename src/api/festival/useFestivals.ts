@@ -27,8 +27,10 @@ export const useFestivals = (params?: FestivalQueryParams) => {
     queryFn: async () => {
       const res = await FestivalService.getAllFestivals(params);
       if (res.data) {
+        // Always keep stored festival stats fresh so KPI cards re-derive data
+        // immediately after any `["festivals"]` invalidation (e.g. contribution added).
+        setFestivals(res.data.festivals);
         if (isListQuery) {
-          setFestivals(res.data.festivals);
           setPaginationMeta({
             total: res.data.total,
             page: res.data.page,

@@ -1,13 +1,12 @@
 import { useState } from "react";
 import { Outlet, useMatches, useParams, useRouter } from "@tanstack/react-router";
-import { ArrowLeft, Calendar, Check, Edit, MapPin, Pin, RotateCcw, Tag, Trash2 } from "lucide-react";
+import { ArrowLeft, Calendar, Edit, MapPin, RotateCcw, Tag, Trash2 } from "lucide-react";
 import {
   useFestival,
   useUpdateFestival,
   useSoftDeleteFestival,
   useRestoreFestival,
 } from "@/api/festival/useFestivals";
-import { useFestivalApiStore } from "@/api/festival/festival.store";
 import { getModuleTheme } from "@/theme/colors";
 import { useIsOrgAdmin } from "@/hooks/useIsOrgAdmin";
 import { AppButton } from "@/components/common/AppButton";
@@ -64,9 +63,6 @@ export function FestivalDetailPage() {
   const deleteMutation = useSoftDeleteFestival();
   const restoreMutation = useRestoreFestival();
 
-  const activeFestivalId = useFestivalApiStore((s) => s.activeFestivalId);
-  const setActiveFestivalId = useFestivalApiStore((s) => s.setActiveFestivalId);
-
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [restoreOpen, setRestoreOpen] = useState(false);
   const [statusTarget, setStatusTarget] = useState<FestivalStatus | null>(null);
@@ -87,7 +83,6 @@ export function FestivalDetailPage() {
   }
 
   const status: FestivalStatus = festival.status;
-  const isSelected = activeFestivalId === festival._id;
   const isDeleted = festival.isDeleted;
 
   const dateRange =
@@ -220,22 +215,6 @@ export function FestivalDetailPage() {
                 </AppBadge>
               )}
             </div>
-
-            <AppButton
-              size="sm"
-              variant={isSelected ? "default" : "outline"}
-              className="text-xs"
-              onClick={() => setActiveFestivalId(isSelected ? null : festival._id)}
-              leftIcon={
-                isSelected ? (
-                  <Check className="h-3.5 w-3.5" />
-                ) : (
-                  <Pin className="h-3.5 w-3.5 text-muted-foreground" />
-                )
-              }
-            >
-              {isSelected ? "Active Context" : "Set as Context"}
-            </AppButton>
           </div>
 
           {/* Meta chips */}

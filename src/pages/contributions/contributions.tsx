@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { Plus } from "lucide-react";
 import { Outlet, useNavigate, useMatches } from "@tanstack/react-router";
 import { useContributionApiStore } from "@/api/contribution/contribution.store";
@@ -55,9 +55,21 @@ export default function ContributionsPage() {
   const setType = useContributionApiStore((s) => s.setType);
   const resetFilters = useContributionApiStore((s) => s.resetFilters);
 
-  // Festivals (for filter)
-  const { isAllFestivals, activeFestivalId } = useFestivalApiStore();
-  const festivalId = isAllFestivals || !activeFestivalId ? "" : activeFestivalId;
+  const setStatusCounts = useContributionApiStore((s) => s.setStatusCounts);
+
+  // Festivals (single source of truth is the top navbar selector)
+  const { activeFestivalId } = useFestivalApiStore();
+  const festivalId = activeFestivalId || "";
+
+  // Reset page-specific stale data when the selected festival changes
+  const prevFestivalRef = useRef(activeFestivalId);
+  useEffect(() => {
+    if (prevFestivalRef.current !== activeFestivalId) {
+      setPage(1);
+      setStatusCounts({ total: 0, DEPOSITED: 0, PENDING: 0, CANCELLED: 0 });
+      prevFestivalRef.current = activeFestivalId;
+    }
+  }, [activeFestivalId, setPage, setStatusCounts]);
 
   // Local UI
   const [localSearch, setLocalSearch] = useState(search);

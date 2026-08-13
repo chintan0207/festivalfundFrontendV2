@@ -17,7 +17,6 @@ import {
 import { AppButton } from "@/components/common/AppButton";
 import { AppInput } from "@/components/common/AppInput";
 import { AppTextArea } from "@/components/common/AppTextArea";
-import { AppSelect } from "@/components/common/AppSelect";
 import { AppBadge } from "@/components/common/AppBadge";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { CardListSkeleton } from "@/components/common/CardListSkeleton";
@@ -30,7 +29,6 @@ import { roleStyles } from "@/pages/settings/settingsRoleStyles";
 import { Badge } from "@/components/ui/badge";
 import {
   Building,
-  Sliders,
   CreditCard,
   Users,
   CheckCircle,
@@ -46,8 +44,6 @@ import {
   RefreshCw,
   Mail,
 } from "lucide-react";
-import { useFestivalApiStore } from "@/api/festival/festival.store";
-import { useFestivals } from "@/api/festival/useFestivals";
 import { getModuleTheme, gradientColors } from "@/theme/colors";
 import { cn, initials } from "@/lib/utils";
 import type { Invitation, User } from "@/types/Types";
@@ -97,12 +93,6 @@ export const SettingsPage = () => {
   }>({ open: false, mode: "invite", member: null });
   const [deleteTarget, setDeleteTarget] = useState<User | null>(null);
   const [revokeTarget, setRevokeTarget] = useState<Invitation | null>(null);
-
-  // Festival context (unchanged behavior)
-  const { data } = useFestivals();
-  const festivals = data?.festivals ?? [];
-  const { activeFestivalId, isAllFestivals, setActiveFestivalId, setActiveFestivalAll } =
-    useFestivalApiStore();
 
   useEffect(() => {
     if (profileOrg) {
@@ -223,7 +213,7 @@ export const SettingsPage = () => {
             )}
           </div>
           <p className="text-xs text-muted-foreground mt-1">
-            Configure organization profile, default active festival, and team access.
+            Configure organization profile, team access, and document numbering.
           </p>
         </div>
 
@@ -408,42 +398,6 @@ export const SettingsPage = () => {
                 </p>
               </div>
             </div>
-          </div>
-
-          {/* DEFAULT FESTIVAL SELECTION */}
-          <div className="p-5 rounded-2xl bg-card border border-border shadow-sm space-y-4">
-            <div className="flex items-center gap-2 border-b border-border pb-3">
-              <Sliders className={`h-5 w-5 ${theme.iconColor}`} />
-              <h2 className="text-base font-bold text-foreground">
-                Active Festival Context
-              </h2>
-            </div>
-
-            <div className="space-y-3 text-xs">
-              <AppSelect
-                id="activeSelect"
-                label="Select Default Active Festival"
-                value={isAllFestivals ? "ALL" : activeFestivalId || ""}
-                onChange={(val) => {
-                  if (val === "ALL") {
-                    setActiveFestivalAll();
-                  } else {
-                    setActiveFestivalId(val);
-                  }
-                }}
-                options={[
-                  { value: "ALL", label: "All Festivals (Combined Overview)" },
-                  ...festivals.map((f) => ({
-                    value: f._id,
-                    label: `${f.name} (${f.year}) — ${f.status}`,
-                  })),
-                ]}
-              />
-            </div>
-            <p className="text-2xs text-muted-foreground">
-              This setting updates the active festival context across the entire
-              application workspace.
-            </p>
           </div>
 
           {/* RECEIPT & VOUCHER SEQUENCES (read-only) */}

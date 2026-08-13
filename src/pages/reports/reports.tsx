@@ -1,6 +1,8 @@
-import { useState, useMemo, useCallback } from "react";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useState, useMemo } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { useFestivalStore } from "@/store/festivalStore";
+import { useFestivalApiStore } from "@/api/festival/festival.store";
 import { useFestivals } from "@/api/festival/useFestivals";
 import {
   useContributions,
@@ -70,12 +72,14 @@ export const ReportsPage = () => {
 
   // Local & Store fallback state
   const {
-    activeFestivalId,
     festivals: storeFestivals,
     contributions: storeContributions,
     expenses: storeExpenses,
     contributors: storeContributors,
   } = useFestivalStore();
+
+  // Single source of truth: active festival id lives in the shared API store (topbar selector)
+  const { activeFestivalId } = useFestivalApiStore();
 
   // Dynamic API queries & mutations
   const { data: apiFestivalsData } = useFestivals();
@@ -179,9 +183,8 @@ export const ReportsPage = () => {
   // Tab State
   const [activeTab, setActiveTab] = useState<ReportTab>("summary");
 
-  // Default Select One Specific Festival (Fall back to activeFestivalId or first festival in list)
-  const initialFestivalId = activeFestivalId || (storeFestivals && storeFestivals[0] ? storeFestivals[0].id : "");
-  const [festivalFilter, setFestivalFilter] = useState<string>(initialFestivalId);
+  // Default Select One Specific Festival (Topbar activeFestivalId is the single source of truth)
+  const effectiveFestivalId = activeFestivalId || "";
   const [statusFilter, setStatusFilter] = useState<string>("ALL");
   const [categoryFilter, setCategoryFilter] = useState<string>("ALL");
   const [contributorCategoryFilter, setContributorCategoryFilter] = useState<string>("ALL");
@@ -195,24 +198,17 @@ export const ReportsPage = () => {
 
   // Active Festival Object
   const activeFest = useMemo(() => {
-    return (
-      festivals.find((f) => f.id === festivalFilter) ||
-      festivals.find((f) => f.id === activeFestivalId) ||
-      festivals[0]
-    );
-  }, [festivals, festivalFilter, activeFestivalId]);
+    return festivals.find((f) => f.id === effectiveFestivalId) || festivals[0];
+  }, [festivals, effectiveFestivalId]);
 
-  const effectiveFestivalId = festivalFilter && festivalFilter !== "ALL" ? festivalFilter : (activeFest?.id || "");
-
-  const handleResetFilters = useCallback(() => {
-    setFestivalFilter(activeFest?.id || activeFestivalId || "");
+  const handleResetFilters = () => {
     setStatusFilter("ALL");
     setCategoryFilter("ALL");
     setContributorCategoryFilter("ALL");
     setPaymentModeFilter("ALL");
     setSearchQuery("");
     setDatePreset("ALL");
-  }, [activeFest, activeFestivalId]);
+  };
 
   const { data: apiStatsData } = useFestivalStats(activeFest?.id || "");
 
@@ -625,16 +621,6 @@ export const ReportsPage = () => {
   const quickFilters: QuickFilterGroup[] = useMemo(() => {
     return [
       {
-        id: "festival_select",
-        label: "Festival Context",
-        value: effectiveFestivalId,
-        options: [
-          // { value: "ALL", label: "All Festivals" }, // Removed "All Festivals" option as requested
-          ...festivals.map((f) => ({ value: f.id, label: `${f.name} (${f.year})` })),
-        ],
-        onChange: setFestivalFilter,
-      },
-      {
         id: "date_preset",
         label: "Date Range",
         value: datePreset,
@@ -662,7 +648,7 @@ export const ReportsPage = () => {
           ]
         : []),
     ];
-  }, [effectiveFestivalId, datePreset, paymentModeFilter, festivals, activeTab]);
+  }, [datePreset, paymentModeFilter, activeTab]);
 
   const sortOptions: SortOption[] = useMemo(() => {
     return [
