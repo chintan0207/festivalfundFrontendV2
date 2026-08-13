@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback, useRef } from "react";
-import { Plus } from "lucide-react";
+import { Plus, Download } from "lucide-react";
+import { toast } from "sonner";
 import { Outlet, useNavigate, useMatches } from "@tanstack/react-router";
 import { useContributionApiStore } from "@/api/contribution/contribution.store";
 import {
@@ -8,6 +9,7 @@ import {
   useDownloadContributionSlip,
 } from "@/api/contribution/useContributions";
 import { useFestivalApiStore } from "@/api/festival/festival.store";
+import { useReportPdfExport } from "@/api/report/useReports";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useIsOrgAdmin } from "@/hooks/useIsOrgAdmin";
 import { getModuleTheme } from "@/theme/colors";
@@ -58,7 +60,7 @@ export default function ContributionsPage() {
   const setStatusCounts = useContributionApiStore((s) => s.setStatusCounts);
 
   // Festivals (single source of truth is the top navbar selector)
-  const { activeFestivalId } = useFestivalApiStore();
+  const { activeFestivalId, activeFestival } = useFestivalApiStore();
   const festivalId = activeFestivalId || "";
 
   // Reset page-specific stale data when the selected festival changes
@@ -86,6 +88,34 @@ export default function ContributionsPage() {
 
   const dialogs = useContributionDialogs({ themeGradient: theme.gradient });
   const { openAdd } = dialogs;
+
+  const reportExport = useReportPdfExport();
+
+  const handleExport = useCallback(() => {
+    if (!activeFestivalId) {
+      toast.error("No festival selected. Please select a festival first.");
+      return;
+    }
+
+    const filenameSlug = (activeFestival?.name || "festival")
+      .replace(/[^a-z0-9-_]+/gi, "-")
+      .replace(/-+/g, "-")
+      .toLowerCase();
+
+    reportExport.mutate({
+      type: "contributions",
+      festivalId: activeFestivalId,
+      params: {
+        ...(search.trim() ? { search: search.trim() } : {}),
+        ...(status ? { status } : {}),
+        ...(category ? { category } : {}),
+        ...(type ? { type } : {}),
+        sortField,
+        sortOrder,
+      },
+      fileName: `contributions-${filenameSlug}.pdf`,
+    });
+  }, [activeFestivalId, activeFestival, search, status, category, type, sortField, sortOrder, reportExport]);
 
   // Open the add dialog from the mobile FAB
   useEffect(() => {
@@ -197,15 +227,26 @@ export default function ContributionsPage() {
         ]}
         badge={<AppBadge className={theme.badgeColor}>{total} total</AppBadge>}
         actions={
-          isAdmin && (
+          <>
             <AppButton
-              onClick={dialogs.openAdd}
-              leftIcon={<Plus className="h-4 w-4" />}
-              gradient={theme.gradient}
+              className={theme.iconColor}
+              variant="outline"
+              onClick={handleExport}
+              loading={reportExport.isPending}
+              leftIcon={<Download className="h-4 w-4" />}
             >
-              Add Contribution
+              Export PDF
             </AppButton>
-          )
+            {isAdmin && (
+              <AppButton
+                onClick={dialogs.openAdd}
+                leftIcon={<Plus className="h-4 w-4" />}
+                gradient={theme.gradient}
+              >
+                Add Contribution
+              </AppButton>
+            )}
+          </>
         }
       />
 

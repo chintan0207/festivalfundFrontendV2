@@ -16,6 +16,26 @@ export interface FestivalStatsResponse {
   categoryTotals?: Record<string, number>;
 }
 
+export type ReportExportParams = {
+  search?: string;
+  status?: string;
+  type?: string;
+  category?: string;
+  contributorCategory?: string;
+  paymentMode?: string;
+  dateRange?: string;
+  sortField?: string;
+  sortOrder?: "asc" | "desc";
+  isActive?: boolean;
+};
+
+export type ReportExportType =
+  | "summary"
+  | "contributions"
+  | "expenses"
+  | "contributors"
+  | "audit";
+
 export const ReportService = {
   /**
    * Fetch live calculated stats for a festival
@@ -26,34 +46,13 @@ export const ReportService = {
   },
 
   /**
-   * Download Complete Festival Report PDF blob
+   * Download a backend-generated PDF report for a Reports tab.
    */
-  downloadFestivalPdf: async (festivalId: string): Promise<Blob> => {
-    const res = await ApiClient.get(`/reports/festival/${festivalId}/pdf`, {
+  exportReport: async (type: ReportExportType, festivalId: string, params?: ReportExportParams): Promise<Blob> => {
+    const res = await ApiClient.get(`/reports/export/${type}/${festivalId}`, {
+      params,
       responseType: "blob",
     });
-    return res.data;
-  },
-
-  /**
-   * Download Contributions PDF blob
-   */
-  downloadContributionsPdf: async (festivalId?: string): Promise<Blob> => {
-    const res = await ApiClient.get("/reports/contributions/pdf", {
-      params: festivalId ? { festivalId } : {},
-      responseType: "blob",
-    });
-    return res.data;
-  },
-
-  /**
-   * Download Expenses PDF blob
-   */
-  downloadExpensesPdf: async (festivalId?: string): Promise<Blob> => {
-    const res = await ApiClient.get("/reports/expenses/pdf", {
-      params: festivalId ? { festivalId } : {},
-      responseType: "blob",
-    });
-    return res.data;
+    return res.data as Blob;
   },
 };

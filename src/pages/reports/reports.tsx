@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useMemo } from "react";
 import { useNavigate } from "@tanstack/react-router";
+import { toast } from "sonner";
 import { useFestivalStore } from "@/store/festivalStore";
 import { useFestivalApiStore } from "@/api/festival/festival.store";
 import { useFestivals } from "@/api/festival/useFestivals";
@@ -10,15 +11,15 @@ import {
   useDownloadContributionSlip,
 } from "@/api/contribution/useContributions";
 import { useExpenses, useUpdateExpenseStatus } from "@/api/expense/useExpenses";
-import { useContributors, useDownloadContributorsPdf } from "@/api/contributor/useContributors";
-import { useFestivalStats } from "@/api/report/useReports";
+import { useContributors } from "@/api/contributor/useContributors";
+import { useFestivalStats, useReportPdfExport } from "@/api/report/useReports";
+import type { ReportExportParams, ReportExportType } from "@/api/report/report.service";
 
 import { PageContainer } from "@/components/common/PageContainer";
 import { PageHeader } from "@/components/common/PageHeader";
 import { PageFilterToolbar, type InlinePillGroup, type QuickFilterGroup, type SortOption } from "@/components/common/PageFilterToolbar";
 import { AppButton } from "@/components/common/AppButton";
 import { getModuleTheme } from "@/theme/colors";
-import { cn } from "@/lib/utils";
 
 import {
   Download,
@@ -28,6 +29,7 @@ import {
   Users,
   BarChart3,
   ShieldCheck,
+  Loader2,
 } from "lucide-react";
 
 import { ReportKpiCards } from "./components/ReportKpiCards";
@@ -40,12 +42,6 @@ import { ContributionTable } from "@/pages/contributions/components/list/Contrib
 import { ExpenseTable } from "@/pages/expenses/components/list/ExpenseTable";
 import { ContributorTable } from "@/pages/contributors/components/list/ContributorTable";
 
-import {
-  generateFestivalReportPdf,
-  generateFilteredContributionsPdf,
-  generateFilteredExpensesPdf,
-} from "@/utils/pdfReportGenerator";
-import { exportToCsv } from "@/utils/excelCsvReportExporter";
 import type { ContributionListItem, ExpenseListItem, ExpenseStatus, Contributor } from "@/types/Types";
 
 type ReportTab =
@@ -68,7 +64,6 @@ interface TabItemConfig {
 
 export const ReportsPage = () => {
   const navigate = useNavigate();
-  const theme = getModuleTheme("reports");
 
   // Local & Store fallback state
   const {
@@ -86,7 +81,7 @@ export const ReportsPage = () => {
   const { data: apiContributionsData, isLoading: isLoadingContributions } = useContributions();
   const { data: apiExpensesData, isLoading: isLoadingExpenses } = useExpenses();
   const { data: apiContributorsData, isLoading: isLoadingContributors } = useContributors();
-  const downloadContributorsPdf = useDownloadContributorsPdf();
+  const reportExport = useReportPdfExport();
   const updateContributionStatus = useUpdateContributionStatus();
   const downloadContributionSlip = useDownloadContributionSlip();
   const updateExpenseStatus = useUpdateExpenseStatus();
@@ -462,77 +457,81 @@ export const ReportsPage = () => {
     setActiveTab("expenses");
   };
 
-  // 5. EXPORT HANDLERS
-  const handleExportPdf = () => {
-    generateFestivalReportPdf({
-      festival: activeFest,
-      contributions: filteredContributions,
-      expenses: filteredExpenses,
-      openingBalance,
-      totalCollected,
-      pendingAmount,
-      totalSpent,
-      currentBalance,
-      categoryTotals,
-      filteredDateLabel: searchQuery || statusFilter !== "ALL" || categoryFilter !== "ALL"
-        ? `Search: "${searchQuery}" | Status: ${statusFilter} | Category: ${categoryFilter}`
-        : undefined,
-    });
-  };
+  // 5. EXPORT HANDLERS (backend-driven PDF per Reports tab)
+  const exportParams: ReportExportParams | undefined = useMemo(() => {
+    const base: ReportExportParams = {
+      ...(searchQuery.trim() ? { search: searchQuery.trim() } : {}),
+      ...(datePreset !== "ALL" ? { dateRange: datePreset } : {}),
+      sortField,
+      sortOrder,
+    };
 
-  const handleExportFilteredContributionsPdf = () => {
-    generateFilteredContributionsPdf({
-      festivalName: activeFest?.name || "Festival",
-      items: filteredContributions,
-      filterLabel: searchQuery || statusFilter !== "ALL"
-        ? `Search: "${searchQuery}" | Status: ${statusFilter}`
-        : "All Contributions",
-      totalAmount: totalCollected,
-    });
-  };
-
-  const handleExportFilteredExpensesPdf = () => {
-    generateFilteredExpensesPdf({
-      festivalName: activeFest?.name || "Festival",
-      items: filteredExpenses,
-      filterLabel: searchQuery || categoryFilter !== "ALL"
-        ? `Search: "${searchQuery}" | Category: ${categoryFilter}`
-        : "All Expenses",
-      totalAmount: totalSpent,
-    });
-  };
-
-  const handleExportCsv = () => {
-    if (activeTab === "expenses") {
-      exportToCsv("Festival_Expenses_Report", filteredExpenses, [
-        { header: "Voucher #", accessor: (e) => e.voucherNo },
-        { header: "Title", accessor: (e) => e.title },
-        { header: "Category", accessor: (e) => e.category },
-        { header: "Paid To", accessor: (e) => e.paidTo },
-        { header: "Amount (INR)", accessor: (e) => e.amount },
-        { header: "Date", accessor: (e) => e.date },
-      ]);
-    } else if (activeTab === "contributions") {
-      exportToCsv("Festival_Contributions_Report", filteredContributions, [
-        { header: "Receipt #", accessor: (c) => c.receiptNo },
-        { header: "Contributor", accessor: (c) => c.contributorName },
-        { header: "Amount (INR)", accessor: (c) => c.amount },
-        { header: "Payment Mode", accessor: (c) => c.paymentMode || "CASH" },
-        { header: "Date", accessor: (c) => c.date },
-        { header: "Status", accessor: (c) => c.status },
-      ]);
-    } else {
-      exportToCsv("Festival_Financial_Summary", [
-        { Metric: "Opening Balance", Amount: openingBalance },
-        { Metric: "Total Collected", Amount: totalCollected },
-        { Metric: "Pending Pledges", Amount: pendingAmount },
-        { Metric: "Total Spent", Amount: totalSpent },
-        { Metric: "Current Net Balance", Amount: currentBalance },
-      ], [
-        { header: "Financial Metric", accessor: (row) => row.Metric },
-        { header: "Amount (INR)", accessor: (row) => row.Amount },
-      ]);
+    if (activeTab === "contributions") {
+      return {
+        ...base,
+        ...(statusFilter !== "ALL" ? { status: statusFilter } : {}),
+        ...(paymentModeFilter !== "ALL" ? { paymentMode: paymentModeFilter } : {}),
+      };
     }
+
+    if (activeTab === "expenses") {
+      return {
+        ...base,
+        ...(categoryFilter !== "ALL" ? { category: categoryFilter } : {}),
+        ...(paymentModeFilter !== "ALL" ? { paymentMode: paymentModeFilter } : {}),
+      };
+    }
+
+    if (activeTab === "contributors") {
+      return {
+        ...base,
+        ...(contributorCategoryFilter !== "ALL"
+          ? { contributorCategory: contributorCategoryFilter }
+          : {}),
+      };
+    }
+
+    return base;
+  }, [
+    activeTab,
+    searchQuery,
+    datePreset,
+    statusFilter,
+    categoryFilter,
+    paymentModeFilter,
+    contributorCategoryFilter,
+    sortField,
+    sortOrder,
+  ]);
+
+  const handleExportTab = () => {
+    if (!effectiveFestivalId) {
+      toast.error("No festival selected. Please select a festival first.");
+      return;
+    }
+
+    const type: ReportExportType =
+      activeTab === "summary"
+        ? "summary"
+        : activeTab === "contributions"
+          ? "contributions"
+          : activeTab === "expenses"
+            ? "expenses"
+            : activeTab === "contributors"
+              ? "contributors"
+              : "audit";
+
+    const filenameSlug = (activeFest?.name || "festival")
+      .replace(/[^a-z0-9-_]+/gi, "-")
+      .replace(/-+/g, "-")
+      .toLowerCase();
+
+    reportExport.mutate({
+      type,
+      festivalId: effectiveFestivalId,
+      params: exportParams,
+      fileName: `${type}-${filenameSlug}.pdf`,
+    });
   };
 
   const toggleSort = (field: SortField) => {
@@ -658,8 +657,9 @@ export const ReportsPage = () => {
     ];
   }, []);
 
-  const reportTabsConfig: TabItemConfig[] = useMemo(
-    () => [
+  const reportTabsConfig: TabItemConfig[] = useMemo(() => {
+    const auditGradient = getModuleTheme("audit-logs").gradient;
+    return [
       {
         id: "summary",
         label: "Festival Summary",
@@ -694,11 +694,10 @@ export const ReportsPage = () => {
         id: "audit",
         label: "Audit Log",
         icon: <ShieldCheck className="h-4 w-4" />,
-        activeClass: "bg-gradient-to-r from-slate-600 to-zinc-700 text-white border-slate-600 shadow-md font-extrabold scale-[1.02]",
+        activeClass: `${auditGradient} text-white border-slate-600 shadow-md font-extrabold scale-[1.02]`,
       },
-    ],
-    [filteredContributions.length, filteredExpenses.length]
-  );
+    ];
+  }, [filteredContributions.length, filteredExpenses.length]);
 
   return (
     <PageContainer variant="list">
@@ -711,28 +710,6 @@ export const ReportsPage = () => {
           { label: "Dashboard", to: "/dashboard" },
           { label: "Reports" },
         ]}
-        actions={
-          <div className="flex items-center gap-2">
-            <AppButton
-              variant="outline"
-              size="sm"
-              onClick={handleExportCsv}
-              leftIcon={<Download className="h-4 w-4 text-emerald-600" />}
-            >
-              Export CSV
-            </AppButton>
-
-            <AppButton
-              variant="default"
-              size="sm"
-              onClick={handleExportPdf}
-              leftIcon={<Download className="h-4 w-4" />}
-              className={cn("text-white font-bold shadow-md", theme.gradient)}
-            >
-              Export Complete Report (PDF)
-            </AppButton>
-          </div>
-        }
       />
 
       {/* 2. RESPONSIVE HORIZONTAL SCROLLABLE TAB NAVIGATION (6 CORE TABS WITH RICH MODULE THEME GRADIENTS) */}
@@ -797,6 +774,30 @@ export const ReportsPage = () => {
       {/* TAB 1: FESTIVAL SUMMARY VIEW */}
       {activeTab === "summary" && (
         <div className="space-y-6">
+          {/* SUMMARY HEADER WITH BACKEND-DRIVEN EXPORT */}
+          <div className="flex items-center justify-between flex-wrap gap-2">
+            <div className="flex items-center gap-2 text-sky-600">
+              <FileText className="h-5 w-5" />
+              <h2 className="text-base font-bold text-foreground">Festival Financial Summary</h2>
+            </div>
+
+            <AppButton
+              variant="outline"
+              size="sm"
+              onClick={handleExportTab}
+              disabled={reportExport.isPending}
+              leftIcon={
+                reportExport.isPending ? (
+                  <Loader2 className="h-3.5 w-3.5 animate-spin text-sky-600" />
+                ) : (
+                  <Download className="h-3.5 w-3.5 text-sky-600" />
+                )
+              }
+            >
+              {reportExport.isPending ? "Exporting..." : "Export PDF"}
+            </AppButton>
+          </div>
+
           {/* FESTIVAL DETAILS OVERVIEW CARD */}
           <FestivalDetailsCard
             festival={activeFest}
@@ -831,10 +832,17 @@ export const ReportsPage = () => {
               <AppButton
                 variant="outline"
                 size="sm"
-                onClick={handleExportFilteredContributionsPdf}
-                leftIcon={<Download className="h-3.5 w-3.5 text-purple-600" />}
+                onClick={handleExportTab}
+                disabled={reportExport.isPending}
+                leftIcon={
+                  reportExport.isPending ? (
+                    <Loader2 className="h-3.5 w-3.5 animate-spin text-purple-600" />
+                  ) : (
+                    <Download className="h-3.5 w-3.5 text-purple-600" />
+                  )
+                }
               >
-                Export Filtered PDF
+                {reportExport.isPending ? "Exporting..." : "Export PDF"}
               </AppButton>
             </div>
           </div>
@@ -871,10 +879,17 @@ export const ReportsPage = () => {
               <AppButton
                 variant="outline"
                 size="sm"
-                onClick={handleExportFilteredExpensesPdf}
-                leftIcon={<Download className="h-3.5 w-3.5 text-rose-600" />}
+                onClick={handleExportTab}
+                disabled={reportExport.isPending}
+                leftIcon={
+                  reportExport.isPending ? (
+                    <Loader2 className="h-3.5 w-3.5 animate-spin text-rose-600" />
+                  ) : (
+                    <Download className="h-3.5 w-3.5 text-rose-600" />
+                  )
+                }
               >
-                Export Filtered PDF
+                {reportExport.isPending ? "Exporting..." : "Export PDF"}
               </AppButton>
             </div>
           </div>
@@ -910,10 +925,17 @@ export const ReportsPage = () => {
               <AppButton
                 variant="outline"
                 size="sm"
-                onClick={() => downloadContributorsPdf.mutate()}
-                leftIcon={<Download className="h-3.5 w-3.5 text-emerald-600" />}
+                onClick={handleExportTab}
+                disabled={reportExport.isPending}
+                leftIcon={
+                  reportExport.isPending ? (
+                    <Loader2 className="h-3.5 w-3.5 animate-spin text-emerald-600" />
+                  ) : (
+                    <Download className="h-3.5 w-3.5 text-emerald-600" />
+                  )
+                }
               >
-                Export Contributors PDF
+                {reportExport.isPending ? "Exporting..." : "Export PDF"}
               </AppButton>
             </div>
           </div>
@@ -942,7 +964,38 @@ export const ReportsPage = () => {
 
       {/* TAB 6: AUDIT LOG TAB */}
       {activeTab === "audit" && (
-        <AuditLogTab contributions={filteredContributions} expenses={filteredExpenses} />
+        <div className="space-y-4">
+          <div className="flex items-center justify-between flex-wrap gap-2">
+            <div className="flex items-center gap-2 text-indigo-600">
+              <ShieldCheck className="h-5 w-5" />
+              <h2 className="text-base font-bold text-foreground">Chronological Audit Log</h2>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <span className="text-2xs text-muted-foreground font-semibold">
+                {filteredContributions.length + filteredExpenses.length} audit records
+              </span>
+
+              <AppButton
+                variant="outline"
+                size="sm"
+                onClick={handleExportTab}
+                disabled={reportExport.isPending}
+                leftIcon={
+                  reportExport.isPending ? (
+                    <Loader2 className="h-3.5 w-3.5 animate-spin text-indigo-600" />
+                  ) : (
+                    <Download className="h-3.5 w-3.5 text-indigo-600" />
+                  )
+                }
+              >
+                {reportExport.isPending ? "Exporting..." : "Export PDF"}
+              </AppButton>
+            </div>
+          </div>
+
+          <AuditLogTab contributions={filteredContributions} expenses={filteredExpenses} />
+        </div>
       )}
     </PageContainer>
   );

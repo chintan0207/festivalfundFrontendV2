@@ -1,13 +1,11 @@
 import { useEffect, useState, useCallback, useRef } from "react";
-import { Plus } from "lucide-react";
+import { Plus, Download } from "lucide-react";
+import { toast } from "sonner";
 import { useNavigate } from "@tanstack/react-router";
 import { useExpenseApiStore } from "@/api/expense/expense.store";
-import {
-  useExpenses,
-  useUpdateExpenseStatus,
-  useDownloadExpensesPdfByFestival,
-} from "@/api/expense/useExpenses";
+import { useExpenses, useUpdateExpenseStatus } from "@/api/expense/useExpenses";
 import { useFestivalApiStore } from "@/api/festival/festival.store";
+import { useReportPdfExport } from "@/api/report/useReports";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useIsOrgAdmin } from "@/hooks/useIsOrgAdmin";
 import { getModuleTheme } from "@/theme/colors";
@@ -59,7 +57,7 @@ export default function ExpensesPage() {
   const resetFilters = useExpenseApiStore((s) => s.resetFilters);
 
   // Festivals (single source of truth is the top navbar selector)
-  const { activeFestivalId } = useFestivalApiStore();
+  const { activeFestivalId, activeFestival } = useFestivalApiStore();
   const festivalId = activeFestivalId || "";
 
   // Reset page-specific stale data when the selected festival changes
@@ -127,7 +125,7 @@ export default function ExpensesPage() {
 
   // Status actions
   const updateStatusMutation = useUpdateExpenseStatus();
-  const downloadPdf = useDownloadExpensesPdfByFestival();
+  const reportExport = useReportPdfExport();
 
   const handleStatusChange = useCallback(
     (id: string, status: ExpenseStatus, reason?: string) => {
@@ -137,9 +135,29 @@ export default function ExpensesPage() {
   );
 
   const handleDownloadPdf = useCallback(() => {
-    if (!festivalId) return;
-    downloadPdf.mutate(festivalId);
-  }, [festivalId, downloadPdf]);
+    if (!festivalId) {
+      toast.error("No festival selected. Please select a festival first.");
+      return;
+    }
+
+    const filenameSlug = (activeFestival?.name || "festival")
+      .replace(/[^a-z0-9-_]+/gi, "-")
+      .replace(/-+/g, "-")
+      .toLowerCase();
+
+    reportExport.mutate({
+      type: "expenses",
+      festivalId,
+      params: {
+        ...(search.trim() ? { search: search.trim() } : {}),
+        ...(status ? { status } : {}),
+        ...(category ? { category } : {}),
+        sortField,
+        sortOrder,
+      },
+      fileName: `expenses-${filenameSlug}.pdf`,
+    });
+  }, [festivalId, activeFestival, search, status, category, sortField, sortOrder, reportExport]);
 
   // Handlers
   const handleSort = useCallback(
@@ -183,17 +201,18 @@ export default function ExpensesPage() {
         ]}
         badge={<AppBadge className={theme.badgeColor}>{total} total</AppBadge>}
         actions={
-          isAdmin && (
-            <>
-              {festivalId && (
-                <AppButton
-                  variant="outline"
-                  onClick={handleDownloadPdf}
-                  loading={downloadPdf.isPending}
-                >
-                  Export PDF
-                </AppButton>
-              )}
+          <>
+            {festivalId && (
+              <AppButton
+                variant="outline"
+                onClick={handleDownloadPdf}
+                loading={reportExport.isPending}
+                leftIcon={<Download className="h-4 w-4" />}
+              >
+                Export PDF
+              </AppButton>
+            )}
+            {isAdmin && (
               <AppButton
                 onClick={dialogs.openAdd}
                 leftIcon={<Plus className="h-4 w-4" />}
@@ -201,8 +220,8 @@ export default function ExpensesPage() {
               >
                 Add Expense
               </AppButton>
-            </>
-          )
+            )}
+          </>
         }
       />
 
