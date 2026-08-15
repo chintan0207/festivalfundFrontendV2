@@ -25,6 +25,7 @@ import { Route as MarketingPricingRouteImport } from './routes/_marketing/pricin
 import { Route as MarketingHomeRouteImport } from './routes/_marketing/home'
 import { Route as MarketingFeaturesRouteImport } from './routes/_marketing/features'
 import { Route as MarketingCookiePolicyRouteImport } from './routes/_marketing/cookie-policy'
+import { Route as MarketingContributorLookupRouteImport } from './routes/_marketing/contributor-lookup'
 import { Route as MarketingContactRouteImport } from './routes/_marketing/contact'
 import { Route as MarketingAppRouteImport } from './routes/_marketing/app'
 import { Route as MarketingAboutRouteImport } from './routes/_marketing/about'
@@ -122,6 +123,12 @@ const MarketingCookiePolicyRoute = MarketingCookiePolicyRouteImport.update({
   path: '/cookie-policy',
   getParentRoute: () => MarketingRouteRoute,
 } as any)
+const MarketingContributorLookupRoute =
+  MarketingContributorLookupRouteImport.update({
+    id: '/contributor-lookup',
+    path: '/contributor-lookup',
+    getParentRoute: () => MarketingRouteRoute,
+  } as any)
 const MarketingContactRoute = MarketingContactRouteImport.update({
   id: '/contact',
   path: '/contact',
@@ -231,6 +238,7 @@ export interface FileRoutesByFullPath {
   '/about': typeof MarketingAboutRoute
   '/app': typeof MarketingAppRoute
   '/contact': typeof MarketingContactRoute
+  '/contributor-lookup': typeof MarketingContributorLookupRoute
   '/cookie-policy': typeof MarketingCookiePolicyRoute
   '/features': typeof MarketingFeaturesRoute
   '/home': typeof MarketingHomeRoute
@@ -264,6 +272,7 @@ export interface FileRoutesByTo {
   '/about': typeof MarketingAboutRoute
   '/app': typeof MarketingAppRoute
   '/contact': typeof MarketingContactRoute
+  '/contributor-lookup': typeof MarketingContributorLookupRoute
   '/cookie-policy': typeof MarketingCookiePolicyRoute
   '/features': typeof MarketingFeaturesRoute
   '/home': typeof MarketingHomeRoute
@@ -300,6 +309,7 @@ export interface FileRoutesById {
   '/_marketing/about': typeof MarketingAboutRoute
   '/_marketing/app': typeof MarketingAppRoute
   '/_marketing/contact': typeof MarketingContactRoute
+  '/_marketing/contributor-lookup': typeof MarketingContributorLookupRoute
   '/_marketing/cookie-policy': typeof MarketingCookiePolicyRoute
   '/_marketing/features': typeof MarketingFeaturesRoute
   '/_marketing/home': typeof MarketingHomeRoute
@@ -337,6 +347,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/app'
     | '/contact'
+    | '/contributor-lookup'
     | '/cookie-policy'
     | '/features'
     | '/home'
@@ -370,6 +381,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/app'
     | '/contact'
+    | '/contributor-lookup'
     | '/cookie-policy'
     | '/features'
     | '/home'
@@ -405,6 +417,7 @@ export interface FileRouteTypes {
     | '/_marketing/about'
     | '/_marketing/app'
     | '/_marketing/contact'
+    | '/_marketing/contributor-lookup'
     | '/_marketing/cookie-policy'
     | '/_marketing/features'
     | '/_marketing/home'
@@ -548,6 +561,13 @@ declare module '@tanstack/react-router' {
       path: '/cookie-policy'
       fullPath: '/cookie-policy'
       preLoaderRoute: typeof MarketingCookiePolicyRouteImport
+      parentRoute: typeof MarketingRouteRoute
+    }
+    '/_marketing/contributor-lookup': {
+      id: '/_marketing/contributor-lookup'
+      path: '/contributor-lookup'
+      fullPath: '/contributor-lookup'
+      preLoaderRoute: typeof MarketingContributorLookupRouteImport
       parentRoute: typeof MarketingRouteRoute
     }
     '/_marketing/contact': {
@@ -703,6 +723,7 @@ interface MarketingRouteRouteChildren {
   MarketingAboutRoute: typeof MarketingAboutRoute
   MarketingAppRoute: typeof MarketingAppRoute
   MarketingContactRoute: typeof MarketingContactRoute
+  MarketingContributorLookupRoute: typeof MarketingContributorLookupRoute
   MarketingCookiePolicyRoute: typeof MarketingCookiePolicyRoute
   MarketingFeaturesRoute: typeof MarketingFeaturesRoute
   MarketingHomeRoute: typeof MarketingHomeRoute
@@ -718,6 +739,7 @@ const MarketingRouteRouteChildren: MarketingRouteRouteChildren = {
   MarketingAboutRoute: MarketingAboutRoute,
   MarketingAppRoute: MarketingAppRoute,
   MarketingContactRoute: MarketingContactRoute,
+  MarketingContributorLookupRoute: MarketingContributorLookupRoute,
   MarketingCookiePolicyRoute: MarketingCookiePolicyRoute,
   MarketingFeaturesRoute: MarketingFeaturesRoute,
   MarketingHomeRoute: MarketingHomeRoute,

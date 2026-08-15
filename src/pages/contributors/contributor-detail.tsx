@@ -10,6 +10,7 @@ import { PageHeader } from "@/components/common/PageHeader";
 import { PageContainer } from "@/components/common/PageContainer";
 import { DetailPageSkeleton } from "@/components/common/DetailPageSkeleton";
 import { EmptyState } from "@/components/common/EmptyState";
+import { PublicVerificationShare } from "@/components/common/PublicVerificationShare";
 import { contributionTotal } from "@/lib/contributionFormat";
 import { ContributorDetailHeader } from "./components/detail/ContributorDetailHeader";
 import { ContributionsSectionHeading } from "./components/detail/ContributionsSectionHeading";
@@ -100,26 +101,32 @@ export default function ContributorDetailPage() {
           { label: contributor.name },
         ]}
         actions={
-          isAdmin && (
-            <>
-              <AppButton
-                variant="outline"
-                leftIcon={<Pencil className="h-3.5 w-3.5" />}
-                className="h-8 text-xs rounded-full"
-                onClick={() => dialogs.openEdit(contributor)}
-              >
-                <span className="hidden sm:inline">Edit</span>
-              </AppButton>
-              <AppButton
-                variant="outline"
-                leftIcon={<Trash2 className="h-3.5 w-3.5" />}
-                className="h-8 text-xs rounded-full text-rose-600 border-rose-200 hover:bg-rose-50 dark:border-rose-800 dark:hover:bg-rose-950"
-                onClick={() => dialogs.openDelete(contributor._id)}
-              >
-                <span className="hidden sm:inline">Delete</span>
-              </AppButton>
-            </>
-          )
+          <>
+            <PublicVerificationShare
+              lookupKey={contributor.globalContributorKey}
+              phone={contributor.phoneNumber}
+            />
+            {isAdmin && (
+              <>
+                <AppButton
+                  variant="outline"
+                  leftIcon={<Pencil className="h-3.5 w-3.5" />}
+                  className="h-8 text-xs rounded-full"
+                  onClick={() => dialogs.openEdit(contributor)}
+                >
+                  <span className="hidden sm:inline">Edit</span>
+                </AppButton>
+                <AppButton
+                  variant="outline"
+                  leftIcon={<Trash2 className="h-3.5 w-3.5" />}
+                  className="h-8 text-xs rounded-full text-rose-600 border-rose-200 hover:bg-rose-50 dark:border-rose-800 dark:hover:bg-rose-950"
+                  onClick={() => dialogs.openDelete(contributor._id)}
+                >
+                  <span className="hidden sm:inline">Delete</span>
+                </AppButton>
+              </>
+            )}
+          </>
         }
       />
 
