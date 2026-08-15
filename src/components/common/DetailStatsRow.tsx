@@ -53,7 +53,7 @@ function DetailStatView({
       </span>
       <span
         className={cn(
-          "text-xs sm:text-sm font-bold text-foreground mt-0.5",
+          "text-xs sm:text-sm font-bold text-foreground mt-0.5 min-w-0 break-words [overflow-wrap:anywhere] leading-snug",
           valueClassName,
         )}
       >

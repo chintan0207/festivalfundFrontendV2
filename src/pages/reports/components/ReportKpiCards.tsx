@@ -4,7 +4,6 @@ import {
   TrendingDown,
   Activity,
   Clock,
-  Receipt,
   Users,
   CheckCircle,
   XCircle,
@@ -20,7 +19,6 @@ interface ReportKpiCardsProps {
   totalSpent: number;
   currentBalance: number;
   pendingAmount: number;
-  transactionCount: number;
   contributorCount: number;
   itemContributionsCount?: number;
   pendingExpenseAmount?: number;
@@ -39,7 +37,6 @@ export const ReportKpiCards = ({
   totalSpent,
   currentBalance,
   pendingAmount,
-  transactionCount,
   contributorCount,
   itemContributionsCount = 0,
   pendingExpenseAmount = 0,
@@ -197,19 +194,11 @@ export const ReportKpiCards = ({
         subtext="Uncollected Pledges"
       />
       <KPICard
-        label="Txn Count"
-        value={transactionCount}
-        accent="blue"
-        icon={<Receipt className="h-4 w-4" />}
-        subtext="Receipts & Vouchers"
-      />
-      <KPICard
         label="Contributors"
         value={contributorCount}
         accent="emerald"
         icon={<Users className="h-4 w-4" />}
         subtext="Active Donors"
-        className="col-span-2 sm:col-span-1"
       />
     </div>
   );

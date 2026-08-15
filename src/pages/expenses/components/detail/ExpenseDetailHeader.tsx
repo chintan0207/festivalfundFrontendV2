@@ -30,7 +30,7 @@ export function ExpenseDetailHeader({
     <div className="rounded-2xl bg-card border border-border/80 shadow-sm overflow-hidden">
       <div className="p-3.5 sm:p-6 space-y-3 sm:space-y-4">
         <div className="flex items-start justify-between gap-3">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 min-w-0 flex-1">
             <div
               className={cn(
                 "h-10 w-10 sm:h-12 sm:w-12 rounded-xl flex items-center justify-center text-white shrink-0 shadow-md",
@@ -43,11 +43,11 @@ export function ExpenseDetailHeader({
                 <Building2 className="h-5 w-5 sm:h-6 sm:w-6" />
               )}
             </div>
-            <div>
-              <h1 className={`font-mono font-bold text-sm sm:text-lg ${theme.iconColor}`}>
+            <div className="min-w-0">
+              <h1 className={`font-mono font-bold text-sm sm:text-lg ${theme.iconColor} truncate`}>
                 {expense.expenseCode}
               </h1>
-              <p className="text-[11px] sm:text-xs text-muted-foreground mt-0.5">
+              <p className="text-[11px] sm:text-xs text-muted-foreground mt-0.5 truncate">
                 {expenseCategoryLabel(expense.category)} expense
               </p>
             </div>

@@ -135,8 +135,8 @@ function ExpenseCard({
               </div>
             </div>
 
-            <div className="flex items-center gap-1 shrink-0">
-              <p className="text-sm font-extrabold text-foreground whitespace-nowrap tabular-nums">
+            <div className="flex items-center gap-1 min-w-0">
+              <p className="text-sm font-extrabold text-foreground whitespace-nowrap tabular-nums truncate max-w-[45%]">
                 {amount}
               </p>
               <div onClick={(e) => e.stopPropagation()}>{statusSelect}</div>

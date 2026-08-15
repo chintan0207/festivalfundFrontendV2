@@ -366,7 +366,7 @@ export function PageFilterToolbar({
 
               <PopoverContent
                 align="end"
-                className="w-80 p-3.5 rounded-2xl border border-border/80 bg-popover/95 backdrop-blur-md shadow-2xl space-y-3"
+                className="w-80 max-w-[calc(100vw-1rem)] p-3.5 rounded-2xl border border-border/80 bg-popover/95 backdrop-blur-md shadow-2xl space-y-3"
               >
                 <div className="flex items-center justify-between gap-2 pb-2 border-b border-border/60">
                   <h4 className="text-xs font-bold text-foreground tracking-tight">Filters</h4>

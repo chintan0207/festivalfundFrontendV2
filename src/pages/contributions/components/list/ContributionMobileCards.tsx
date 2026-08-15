@@ -160,8 +160,8 @@ function ContributionCard({
                 </p>
               </div>
             </div>
-            <div className="flex items-center gap-1">
-              <p className="text-sm font-extrabold text-foreground whitespace-nowrap text-center">
+            <div className="flex items-center gap-1 min-w-0">
+              <p className="text-sm font-extrabold text-foreground whitespace-nowrap truncate text-center max-w-[45%]">
                 {valueLabel}
               </p>
 
