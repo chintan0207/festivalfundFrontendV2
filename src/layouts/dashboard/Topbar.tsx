@@ -18,6 +18,7 @@ import {
   Calendar,
   Check,
 } from "lucide-react";
+import { NotificationBell } from "./NotificationBell";
 
 const Topbar = () => {
   const { user, organization } = useAuthStore();
@@ -93,8 +94,11 @@ const Topbar = () => {
         )}
       </div>
 
-      {/* RIGHT ACTION ITEMS: THEME TOGGLE & PROFILE */}
+      {/* RIGHT ACTION ITEMS: NOTIFICATIONS, THEME TOGGLE & PROFILE */}
       <div className="flex items-center gap-2">
+        {/* Notifications bell driven by recent festival activity */}
+        <NotificationBell />
+
         {/* Theme Toggle Button */}
         <ThemeToggle />
 
