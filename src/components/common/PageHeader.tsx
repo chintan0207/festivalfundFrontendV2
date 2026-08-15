@@ -115,7 +115,10 @@ export function PageHeader({
         </div>
 
         {actions && (
-          <div data-fab-observe className="flex items-center gap-2 flex-wrap sm:flex-nowrap w-full sm:w-auto justify-start sm:justify-end shrink-0">
+          <div
+            data-fab-observe
+            className="flex items-center gap-2 flex-wrap min-w-0 w-full sm:w-auto justify-start sm:justify-end"
+          >
             {actions}
           </div>
         )}

@@ -1,13 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { ContributionService, type ContributionQueryParams } from "./contribution.service";
+import {
+  ContributionService,
+  type ContributionQueryParams,
+} from "./contribution.service";
 import { useContributionApiStore } from "./contribution.store";
 import type { CreateContributionPayload, UpdateContributionPayload } from "@/types/Types";
 
 export const CONTRIBUTION_QUERY_KEYS = {
   all: (params?: ContributionQueryParams) =>
-    params ? ["contributions", params] as const : ["contributions"] as const,
+    params ? (["contributions", params] as const) : (["contributions"] as const),
   detail: (id: string) => ["contribution", id] as const,
 };
 
@@ -61,6 +64,7 @@ export const useCreateContribution = () => {
     onSuccess: (res) => {
       queryClient.invalidateQueries({ queryKey: ["contributions"] });
       queryClient.invalidateQueries({ queryKey: ["festivals"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard"] });
       toast.success(res.message || "Contribution created successfully");
     },
     onError: (error: any) => {
@@ -73,17 +77,13 @@ export const useUpdateContribution = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({
-      id,
-      payload,
-    }: {
-      id: string;
-      payload: UpdateContributionPayload;
-    }) => ContributionService.updateContribution(id, payload),
+    mutationFn: ({ id, payload }: { id: string; payload: UpdateContributionPayload }) =>
+      ContributionService.updateContribution(id, payload),
     onSuccess: (res, { id }) => {
       queryClient.invalidateQueries({ queryKey: ["contributions"] });
       queryClient.invalidateQueries({ queryKey: CONTRIBUTION_QUERY_KEYS.detail(id) });
       queryClient.invalidateQueries({ queryKey: ["festivals"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard"] });
       toast.success(res.message || "Contribution updated successfully");
     },
     onError: (error: any) => {
@@ -96,16 +96,26 @@ export const useUpdateContributionStatus = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, status, reason }: { id: string; status: string; reason?: string }) =>
-      ContributionService.updateContributionStatus(id, status, reason),
+    mutationFn: ({
+      id,
+      status,
+      reason,
+    }: {
+      id: string;
+      status: string;
+      reason?: string;
+    }) => ContributionService.updateContributionStatus(id, status, reason),
     onSuccess: (res, { id }) => {
       queryClient.invalidateQueries({ queryKey: ["contributions"] });
       queryClient.invalidateQueries({ queryKey: CONTRIBUTION_QUERY_KEYS.detail(id) });
       queryClient.invalidateQueries({ queryKey: ["festivals"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard"] });
       toast.success(res.message || "Contribution status updated successfully");
     },
     onError: (error: any) => {
-      toast.error(error?.response?.data?.message || "Failed to update contribution status");
+      toast.error(
+        error?.response?.data?.message || "Failed to update contribution status",
+      );
     },
   });
 };
@@ -119,6 +129,7 @@ export const useDeleteContribution = () => {
       queryClient.invalidateQueries({ queryKey: ["contributions"] });
       queryClient.invalidateQueries({ queryKey: CONTRIBUTION_QUERY_KEYS.detail(id) });
       queryClient.invalidateQueries({ queryKey: ["festivals"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard"] });
       toast.success(res.message || "Contribution deleted successfully");
     },
     onError: (error: any) => {

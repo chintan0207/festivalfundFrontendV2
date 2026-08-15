@@ -1,156 +1,115 @@
 import { useFestivalApiStore } from "@/api/festival/festival.store";
 import { useFestivals } from "@/api/festival/useFestivals";
-import {
-  TrendingUp,
-  TrendingDown,
-  Activity,
-  Clock,
-  Banknote,
-  Calendar,
-  Zap,
-} from "lucide-react";
+import { useDashboard } from "@/api/dashboard/useDashboard";
+import { Link } from "@tanstack/react-router";
+import { CalendarPlus } from "lucide-react";
+import { PageContainer } from "@/components/common/PageContainer";
+import { PageHeader } from "@/components/common/PageHeader";
+import { AppBadge } from "@/components/common/AppBadge";
+import { AppButton } from "@/components/common/AppButton";
+import { EmptyState } from "@/components/common/EmptyState";
+import { getModuleTheme } from "@/theme/colors";
+import { DashboardQuickActions } from "./components/DashboardQuickActions";
+import { DashboardSkeleton } from "./components/DashboardSkeleton";
+import { DashboardError } from "./components/DashboardError";
+import { DashboardKpis } from "./components/DashboardKpis";
+import { DashboardOverview } from "./components/DashboardOverview";
+import { DashboardPaymentChannels } from "./components/DashboardPaymentChannels";
+import { DashboardContributorCategories } from "./components/DashboardContributorCategories";
+import { DashboardFestivalSummary } from "./components/DashboardFestivalSummary";
+import { DashboardRecentContributions } from "./components/DashboardRecentContributions";
+import { DashboardRecentExpenses } from "./components/DashboardRecentExpenses";
+import { DashboardActivityFeed } from "./components/DashboardActivityFeed";
+import { DashboardCollectionStatus } from "./components/DashboardCollectionStatus";
 
 const Dashboard = () => {
+  const theme = getModuleTheme("dashboard");
   const { activeFestivalId } = useFestivalApiStore();
-  const { data } = useFestivals();
-  const festivals = (data?.festivals ?? []).filter((f) => !f.isDeleted);
 
-  const activeFest =
-    festivals.find((f) => f._id === activeFestivalId) ?? festivals[0] ?? null;
+  // Resolve a valid festival: the top navbar is the single source of truth,
+  // but it auto-falls-back to the first festival. Guard against a stale id so
+  // the dashboard never queries a deleted festival.
+  const { data: festivalsData } = useFestivals();
+  const festivals = (festivalsData?.festivals ?? []).filter((f) => !f.isDeleted);
+  const resolvedFestivalId =
+    activeFestivalId && festivals.some((f) => f._id === activeFestivalId)
+      ? activeFestivalId
+      : festivals[0]?._id || "";
 
-  // Derived stats based on backend data structure
-  const stats = activeFest?.stats;
-  const openingBalance = stats?.openingBalance ?? 0;
-  const totalCollected = stats?.totalCollected ?? 0;
-  const totalSpent = stats?.totalExpenses ?? 0;
-  const currentBalance =
-    stats?.currentBalance ?? openingBalance + totalCollected - totalSpent;
-  const pendingAmount = stats?.pendingAmount ?? 0;
+  const { data, isLoading, isError, error, refetch } = useDashboard(resolvedFestivalId);
+
+  const title = data
+    ? `${data.festival.name} ${data.festival.year}`
+    : "Festival Dashboard";
 
   return (
-    <div className="space-y-6 pb-12">
-      {/* HEADER WITH FESTIVAL SELECTOR */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight text-foreground">
-            Festival Dashboard
-          </h1>
-          <p className="text-xs text-muted-foreground mt-0.5">
-            Overview of contributions and expenses
-          </p>
-        </div>
+    <PageContainer variant="list">
+      <PageHeader
+        module="dashboard"
+        title={title}
+        description="Live overview of collections, expenses, contributors and recent activity."
+        badge={
+          data ? (
+            <AppBadge size="sm" className={theme.badgeColor}>
+              {data.festival.status}
+            </AppBadge>
+          ) : undefined
+        }
+        actions={<DashboardQuickActions />}
+      />
 
-        {/* ACTIVE FESTIVAL CHIP (selection lives in the top navbar) */}
-        <div className="flex items-center gap-3 px-4 py-2.5 rounded-2xl bg-card border border-border/80 shadow-xs">
-          <div className="h-9 w-9 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold shrink-0 shadow-xs">
-            <Calendar className="h-5 w-5" />
-          </div>
-          <div className="text-left min-w-[130px]">
-            <p className="text-xs font-bold text-foreground truncate">
-              {activeFest?.name ?? "Select Festival"}
-            </p>
-            <p className="text-2xs text-muted-foreground font-medium">
-              {activeFest?.year ?? ""}
-            </p>
-          </div>
+      {!resolvedFestivalId ? (
+        <div className="rounded-2xl bg-card border border-border/80 shadow-sm">
+          <EmptyState
+            icon={CalendarPlus}
+            title="No festival created yet"
+            description="Create your first festival to start tracking contributions and expenses."
+            action={
+              <Link to="/dashboard/festivals/new">
+                <AppButton leftIcon={<CalendarPlus className="h-4 w-4" />}>
+                  Create Festival
+                </AppButton>
+              </Link>
+            }
+          />
         </div>
-      </div>
+      ) : isLoading || !data ? (
+        <DashboardSkeleton />
+      ) : isError ? (
+        <DashboardError
+          message={error instanceof Error ? error.message : undefined}
+          onRetry={refetch}
+        />
+      ) : (
+        <div className="space-y-4 sm:space-y-5">
+          {/* KPI row */}
+          <DashboardKpis data={data} />
 
-      {/* 4 PRIMARY STAT CARDS */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-        {/* 1. Opening Balance */}
-        <div className="p-5 rounded-2xl bg-card border border-border/80 shadow-xs flex items-center gap-4 hover:shadow-md transition-shadow">
-          <div className="h-12 w-12 rounded-2xl bg-blue-600 text-white flex items-center justify-center shrink-0 shadow-sm font-bold text-xl">
-            ₹
+          {/* Row 2: festival summary / payment channels / contributor categories */}
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4 items-stretch">
+            <DashboardFestivalSummary data={data} />
+            <DashboardPaymentChannels data={data} />
+            <DashboardContributorCategories data={data} />
           </div>
-          <div>
-            <p className="text-2xs font-medium text-muted-foreground">Opening Balance</p>
-            <p className="text-xl font-extrabold text-foreground tracking-tight mt-0.5">
-              ₹{openingBalance.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
-            </p>
-            <p className="text-2xs text-muted-foreground">Initial funds</p>
-          </div>
-        </div>
 
-        {/* 2. Total Collected */}
-        <div className="p-5 rounded-2xl bg-card border border-border/80 shadow-xs flex items-center gap-4 hover:shadow-md transition-shadow">
-          <div className="h-12 w-12 rounded-2xl bg-emerald-500 text-white flex items-center justify-center shrink-0 shadow-sm font-bold text-xl">
-            <TrendingUp className="h-6 w-6" />
-          </div>
-          <div>
-            <p className="text-2xs font-medium text-muted-foreground">Total Collected</p>
-            <p className="text-xl font-extrabold text-foreground tracking-tight mt-0.5">
-              ₹{totalCollected.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
-            </p>
-            <p className="text-2xs text-muted-foreground">From contributions</p>
-          </div>
-        </div>
+          {/* Financial overview — full width */}
+          <DashboardOverview data={data} />
 
-        {/* 3. Total Spent */}
-        <div className="p-5 rounded-2xl bg-card border border-border/80 shadow-xs flex items-center gap-4 hover:shadow-md transition-shadow">
-          <div className="h-12 w-12 rounded-2xl bg-rose-500 text-white flex items-center justify-center shrink-0 shadow-sm font-bold text-xl">
-            <TrendingDown className="h-6 w-6" />
-          </div>
-          <div>
-            <p className="text-2xs font-medium text-muted-foreground">Total Spent</p>
-            <p className="text-xl font-extrabold text-foreground tracking-tight mt-0.5">
-              ₹{totalSpent.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
-            </p>
-            <p className="text-2xs text-muted-foreground">On expenses</p>
-          </div>
-        </div>
-
-        {/* 4. Current Balance */}
-        <div className="p-5 rounded-2xl bg-card border border-border/80 shadow-xs flex items-center gap-4 hover:shadow-md transition-shadow">
-          <div className="h-12 w-12 rounded-2xl bg-purple-600 text-white flex items-center justify-center shrink-0 shadow-sm font-bold text-xl">
-            <Activity className="h-6 w-6" />
-          </div>
-          <div>
-            <p className="text-2xs font-medium text-muted-foreground">Current Balance</p>
-            <p className="text-xl font-extrabold text-foreground tracking-tight mt-0.5">
-              ₹{currentBalance.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
-            </p>
-            <p className="text-2xs text-muted-foreground">Available funds</p>
-          </div>
-        </div>
-      </div>
-
-      {/* QUICK OVERVIEW CARD */}
-      <div className="p-6 rounded-2xl bg-card border border-border/80 shadow-xs space-y-4">
-        <div className="flex items-center gap-2">
-          <Zap className="h-4 w-4 text-blue-600" />
-          <h2 className="text-base font-bold text-foreground">Quick Overview</h2>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {/* Pending Amount */}
-          <div className="p-4 rounded-xl bg-muted/40 border border-border/60 flex items-center gap-3">
-            <div className="h-10 w-10 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center shrink-0">
-              <Clock className="h-5 w-5" />
+          {/* Lower grid: 40% stacked cards (left) / 60% activity (right), equal height.
+              On mobile, order utilities put Recent Activity on top. */}
+          <div className="grid grid-cols-1 md:grid-cols-[minmax(0,45fr)_minmax(0,55fr)] lg:grid-cols-[minmax(0,40fr)_minmax(0,60fr)] gap-3 sm:gap-4 items-stretch">
+            <div className="order-2 md:order-1 grid gap-3 sm:gap-4 min-h-0">
+              <DashboardRecentExpenses data={data} limit={4} />
+              <DashboardRecentContributions data={data} limit={4} />
+              <DashboardCollectionStatus data={data} />
             </div>
-            <div>
-              <p className="text-base font-bold text-foreground">
-                ₹{pendingAmount.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
-              </p>
-              <p className="text-2xs text-muted-foreground font-medium">Pending Amount</p>
-            </div>
-          </div>
-
-          {/* Total Amount */}
-          <div className="p-4 rounded-xl bg-muted/40 border border-border/60 flex items-center gap-3">
-            <div className="h-10 w-10 rounded-xl bg-orange-500/10 text-orange-600 flex items-center justify-center shrink-0">
-              <Banknote className="h-5 w-5" />
-            </div>
-            <div>
-              <p className="text-base font-bold text-foreground">
-                ₹{totalCollected.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
-              </p>
-              <p className="text-2xs text-muted-foreground font-medium">Total Amount</p>
+            <div className="order-1 md:order-2 min-h-0">
+              <DashboardActivityFeed data={data} />
             </div>
           </div>
         </div>
-      </div>
-    </div>
+      )}
+    </PageContainer>
   );
 };
 

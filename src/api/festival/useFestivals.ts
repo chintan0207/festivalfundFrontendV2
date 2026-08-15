@@ -1,10 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import {
-  FestivalService,
-  type FestivalQueryParams,
-} from "./festival.service";
+import { FestivalService, type FestivalQueryParams } from "./festival.service";
 import { useFestivalApiStore } from "./festival.store";
 import type { CreateFestivalPayload, UpdateFestivalPayload } from "@/types/Types";
 
@@ -63,9 +60,11 @@ export const useCreateFestival = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (payload: CreateFestivalPayload) => FestivalService.createFestival(payload),
+    mutationFn: (payload: CreateFestivalPayload) =>
+      FestivalService.createFestival(payload),
     onSuccess: (res) => {
       queryClient.invalidateQueries({ queryKey: FESTIVAL_QUERY_KEYS.all() });
+      queryClient.invalidateQueries({ queryKey: ["dashboard"] });
       toast.success(res.message || "Festival created successfully");
     },
     onError: (error: any) => {
@@ -88,6 +87,7 @@ export const useUpdateFestival = () => {
     onSuccess: (res, { festivalId }) => {
       queryClient.invalidateQueries({ queryKey: FESTIVAL_QUERY_KEYS.all() });
       queryClient.invalidateQueries({ queryKey: FESTIVAL_QUERY_KEYS.detail(festivalId) });
+      queryClient.invalidateQueries({ queryKey: ["dashboard"] });
       toast.success(res.message || "Festival updated successfully");
     },
     onError: (error: any) => {
@@ -109,8 +109,11 @@ export const useSoftDeleteFestival = () => {
       const festivalId = typeof param === "string" ? param : param.festivalId;
       queryClient.invalidateQueries({ queryKey: FESTIVAL_QUERY_KEYS.all() });
       if (festivalId) {
-        queryClient.invalidateQueries({ queryKey: FESTIVAL_QUERY_KEYS.detail(festivalId) });
+        queryClient.invalidateQueries({
+          queryKey: FESTIVAL_QUERY_KEYS.detail(festivalId),
+        });
       }
+      queryClient.invalidateQueries({ queryKey: ["dashboard"] });
       toast.success(res.message || "Festival deleted successfully");
     },
     onError: (error: any) => {
@@ -132,8 +135,11 @@ export const useRestoreFestival = () => {
       const festivalId = typeof param === "string" ? param : param.festivalId;
       queryClient.invalidateQueries({ queryKey: FESTIVAL_QUERY_KEYS.all() });
       if (festivalId) {
-        queryClient.invalidateQueries({ queryKey: FESTIVAL_QUERY_KEYS.detail(festivalId) });
+        queryClient.invalidateQueries({
+          queryKey: FESTIVAL_QUERY_KEYS.detail(festivalId),
+        });
       }
+      queryClient.invalidateQueries({ queryKey: ["dashboard"] });
       toast.success(res.message || "Festival restored successfully");
     },
     onError: (error: any) => {
@@ -155,8 +161,11 @@ export const useHardDeleteFestival = () => {
       const festivalId = typeof param === "string" ? param : param.festivalId;
       queryClient.invalidateQueries({ queryKey: FESTIVAL_QUERY_KEYS.all() });
       if (festivalId) {
-        queryClient.invalidateQueries({ queryKey: FESTIVAL_QUERY_KEYS.detail(festivalId) });
+        queryClient.invalidateQueries({
+          queryKey: FESTIVAL_QUERY_KEYS.detail(festivalId),
+        });
       }
+      queryClient.invalidateQueries({ queryKey: ["dashboard"] });
       toast.success(res.message || "Festival permanently deleted");
     },
     onError: (error: any) => {

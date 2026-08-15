@@ -64,6 +64,7 @@ export const useCreateExpense = () => {
     onSuccess: (res) => {
       queryClient.invalidateQueries({ queryKey: ["expenses"] });
       queryClient.invalidateQueries({ queryKey: ["festivals"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard"] });
       toast.success(res.message || "Expense created successfully");
     },
     onError: (error: any) => {
@@ -82,6 +83,7 @@ export const useUpdateExpense = () => {
       queryClient.invalidateQueries({ queryKey: ["expenses"] });
       queryClient.invalidateQueries({ queryKey: EXPENSE_QUERY_KEYS.detail(id) });
       queryClient.invalidateQueries({ queryKey: ["festivals"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard"] });
       toast.success(res.message || "Expense updated successfully");
     },
     onError: (error: any) => {
@@ -94,12 +96,20 @@ export const useUpdateExpenseStatus = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, status, reason }: { id: string; status: string; reason?: string }) =>
-      ExpenseService.updateExpenseStatus(id, status, reason),
+    mutationFn: ({
+      id,
+      status,
+      reason,
+    }: {
+      id: string;
+      status: string;
+      reason?: string;
+    }) => ExpenseService.updateExpenseStatus(id, status, reason),
     onSuccess: (res, { id }) => {
       queryClient.invalidateQueries({ queryKey: ["expenses"] });
       queryClient.invalidateQueries({ queryKey: EXPENSE_QUERY_KEYS.detail(id) });
       queryClient.invalidateQueries({ queryKey: ["festivals"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard"] });
       toast.success(res.message || "Expense status updated successfully");
     },
     onError: (error: any) => {
@@ -117,6 +127,7 @@ export const useDeleteExpense = () => {
       queryClient.invalidateQueries({ queryKey: ["expenses"] });
       queryClient.invalidateQueries({ queryKey: EXPENSE_QUERY_KEYS.detail(id) });
       queryClient.invalidateQueries({ queryKey: ["festivals"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard"] });
       toast.success(res.message || "Expense deleted successfully");
     },
     onError: (error: any) => {

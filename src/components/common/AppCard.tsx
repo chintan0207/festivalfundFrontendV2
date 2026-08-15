@@ -13,9 +13,13 @@ interface AppCardProps extends React.ComponentProps<typeof Card> {
   subtitle?: string;
   icon?: React.ReactNode;
   variant?: "default" | "dotted" | "shadow" | "elevated" | "flat";
+  /** Denser header/content sizing for compact dashboard surfaces. */
+  compact?: boolean;
+  /** Extra classes merged onto the CardContent wrapper. */
+  contentClassName?: string;
 }
 
-export function AppCard({ title, subtitle, icon, children, className, variant, ...props }: AppCardProps) {
+export function AppCard({ title, subtitle, icon, children, className, variant, compact, contentClassName, ...props }: AppCardProps) {
   return (
     <Card
       className={cn(
@@ -29,22 +33,33 @@ export function AppCard({ title, subtitle, icon, children, className, variant, .
       {...props}
     >
       {(title || subtitle || icon) && (
-        <CardHeader className="p-4 sm:p-6">
+        <CardHeader className={cn("border-b border-border/50", compact ? "px-2" : "p-4 sm:p-4")}>
           <div className="flex items-start gap-3">
             {icon && (
-              <div className="rounded-xl bg-primary/10 p-2 text-primary shrink-0">{icon}</div>
+              <div className={cn("rounded-xl bg-primary/10 text-primary shrink-0 flex items-center justify-center", compact ? "h-8 w-8 [&>svg]:size-3.5" : "p-2")}>{icon}</div>
             )}
 
-            <div className="space-y-1">
-              {title && <CardTitle className="text-lg sm:text-xl font-bold tracking-tight text-foreground">{title}</CardTitle>}
-              {subtitle && <CardDescription className="text-xs sm:text-sm text-muted-foreground leading-relaxed">{subtitle}</CardDescription>}
+            <div className="space-y-0.5 min-w-0">
+              {title && (
+                <CardTitle className={cn("font-bold tracking-tight text-foreground", compact ? "text-sm leading-none" : "text-lg sm:text-xl")}>
+                  {title}
+                </CardTitle>
+              )}
+              {subtitle && (
+                <CardDescription className={cn("text-muted-foreground leading-relaxed", compact ? "text-[11px]" : "text-xs sm:text-sm")}>
+                  {subtitle}
+                </CardDescription>
+              )}
             </div>
           </div>
         </CardHeader>
       )}
 
       {children && (
-        <CardContent className={cn((title || subtitle || icon) ? "px-4 pb-4 sm:px-6 sm:pb-6 pt-0" : "p-4 sm:p-6")}>
+        <CardContent className={cn(
+          compact ? "px-4 py-2" : (title || subtitle || icon) ? "px-4 sm:px-6 sm:pb-2 pt-0" : "p-4 sm:p-6",
+          contentClassName
+        )}>
           {children}
         </CardContent>
       )}

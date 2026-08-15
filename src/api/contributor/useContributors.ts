@@ -1,15 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useMutation, useQuery, useQueryClient, keepPreviousData } from "@tanstack/react-query";
-import { toast } from "sonner";
 import {
-  ContributorService,
-  type ContributorQueryParams,
-} from "./contributor.service";
+  useMutation,
+  useQuery,
+  useQueryClient,
+  keepPreviousData,
+} from "@tanstack/react-query";
+import { toast } from "sonner";
+import { ContributorService, type ContributorQueryParams } from "./contributor.service";
 import { useContributorApiStore } from "./contributor.store";
 import type { CreateContributorPayload, UpdateContributorPayload } from "@/types/Types";
 
 export const CONTRIBUTOR_QUERY_KEYS = {
-  all: (params?: ContributorQueryParams) => params ? ["contributors", params] as const : ["contributors"] as const,
+  all: (params?: ContributorQueryParams) =>
+    params ? (["contributors", params] as const) : (["contributors"] as const),
   detail: (id: string) => ["contributor", id] as const,
 };
 
@@ -17,7 +20,10 @@ export type UseContributorsOptions = {
   keepPreviousData?: boolean;
 };
 
-export const useContributors = (params?: ContributorQueryParams, options?: UseContributorsOptions) => {
+export const useContributors = (
+  params?: ContributorQueryParams,
+  options?: UseContributorsOptions,
+) => {
   const setContributors = useContributorApiStore((s) => s.setContributors);
   const setPaginationMeta = useContributorApiStore((s) => s.setPaginationMeta);
   const setCategoryCounts = useContributorApiStore((s) => s.setCategoryCounts);
@@ -67,6 +73,7 @@ export const useCreateContributor = () => {
       ContributorService.createContributor(payload),
     onSuccess: (res) => {
       queryClient.invalidateQueries({ queryKey: CONTRIBUTOR_QUERY_KEYS.all() });
+      queryClient.invalidateQueries({ queryKey: ["dashboard"] });
       toast.success(res.message || "Contributor added successfully");
     },
     onError: (error: any) => {
@@ -88,7 +95,10 @@ export const useUpdateContributor = () => {
     }) => ContributorService.updateContributor(contributorId, payload),
     onSuccess: (res, { contributorId }) => {
       queryClient.invalidateQueries({ queryKey: CONTRIBUTOR_QUERY_KEYS.all() });
-      queryClient.invalidateQueries({ queryKey: CONTRIBUTOR_QUERY_KEYS.detail(contributorId) });
+      queryClient.invalidateQueries({
+        queryKey: CONTRIBUTOR_QUERY_KEYS.detail(contributorId),
+      });
+      queryClient.invalidateQueries({ queryKey: ["dashboard"] });
       toast.success(res.message || "Contributor updated successfully");
     },
     onError: (error: any) => {
@@ -101,10 +111,14 @@ export const useSoftDeleteContributor = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (contributorId: string) => ContributorService.softDeleteContributor(contributorId),
+    mutationFn: (contributorId: string) =>
+      ContributorService.softDeleteContributor(contributorId),
     onSuccess: (res, contributorId) => {
       queryClient.invalidateQueries({ queryKey: CONTRIBUTOR_QUERY_KEYS.all() });
-      queryClient.invalidateQueries({ queryKey: CONTRIBUTOR_QUERY_KEYS.detail(contributorId) });
+      queryClient.invalidateQueries({
+        queryKey: CONTRIBUTOR_QUERY_KEYS.detail(contributorId),
+      });
+      queryClient.invalidateQueries({ queryKey: ["dashboard"] });
       toast.success(res.message || "Contributor deleted successfully");
     },
     onError: (error: any) => {
