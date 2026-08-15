@@ -286,6 +286,7 @@ function ContributorLookupPage({ initialQuery }: ContributorLookupPageProps) {
                     key={record.organization.id}
                     record={record}
                     members={lookupState.data.members}
+                    lookupPayload={lastPayload}
                   />
                 ))
               )}

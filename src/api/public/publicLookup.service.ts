@@ -128,4 +128,18 @@ export const PublicLookupService = {
     });
     return response.data as Blob;
   },
+
+  /**
+   * Download one contribution's receipt slip. The backend verifies the
+   * contribution belongs to the resolved lookup group, requires DEPOSITED
+   * status, and generates/reuses the slip through the storage provider.
+   */
+  getSlip: async (payload: PublicLookupPayload, contributionId: string): Promise<Blob> => {
+    const response = await publicApiClient.post(
+      "/public/contributor-lookup/slip",
+      { ...payload, contributionId },
+      { responseType: "blob" },
+    );
+    return response.data as Blob;
+  },
 };

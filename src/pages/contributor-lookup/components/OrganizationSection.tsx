@@ -3,16 +3,18 @@ import { AppBadge, AppCard } from "@/components/common";
 import { categoryBadge, categoryLabel } from "@/lib/categoryMeta";
 import { contributorInitials } from "@/lib/contributionFormat";
 import { formatMoney } from "../helpers";
-import type { PublicContributorMember, PublicLookupRecord } from "@/api/public/publicLookup.service";
+import type { PublicContributorMember, PublicLookupPayload, PublicLookupRecord } from "@/api/public/publicLookup.service";
 import { FestivalGroupSection } from "./FestivalGroupSection";
 import { StatChip } from "./StatChip";
 
 export function OrganizationSection({
   record,
   members,
+  lookupPayload,
 }: {
   record: PublicLookupRecord;
   members: PublicContributorMember[];
+  lookupPayload: PublicLookupPayload | null;
 }) {
   const orgMembers = members.filter((member) => member.organization?.id === record.organization.id);
 
@@ -71,6 +73,7 @@ export function OrganizationSection({
             key={festival.festival.id || `${festival.festival.name}-${festival.contributionCount}`}
             group={festival}
             organizationName={record.organization.name}
+            lookupPayload={lookupPayload}
           />
         ))}
       </div>

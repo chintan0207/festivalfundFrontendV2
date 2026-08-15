@@ -1,16 +1,18 @@
 import { CalendarDays } from "lucide-react";
 import { AppBadge } from "@/components/common";
 import { formatDate, formatMoney, visibleContributions } from "../helpers";
-import type { PublicFestivalGroup } from "@/api/public/publicLookup.service";
+import type { PublicFestivalGroup, PublicLookupPayload } from "@/api/public/publicLookup.service";
 import { ContributionRow } from "./ContributionRow";
 import { StatChip } from "./StatChip";
 
 export function FestivalGroupSection({
   group,
   organizationName,
+  lookupPayload,
 }: {
   group: PublicFestivalGroup;
   organizationName: string;
+  lookupPayload: PublicLookupPayload | null;
 }) {
   const festivalName = group.festival?.name
     ? `${group.festival.name}${group.festival.year ? ` ${group.festival.year}` : ""}`
@@ -70,6 +72,7 @@ export function FestivalGroupSection({
                 contribution={contribution}
                 festivalName={festivalName}
                 organizationName={organizationName}
+                lookupPayload={lookupPayload}
               />
             ))}
           </div>

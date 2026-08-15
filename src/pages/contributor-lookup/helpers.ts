@@ -1,5 +1,4 @@
 import { contributionStatusBadge } from "@/lib/contributionFormat";
-import { API_BASE_URL } from "@/api/env";
 import type { PublicContribution, PublicFestivalGroup } from "@/api/public/publicLookup.service";
 
 export const formatMoney = (value?: number | null): string =>
@@ -38,42 +37,9 @@ export function visibleContributions(group: PublicFestivalGroup): {
   return { list, hidden: Math.max(0, group.contributionCount - list.length) };
 }
 
-/** Absolute URL to a slip on the API origin (slips are publicly served). */
-export const slipUrl = (slipPath?: string): string | null => {
-  if (!slipPath) return null;
-  let origin = "";
-  try {
-    origin = new URL(API_BASE_URL || "", window.location.origin).origin;
-  } catch {
-    origin = "";
-  }
-  return `${origin}${slipPath}`;
-};
-
 /**
- * Slips only exist for DEPOSITED contributions (the generator creates them on
- * deposit confirmation and rejects every other status), so gate both the view
- * and download actions on that status having a stored slip path.
+ * Slips only exist/are generated for DEPOSITED contributions (the generator
+ * rejects every other status), so gate both view and download actions on it.
  */
-export const canDownloadSlip = (contribution: PublicContribution): boolean =>
-  contribution.status === "DEPOSITED" && Boolean(contribution.slipPath);
-
-/**
- * Fetches the publicly served slip PDF and triggers a file download. A plain
- * <a download> is ignored for cross-origin URLs, so we fetch the blob first.
- */
-export const downloadSlip = async (contribution: PublicContribution): Promise<void> => {
-  const url = slipUrl(contribution.slipPath);
-  if (!url) return;
-  const response = await fetch(url, { mode: "cors" });
-  if (!response.ok) throw new Error("Failed to fetch slip");
-  const blob = await response.blob();
-  const objectUrl = window.URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.href = objectUrl;
-  link.setAttribute("download", `receipt-${contribution.contributionCode}.pdf`);
-  document.body.appendChild(link);
-  link.click();
-  link.remove();
-  window.URL.revokeObjectURL(objectUrl);
-};
+export const isSlipEligible = (contribution: PublicContribution): boolean =>
+  contribution.status === "DEPOSITED";

@@ -3,16 +3,8 @@ import { ChevronDown, ChevronUp, Download, FileText, IndianRupee } from "lucide-
 import { toast } from "sonner";
 import { AppBadge, AppButton } from "@/components/common";
 import { categoryBadge, categoryLabel } from "@/lib/categoryMeta";
-import {
-  canDownloadSlip,
-  downloadSlip,
-  formatDate,
-  formatMoney,
-  paymentLabel,
-  slipUrl,
-  statusBadgeClass,
-} from "../helpers";
-import type { PublicContribution } from "@/api/public/publicLookup.service";
+import { PublicLookupService, type PublicContribution, type PublicLookupPayload } from "@/api/public/publicLookup.service";
+import { formatDate, formatMoney, isSlipEligible, paymentLabel, statusBadgeClass } from "../helpers";
 
 function Detail({ label, value }: { label: string; value: string }) {
   return (
@@ -27,28 +19,56 @@ export function ContributionRow({
   contribution,
   festivalName,
   organizationName,
+  lookupPayload,
 }: {
   contribution: PublicContribution;
   festivalName: string;
   organizationName: string;
+  lookupPayload: PublicLookupPayload | null;
 }) {
   const [open, setOpen] = useState(false);
-  const [downloading, setDownloading] = useState(false);
+  const [slipLoading, setSlipLoading] = useState(false);
   const isMoney = contribution.type === "MONEY";
   const displayValue = isMoney ? contribution.amount : contribution.estimatedValue;
-  const slip = slipUrl(contribution.slipPath);
-  const showSlipActions = canDownloadSlip(contribution);
+  const showSlipActions = isSlipEligible(contribution);
+
+  async function fetchSlip() {
+    if (!lookupPayload) throw new Error("Missing lookup context");
+    setSlipLoading(true);
+    try {
+      return await PublicLookupService.getSlip(lookupPayload, contribution.contributionId);
+    } finally {
+      setSlipLoading(false);
+    }
+  }
+
+  async function handleViewSlip() {
+    try {
+      const blob = await fetchSlip();
+      const url = window.URL.createObjectURL(blob);
+      window.open(url, "_blank", "noopener,noreferrer");
+      window.setTimeout(() => window.URL.revokeObjectURL(url), 60_000);
+    } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      toast.error((error as any)?.response?.data?.message || "Failed to load the slip");
+    }
+  }
 
   async function handleDownloadSlip() {
-    if (downloading || !slip) return;
-    setDownloading(true);
     try {
-      await downloadSlip(contribution);
+      const blob = await fetchSlip();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `receipt-${contribution.contributionCode}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
       toast.success("Slip downloaded successfully");
-    } catch {
-      toast.error("Failed to download slip");
-    } finally {
-      setDownloading(false);
+    } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      toast.error((error as any)?.response?.data?.message || "Failed to download slip");
     }
   }
 
@@ -123,16 +143,17 @@ export function ContributionRow({
               <AppButton
                 type="button"
                 variant="outline"
+                loading={slipLoading}
                 leftIcon={<FileText className="h-3.5 w-3.5" />}
                 className="h-8 rounded-full text-xs"
-                onClick={() => window.open(slip!, "_blank", "noopener,noreferrer")}
+                onClick={handleViewSlip}
               >
                 View Slip
               </AppButton>
               <AppButton
                 type="button"
                 variant="outline"
-                loading={downloading}
+                loading={slipLoading}
                 leftIcon={<Download className="h-3.5 w-3.5" />}
                 className="h-8 rounded-full text-xs"
                 onClick={handleDownloadSlip}
