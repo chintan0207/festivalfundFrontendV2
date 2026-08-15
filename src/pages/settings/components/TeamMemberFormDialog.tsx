@@ -6,6 +6,7 @@ import { AppInput } from "@/components/common/AppInput";
 import { AppSelect, type AppSelectOption } from "@/components/common/AppSelect";
 import { Users } from "lucide-react";
 import { GlobalRoleEnum } from "@/lib/constants";
+import { sanitizePhone } from "@/lib/phone";
 import type { User } from "@/types/Types";
 import {
   teamMemberFormSchema,
@@ -45,6 +46,7 @@ export function TeamMemberFormDialog({
     handleSubmit,
     reset,
     control,
+    setValue,
     formState: { errors },
   } = useForm<TeamMemberFormValues>({
     resolver: zodResolver(teamMemberFormSchema),
@@ -134,7 +136,13 @@ export function TeamMemberFormDialog({
               inputMode="numeric"
               maxLength={10}
               placeholder="10-digit mobile"
-              {...register("phoneNumber")}
+              {...register("phoneNumber", {
+                onChange: (e: { target: { value: string } }) => {
+                  setValue("phoneNumber", sanitizePhone(e.target.value), {
+                    shouldValidate: true,
+                  });
+                },
+              })}
               error={errors.phoneNumber?.message}
             />
           )}

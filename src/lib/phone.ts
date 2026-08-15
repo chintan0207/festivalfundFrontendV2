@@ -1,0 +1,28 @@
+import { z } from "zod";
+
+export const PHONE_REGEX = /^\d{10}$/;
+
+export const PHONE_ERROR = "Enter a valid 10-digit mobile number";
+
+/** Strip everything but digits and cap at 10 (blocks typing/paste of +91 & dashes). */
+export function sanitizePhone(value: string): string {
+  return value.replace(/\D/g, "").slice(0, 10);
+}
+
+export function isValidPhone(value?: string | null): boolean {
+  return !!value && PHONE_REGEX.test(value);
+}
+
+/** Phone input is required and must be exactly 10 digits. */
+export const REQUIRED_PHONE = z
+  .string()
+  .regex(PHONE_REGEX, PHONE_ERROR);
+
+/** Optional phone: empty string or exactly 10 digits. */
+export const OPTIONAL_PHONE = z
+  .string()
+  .refine((value) => !value || PHONE_REGEX.test(value), PHONE_ERROR)
+  .optional();
+
+/** Optional + nullable phone (used where the field may store null). */
+export const OPTIONAL_PHONE_NULLABLE = OPTIONAL_PHONE.nullable();

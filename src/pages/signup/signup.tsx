@@ -45,6 +45,7 @@ function Signup() {
     register,
     handleSubmit,
     trigger,
+    setValue,
     formState: { errors },
   } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
@@ -202,7 +203,7 @@ function Signup() {
                       </AppButton>
                     </>
                   )}
-                  {step === 2 && <StepTwo register={register} errors={errors} />}
+                  {step === 2 && <StepTwo register={register} errors={errors} setValue={setValue} />}
                   {step === 3 && <StepThree register={register} errors={errors} />}
 
                   <div

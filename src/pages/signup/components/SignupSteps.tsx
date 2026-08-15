@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Building2, MapPin, User, Mail, Phone, Lock, Eye, EyeOff, ShieldCheck } from "lucide-react";
 import { AppInput } from "@/components/common/AppInput";
+import { sanitizePhone } from "@/lib/phone";
 
 export const stepContent = {
   1: {
@@ -43,7 +44,7 @@ export function StepOne({ register, errors }: any) {
   );
 }
 
-export function StepTwo({ register, errors }: any) {
+export function StepTwo({ register, errors, setValue }: any) {
   return (
     <div className="space-y-4">
       <AppInput
@@ -69,9 +70,15 @@ export function StepTwo({ register, errors }: any) {
         id="phone"
         label="Phone Number"
         type="tel"
-        placeholder="Enter 10-digit mobile number"
+        inputMode="numeric"
+        maxLength={10}
+        placeholder="10-digit mobile number"
         leftIcon={<Phone className="h-4 w-4" />}
-        {...register("phone")}
+        {...register("phone", {
+          onChange: (e: { target: { value: string } }) => {
+            setValue("phone", sanitizePhone(e.target.value), { shouldValidate: true });
+          },
+        })}
         error={errors.phone?.message}
       />
     </div>

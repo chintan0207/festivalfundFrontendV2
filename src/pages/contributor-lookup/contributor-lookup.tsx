@@ -8,6 +8,7 @@ import {
   type PublicLookupData,
   type PublicLookupPayload,
 } from "@/api/public/publicLookup.service";
+import { isValidPhone, sanitizePhone } from "@/lib/phone";
 import { ResultHeader } from "./components/ResultHeader";
 import { MembersList } from "./components/MembersList";
 import { OrganizationSection } from "./components/OrganizationSection";
@@ -35,7 +36,7 @@ const methodConfig: {
     id: "phone",
     label: "Phone",
     icon: <Phone className="h-4 w-4" />,
-    placeholder: "e.g. +91 98765 43210",
+    placeholder: "10-digit mobile number",
     hint: "Enter the mobile number used at the time of contribution.",
   },
   {
@@ -86,9 +87,19 @@ function ContributorLookupPage({ initialQuery }: ContributorLookupPageProps) {
   }, []);
 
   async function handleSearch() {
-    const value = query.trim();
-    if (!value) {
+    const rawValue = query.trim();
+    if (!rawValue) {
       setLookupState({ status: "error", message: "Please enter a value to search." });
+      return;
+    }
+
+    const value = method === "phone" ? sanitizePhone(rawValue) : rawValue;
+
+    if (method === "phone" && !isValidPhone(value)) {
+      setLookupState({
+        status: "error",
+        message: "Please enter a valid 10-digit mobile number.",
+      });
       return;
     }
 
@@ -212,11 +223,17 @@ function ContributorLookupPage({ initialQuery }: ContributorLookupPageProps) {
                 <AppInput
                   ref={searchInputRef}
                   value={query}
-                  onChange={(e) => setQuery(e.target.value)}
+                  onChange={(e) =>
+                    setQuery(
+                      method === "phone" ? sanitizePhone(e.target.value) : e.target.value,
+                    )
+                  }
                   onKeyDown={(e) => e.key === "Enter" && handleSearch()}
                   placeholder={activeConfig.placeholder}
                   leftIcon={activeConfig.icon}
                   aria-label={activeConfig.label}
+                  inputMode={method === "phone" ? "numeric" : undefined}
+                  maxLength={method === "phone" ? 10 : undefined}
                 />
               </div>
               <AppButton
