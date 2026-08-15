@@ -1,4 +1,5 @@
-import { Outlet } from "@tanstack/react-router";
+import { useEffect } from "react";
+import { Outlet, useLocation } from "@tanstack/react-router";
 import { useCurrentUser } from "@/api/auth/useAuth";
 import { useAuthStore } from "@/api/auth/auth.store";
 import { useOrganization } from "@/api/organization/useOrganization";
@@ -7,8 +8,22 @@ import Topbar from "./Topbar";
 import MobileBottomNav from "./MobileBottomNav";
 import FloatingActionButton from "./FloatingActionButton";
 
-import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
+import { SidebarProvider, SidebarInset, useSidebar } from "@/components/ui/sidebar";
 import { TooltipProvider } from "@/components/ui/tooltip";
+
+/** Closes the mobile sidebar drawer whenever the route changes (taps, nested
+ *  items, programmatic navigation, back/forward). No-op on desktop since the
+ *  desktop sidebar uses the separate `open` (expand/collapse) state. */
+const SidebarBehavior = () => {
+  const location = useLocation();
+  const { setOpenMobile } = useSidebar();
+
+  useEffect(() => {
+    setOpenMobile(false);
+  }, [location.pathname, setOpenMobile]);
+
+  return null;
+};
 
 const DashboardLayout = () => {
   useCurrentUser();
@@ -18,6 +33,8 @@ const DashboardLayout = () => {
   return (
     <TooltipProvider>
       <SidebarProvider>
+        <SidebarBehavior />
+
         <Sidebar />
 
         <SidebarInset className="flex flex-col min-h-screen">

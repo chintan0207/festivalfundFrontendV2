@@ -19,6 +19,7 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { Badge } from "@/components/ui/badge";
 import { AccountMenu } from "@/components/common/AccountMenu";
@@ -36,6 +37,7 @@ import {
 export const Sidebar = () => {
   const { user, organization } = useAuthStore();
   const location = useLocation();
+  const { setOpenMobile } = useSidebar();
 
   const { festivals } = useFestivalStore();
 
@@ -145,6 +147,7 @@ export const Sidebar = () => {
                       >
                         <Link
                           to={item.href}
+                          onClick={() => setOpenMobile(false)}
                           className="flex items-center gap-3 w-full justify-center"
                         >
                           <span
