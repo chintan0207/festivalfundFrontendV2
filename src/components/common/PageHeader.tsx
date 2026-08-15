@@ -37,10 +37,10 @@ export function PageHeader({
     moduleBadgeColors[module] || moduleBadgeColors.default;
 
   return (
-    <div className={cn("relative space-y-2 pb-2 rounded-2xl", className)}>
+    <div className={cn("relative space-y-2 pb-2 rounded-2xl min-w-0", className)}>
       {/* Breadcrumbs with Router Navigation */}
       {breadcrumbs && breadcrumbs.length > 0 && (
-        <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-muted-foreground flex-wrap">
+        <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-muted-foreground flex-wrap min-w-0">
           {breadcrumbs.map((b, i) => {
             const isLast = i === breadcrumbs.length - 1;
             const targetPath = b.to || b.href;
@@ -89,8 +89,8 @@ export function PageHeader({
       )}
 
       {/* Header Main Title & Badge Row */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
-        <div className="space-y-0.5 min-w-0 flex-1">
+      <div className="flex flex-col lg:flex-row lg:flex-wrap lg:items-center gap-3 sm:gap-4 lg:gap-6">
+        <div className="space-y-0.5 min-w-0">
           <div className="flex items-center gap-2.5 flex-wrap">
             <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground break-words">
               {title}
@@ -117,7 +117,7 @@ export function PageHeader({
         {actions && (
           <div
             data-fab-observe
-            className="flex items-center gap-2 flex-wrap min-w-0 w-full sm:w-auto justify-start sm:justify-end"
+            className="flex items-center gap-2 flex-wrap w-full lg:w-auto lg:ml-auto lg:shrink-0 justify-start"
           >
             {actions}
           </div>
