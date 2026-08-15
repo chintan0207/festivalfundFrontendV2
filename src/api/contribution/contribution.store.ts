@@ -13,6 +13,7 @@ type ContributionState = {
   status: string;
   category: string;
   type: string;
+  paymentMode: string;
   festivalId: string;
   total: number;
   totalPages: number;
@@ -33,6 +34,7 @@ type ContributionState = {
   setStatus: (status: string) => void;
   setCategory: (category: string) => void;
   setType: (type: string) => void;
+  setPaymentMode: (mode: string) => void;
   setFestivalId: (festivalId: string) => void;
   setPaginationMeta: (data: {
     total: number;
@@ -59,6 +61,7 @@ const initialFilters = {
   status: "",
   category: "",
   type: "",
+  paymentMode: "",
   festivalId: "",
   total: 0,
   totalPages: 0,
@@ -80,6 +83,7 @@ export const useContributionApiStore = create<ContributionState>((set) => ({
   setStatus: (status) => set({ status, page: 1 }),
   setCategory: (category) => set({ category, page: 1 }),
   setType: (type) => set({ type, page: 1 }),
+  setPaymentMode: (mode) => set({ paymentMode: mode, page: 1 }),
   setFestivalId: (festivalId) => set({ festivalId, page: 1 }),
   setPaginationMeta: ({ total, page, limit, totalPages }) =>
     set({ total, page, limit, totalPages }),

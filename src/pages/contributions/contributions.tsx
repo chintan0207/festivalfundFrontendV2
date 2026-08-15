@@ -28,6 +28,7 @@ import { useContributionDialogs } from "./useContributionDialogs";
 import {
   contributionStatusLabel,
   contributionTypeLabel,
+  contributionPaymentLabel,
 } from "./lib/contributionMeta";
 import { categoryLabel } from "@/lib/categoryMeta";
 import type { ContributionListItem, ContributionStatus } from "@/types/Types";
@@ -43,6 +44,7 @@ export default function ContributionsPage() {
   const status = useContributionApiStore((s) => s.status);
   const category = useContributionApiStore((s) => s.category);
   const type = useContributionApiStore((s) => s.type);
+  const paymentMode = useContributionApiStore((s) => s.paymentMode);
   const total = useContributionApiStore((s) => s.total);
   const totalPages = useContributionApiStore((s) => s.totalPages);
   const contributions = useContributionApiStore((s) => s.contributions);
@@ -55,6 +57,7 @@ export default function ContributionsPage() {
   const setStatus = useContributionApiStore((s) => s.setStatus);
   const setCategory = useContributionApiStore((s) => s.setCategory);
   const setType = useContributionApiStore((s) => s.setType);
+  const setPaymentMode = useContributionApiStore((s) => s.setPaymentMode);
   const resetFilters = useContributionApiStore((s) => s.resetFilters);
 
   const setStatusCounts = useContributionApiStore((s) => s.setStatusCounts);
@@ -110,12 +113,13 @@ export default function ContributionsPage() {
         ...(status ? { status } : {}),
         ...(category ? { category } : {}),
         ...(type ? { type } : {}),
+        ...(paymentMode ? { paymentMode } : {}),
         sortField,
         sortOrder,
       },
       fileName: `contributions-${filenameSlug}.pdf`,
     });
-  }, [activeFestivalId, activeFestival, search, status, category, type, sortField, sortOrder, reportExport]);
+  }, [activeFestivalId, activeFestival, search, status, category, type, paymentMode, sortField, sortOrder, reportExport]);
 
   // Open the add dialog from the mobile FAB
   useEffect(() => {
@@ -151,6 +155,7 @@ export default function ContributionsPage() {
     ...(status ? { status } : {}),
     ...(category ? { category } : {}),
     ...(type ? { type } : {}),
+    ...(paymentMode ? { paymentMode } : {}),
     ...(festivalId ? { festivalId } : {}),
   };
 
@@ -208,6 +213,13 @@ export default function ContributionsPage() {
       id: "type",
       label: `Type: ${contributionTypeLabel(type)}`,
       onRemove: () => setType(""),
+    });
+  }
+  if (paymentMode) {
+    activeFilters.push({
+      id: "paymentMode",
+      label: `Mode: ${contributionPaymentLabel(paymentMode)}`,
+      onRemove: () => setPaymentMode(""),
     });
   }
 
@@ -269,6 +281,17 @@ export default function ContributionsPage() {
               { value: "GIRL", label: "Girls" },
             ],
             onChange: (val) => setCategory(val === "ALL" ? "" : val),
+          },
+          {
+            id: "paymentMode",
+            label: "Mode",
+            value: paymentMode || "ALL",
+            options: [
+              { value: "ALL", label: "All Modes" },
+              { value: "CASH", label: "Cash" },
+              { value: "UPI", label: "UPI" },
+            ],
+            onChange: (val) => setPaymentMode(val === "ALL" ? "" : val),
           },
           {
             id: "type",
