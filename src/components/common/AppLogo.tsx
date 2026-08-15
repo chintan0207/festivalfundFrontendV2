@@ -3,19 +3,19 @@ import { cn } from "@/lib/utils";
 
 interface AppLogoProps {
   size?: "sm" | "md" | "lg";
+  variant?: "full" | "icon";
   className?: string;
-  showText?: boolean;
 }
 
 export function AppLogo({
   size = "md",
+  variant = "full",
   className,
-  showText = true,
 }: AppLogoProps) {
   const sizeMap = {
-    sm: { badge: "h-7 w-7 rounded-lg text-sm", text: "text-base" },
-    md: { badge: "h-9 w-9 rounded-xl text-lg", text: "text-lg" },
-    lg: { badge: "h-11 w-11 rounded-2xl text-2xl", text: "text-2xl" },
+    sm: { image: "h-9 w-9", text: "text-base" },
+    md: { image: "h-12 w-12", text: "text-lg" },
+    lg: { image: "h-14 w-14", text: "text-2xl" },
   };
 
   const currentSize = sizeMap[size];
@@ -23,23 +23,24 @@ export function AppLogo({
   return (
     <Link
       to="/"
+      aria-label="FestivalFund home"
       className={cn(
-        "flex items-center gap-2.5 hover:opacity-90 transition-opacity select-none group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:w-full group-data-[collapsible=icon]:gap-0",
+        "flex items-center gap-1 hover:opacity-90 transition-opacity select-none group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:w-full group-data-[collapsible=icon]:gap-0",
         className
       )}
     >
-      <div
+      <img
+        src="/festivalfundicon.png"
+        alt=""
         className={cn(
-          "flex shrink-0 items-center justify-center bg-gradient-to-br from-primary to-emerald-500 text-primary-foreground font-bold shadow-sm",
-          currentSize.badge
+          "shrink-0 object-contain group-data-[collapsible=icon]:shrink-0",
+          currentSize.image
         )}
-      >
-        F
-      </div>
-      {showText && (
+      />
+      {variant === "full" && (
         <span
           className={cn(
-            "font-bold tracking-tight text-foreground leading-tight group-data-[collapsible=icon]:hidden",
+            "font-bold tracking-tight leading-tight whitespace-nowrap gradient-text group-data-[collapsible=icon]:hidden",
             currentSize.text
           )}
         >
