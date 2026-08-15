@@ -42,7 +42,7 @@ const Navbar = () => {
     <nav
       className={`sticky z-50 transition-all duration-300 ${
         scrolled
-          ? "top-3 mx-auto w-[92%] max-w-7xl rounded-full border border-border/60 bg-background/85 backdrop-blur-sm shadow-lg"
+          ? "top-3 mx-auto w-[calc(100%-1rem)] max-w-7xl rounded-full border border-border/60 bg-background/85 backdrop-blur-sm shadow-lg"
           : "top-0 w-full bg-transparent border-b border-transparent"
       }`}
     >
@@ -150,7 +150,7 @@ const Navbar = () => {
               </AppButton>
             </SheetTrigger>
 
-            <SheetContent side="right" className="w-[300px] sm:w-[340px] p-6">
+            <SheetContent side="right" className="w-[85vw] max-w-sm p-6">
               <SheetTitle className="text-left text-lg font-bold">
                 <AppLogo />
               </SheetTitle>
