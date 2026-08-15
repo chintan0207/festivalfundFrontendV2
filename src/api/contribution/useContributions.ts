@@ -138,9 +138,14 @@ export const useDeleteContribution = () => {
   });
 };
 
+const SLIP_TOAST_ID = "download-contribution-slip";
+
 export const useDownloadContributionSlip = () => {
   return useMutation({
     mutationFn: (id: string) => ContributionService.getContributionSlip(id),
+    onMutate: () => {
+      toast.loading("Downloading slip…", { id: SLIP_TOAST_ID });
+    },
     onSuccess: (blob, id) => {
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement("a");
@@ -149,10 +154,12 @@ export const useDownloadContributionSlip = () => {
       document.body.appendChild(link);
       link.click();
       link.remove();
-      toast.success("Receipt slip downloaded successfully");
+      toast.success("Receipt slip downloaded successfully", { id: SLIP_TOAST_ID });
     },
     onError: (error: any) => {
-      toast.error(error?.response?.data?.message || "Failed to download receipt slip");
+      toast.error(error?.response?.data?.message || "Failed to download receipt slip", {
+        id: SLIP_TOAST_ID,
+      });
     },
   });
 };
