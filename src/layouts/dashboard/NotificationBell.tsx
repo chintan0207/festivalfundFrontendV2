@@ -93,7 +93,7 @@ export function NotificationBell() {
         </button>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent align="end" className="w-80 p-1.5 shadow-xl">
+      <DropdownMenuContent align="end" className="w-80 p-1.5 shadow-xl max-w-[calc(100vw-1rem)]">
         <DropdownMenuLabel className="flex items-center justify-between px-2 py-1.5">
           <span className="text-xs font-bold text-foreground uppercase tracking-wider">
             Recent Activity

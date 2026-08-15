@@ -1,6 +1,7 @@
 import { AppInput } from "@/components/common/AppInput";
 import { AppSelect } from "@/components/common/AppSelect";
 import { categoryOptions } from "@/lib/categoryMeta";
+import { sanitizePhone } from "@/lib/phone";
 
 export function ContributorFormFields({
   register,
@@ -33,8 +34,16 @@ export function ContributorFormFields({
         <AppInput
           id={`${prefix}-phone`}
           label="Phone Number"
-          placeholder="+91 98765 43210"
-          {...register("phoneNumber")}
+          placeholder="9876543210"
+          inputMode="numeric"
+          maxLength={10}
+          {...register("phoneNumber", {
+            onChange: (e: { target: { value: string } }) => {
+              setValue("phoneNumber", sanitizePhone(e.target.value), {
+                shouldValidate: true,
+              });
+            },
+          })}
           error={errors.phoneNumber?.message}
         />
         <AppSelect

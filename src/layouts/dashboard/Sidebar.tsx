@@ -1,6 +1,5 @@
-import { Link, useLocation, useNavigate } from "@tanstack/react-router";
+import { Link, useLocation } from "@tanstack/react-router";
 import { useAuthStore } from "@/api/auth/auth.store";
-import { useLogout } from "@/api/auth/useAuth";
 import { useFestivalStore } from "@/store/festivalStore";
 import { GlobalRoleEnum } from "@/lib/constants";
 import { AppButton } from "@/components/common/AppButton";
@@ -9,14 +8,6 @@ import {
   moduleIconColors,
   moduleBadgeColors,
 } from "@/theme/colors";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import {
   Sidebar as SidebarRoot,
   SidebarHeader,
@@ -28,8 +19,10 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { Badge } from "@/components/ui/badge";
+import { AccountMenu } from "@/components/common/AccountMenu";
 import {
   LayoutDashboard,
   CalendarDays,
@@ -39,15 +32,12 @@ import {
   BarChart3,
   Settings,
   ChevronDown,
-  LogOut,
-  User,
 } from "lucide-react";
 
 export const Sidebar = () => {
   const { user, organization } = useAuthStore();
-  const logout = useLogout();
   const location = useLocation();
-  const navigate = useNavigate();
+  const { setOpenMobile } = useSidebar();
 
   const { festivals } = useFestivalStore();
 
@@ -157,6 +147,7 @@ export const Sidebar = () => {
                       >
                         <Link
                           to={item.href}
+                          onClick={() => setOpenMobile(false)}
                           className="flex items-center gap-3 w-full justify-center"
                         >
                           <span
@@ -192,8 +183,8 @@ export const Sidebar = () => {
 
       {/* FOOTER USER PROFILE */}
       <SidebarFooter className="p-3 border-t border-border/80 group-data-[collapsible=icon]:p-0 group-data-[collapsible=icon]:py-2">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
+        <AccountMenu
+          trigger={
             <AppButton
               variant={"ghost"}
               className="w-full h-auto py-2 px-2.5 flex items-center gap-2.5 rounded-xl hover:bg-muted cursor-pointer
@@ -222,51 +213,8 @@ export const Sidebar = () => {
               </div>
               <ChevronDown className="h-4 w-4 text-muted-foreground shrink-0 group-data-[collapsible=icon]:hidden" />
             </AppButton>
-          </DropdownMenuTrigger>
-
-          <DropdownMenuContent
-            side="right"
-            align="end"
-            className="w-56 p-2 rounded-xl shadow-xl"
-          >
-            <DropdownMenuLabel className="text-xs font-semibold text-foreground px-2 py-1">
-              My Account
-            </DropdownMenuLabel>
-            <DropdownMenuSeparator className="my-1" />
-
-            <DropdownMenuItem
-              onClick={() => navigate({ to: "/dashboard/profile" })}
-              className="flex items-center gap-2 cursor-pointer rounded-lg px-2.5 py-2 text-xs"
-            >
-              <User className="h-4 w-4" />
-              <span>My Account</span>
-            </DropdownMenuItem>
-
-            {isAdmin && (
-              <>
-                <DropdownMenuSeparator className="my-1" />
-
-                <DropdownMenuItem
-                  onClick={() => navigate({ to: "/dashboard/settings" })}
-                  className="flex items-center gap-2 cursor-pointer rounded-lg px-2.5 py-2 text-xs"
-                >
-                  <Settings className="h-4 w-4" />
-                  <span>Organization Settings</span>
-                </DropdownMenuItem>
-              </>
-            )}
-
-            <DropdownMenuSeparator className="my-1" />
-
-            <DropdownMenuItem
-              onClick={() => logout()}
-              className="flex items-center gap-2 cursor-pointer rounded-lg px-2.5 py-2 text-xs text-destructive hover:bg-destructive/10"
-            >
-              <LogOut className="h-4 w-4" />
-              <span>Log out</span>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+          }
+        />
       </SidebarFooter>
     </SidebarRoot>
   );

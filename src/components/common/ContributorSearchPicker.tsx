@@ -62,12 +62,22 @@ export function ContributorSearchPicker({
   const showEmpty = !showLoading && suggestions.length === 0 && !hasQuery;
   const showNoResults = !showLoading && suggestions.length === 0 && hasQuery;
 
-  // Anchor the portal panel to the input cell
+  // Anchor the portal panel to the input cell, clamped inside the viewport.
   const updatePanelPos = () => {
     const cell = cellRef.current;
     if (!cell) return;
     const rect = cell.getBoundingClientRect();
-    setPanelPos({ top: rect.bottom + 6, left: rect.left, width: rect.width });
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    const width = Math.min(rect.width, vw - 16);
+    const left = Math.min(Math.max(rect.left, 8), Math.max(8, vw - width - 8));
+    // Flip upward when there isn't enough room below the input.
+    const estimatedHeight = 300;
+    const top =
+      rect.bottom + 6 + estimatedHeight > vh && rect.top - estimatedHeight > 8
+        ? Math.max(8, rect.top - estimatedHeight - 6)
+        : rect.bottom + 6;
+    setPanelPos({ top, left, width });
   };
 
   // Close on outside click / Escape (include the portaled panel)

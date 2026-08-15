@@ -467,7 +467,7 @@ export const FestivalsPage = () => {
                     </div>
 
                     {/* 3 Metric Chips Grid */}
-                    <div className="grid grid-cols-3 gap-1.5 pt-1.5 border-t border-border/40">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5 pt-1.5 border-t border-border/40">
                       <div className="p-1.5 sm:p-2 rounded-lg bg-muted/30 border border-border/30 text-center space-y-0.5 min-w-0">
                         <span className="text-[9px] font-semibold text-muted-foreground block truncate">
                           Contributors
@@ -486,7 +486,7 @@ export const FestivalsPage = () => {
                         </span>
                       </div>
 
-                      <div className="p-1.5 sm:p-2 rounded-lg bg-muted/30 border border-border/30 text-center space-y-0.5 min-w-0">
+                      <div className="p-1.5 sm:p-2 rounded-lg bg-muted/30 border border-border/30 text-center space-y-0.5 min-w-0 col-span-2 sm:col-span-1">
                         <span className="text-[9px] font-semibold text-muted-foreground block truncate">
                           Days Left
                         </span>

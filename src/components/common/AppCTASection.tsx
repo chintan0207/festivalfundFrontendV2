@@ -16,7 +16,7 @@ export function AppCTASection({
   className,
 }: AppCTASectionProps) {
   return (
-    <section className={cn("relative px-4 py-20 sm:px-6", className)}>
+    <section className={cn("relative overflow-hidden px-4 py-20 sm:px-6", className)}>
       <div className="absolute left-1/2 top-0 h-[500px] w-[800px] -translate-x-1/2 rounded-full bg-gradient-to-br from-primary/15 via-chart-2/15 to-transparent blur-3xl pointer-events-none" />
       <div className="relative mx-auto max-w-5xl">
         <AppCard className="rounded-3xl border border-border/60 bg-background/60 p-8 text-center shadow-xl backdrop-blur-sm sm:p-14">

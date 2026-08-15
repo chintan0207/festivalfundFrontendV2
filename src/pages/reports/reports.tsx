@@ -347,7 +347,6 @@ export const ReportsPage = ({
   );
   const totalSpent = filteredExpenses.reduce((acc, e) => acc + e.amount, 0);
   const currentBalance = openingBalance + totalCollected - totalSpent;
-  const transactionCount = filteredContributions.length + filteredExpenses.length;
   const contributorCount = new Set(
     filteredContributions.map((c) => c.contributorId).filter(Boolean),
   ).size;
@@ -907,7 +906,6 @@ export const ReportsPage = ({
         totalSpent={totalSpent}
         currentBalance={currentBalance}
         pendingAmount={pendingAmount}
-        transactionCount={transactionCount}
         contributorCount={contributorCount}
         itemContributionsCount={itemContributionsCount}
         pendingExpenseAmount={pendingExpenseAmount}

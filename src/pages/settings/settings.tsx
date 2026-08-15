@@ -46,6 +46,7 @@ import {
 } from "lucide-react";
 import { getModuleTheme, gradientColors } from "@/theme/colors";
 import { cn, initials } from "@/lib/utils";
+import { sanitizePhone } from "@/lib/phone";
 import type { Invitation, User } from "@/types/Types";
 
 const planStyles: Record<string, string> = {
@@ -316,7 +317,7 @@ export const SettingsPage = () => {
                 inputMode="numeric"
                 maxLength={10}
                 value={orgPhone}
-                onChange={(e) => setOrgPhone(e.target.value.replace(/[^0-9]/g, ""))}
+                onChange={(e) => setOrgPhone(sanitizePhone(e.target.value))}
               />
               <AppInput
                 id="orgWebsite"

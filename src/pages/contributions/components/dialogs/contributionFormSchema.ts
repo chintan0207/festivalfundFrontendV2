@@ -1,4 +1,5 @@
 import * as z from "zod";
+import { isValidPhone, PHONE_ERROR } from "@/lib/phone";
 
 const baseShape = {
   // Contributor (add mode only)
@@ -38,8 +39,8 @@ export function buildContributionSchema(mode: "add" | "edit") {
         if (data.contributorMode === "new" && !data.category) {
           ctx.addIssue({ code: "custom", path: ["category"], message: "Category is required" });
         }
-        if (data.contributorMode === "new" && data.phoneNumber && !/^\d{10}$/.test(data.phoneNumber)) {
-          ctx.addIssue({ code: "custom", path: ["phoneNumber"], message: "Enter a valid 10-digit phone number" });
+        if (data.contributorMode === "new" && data.phoneNumber && !isValidPhone(data.phoneNumber)) {
+          ctx.addIssue({ code: "custom", path: ["phoneNumber"], message: PHONE_ERROR });
         }
         if (!data.festivalId) {
           ctx.addIssue({ code: "custom", path: ["festivalId"], message: "Select a festival" });
