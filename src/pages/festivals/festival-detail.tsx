@@ -91,7 +91,13 @@ export function FestivalDetailPage() {
       : "Dates TBD";
 
   const stats: DetailStat[] = [
-    { label: "Target Budget", value: formatCurrencyShort(festival.targetAmount ?? 0) },
+    {
+      label: "Target Budget",
+      value:
+        festival.targetAmount !== undefined && festival.targetAmount !== null
+          ? formatCurrencyShort(festival.targetAmount)
+          : "Not configured",
+    },
     { label: "Opening Balance", value: formatCurrencyShort(festival.stats?.openingBalance ?? 0) },
     { label: "Total Collected", value: formatCurrencyShort(festival.stats?.totalCollected ?? 0) },
     { label: "Pending Amount", value: formatCurrencyShort(festival.stats?.pendingAmount ?? 0) },

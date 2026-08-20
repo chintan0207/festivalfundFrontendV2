@@ -104,12 +104,9 @@ export function DashboardFestivalSummary({ data }: { data: DashboardData }) {
               />
             </div>
           ) : (
-            <div className="h-2 w-full rounded-full bg-muted/60 overflow-hidden">
-              <div
-                className="h-full rounded-full bg-gradient-to-r from-emerald-500 to-teal-500"
-                style={{ width: "100%" }}
-              />
-            </div>
+            <p className="text-[11px] text-muted-foreground">
+              Set a target balance to track progress.
+            </p>
           )}
           <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
             <Landmark className="h-3.5 w-3.5 shrink-0" />
