@@ -39,6 +39,8 @@ export const ProfilePage = () => {
       return;
     }
 
+    const hasPassword = Boolean(user?.isPasswordSet) || user?.isPasswordSet === undefined;
+
     const payload: {
       name: string;
       email: string;
@@ -50,11 +52,13 @@ export const ProfilePage = () => {
     };
 
     if (newPassword) {
-      if (!currentPassword) {
+      if (hasPassword && !currentPassword) {
         setPassError("Enter your current password to change password");
         return;
       }
-      payload.currentPassword = currentPassword;
+      if (hasPassword) {
+        payload.currentPassword = currentPassword;
+      }
       payload.newPassword = newPassword;
     }
 
@@ -69,6 +73,7 @@ export const ProfilePage = () => {
   };
 
   const role = (user?.role as UserRole) ?? "ORG_VIEWER";
+  const isPasswordSet = user?.isPasswordSet === true;
 
   return (
     <div className="space-y-6 pb-40 md:pb-12 max-w-2xl px-2 sm:px-0">
@@ -125,29 +130,35 @@ export const ProfilePage = () => {
 
         <div className="flex items-center gap-2 border-b border-border pb-3 pt-2">
           <Lock className="h-5 w-5 text-primary" />
-          <h2 className="text-base font-bold text-foreground">Change Password</h2>
+          <h2 className="text-base font-bold text-foreground">
+            {isPasswordSet ? "Change Password" : "Set Password"}
+          </h2>
         </div>
         <p className="text-2xs text-muted-foreground -mt-2">
-          Leave blank to keep your current password.
+          {isPasswordSet
+            ? "Leave blank to keep your current password."
+            : "You signed in with Google. Set a password to enable email/password login."}
         </p>
 
         <div className="grid grid-cols-1 gap-4 text-xs">
-          <AppInput
-            id="currentPassword"
-            label="Current Password"
-            type="password"
-            value={currentPassword}
-            onChange={(e) => setCurrentPassword(e.target.value)}
-            placeholder="Required only when changing password"
-          />
+          {isPasswordSet && (
+            <AppInput
+              id="currentPassword"
+              label="Current Password"
+              type="password"
+              value={currentPassword}
+              onChange={(e) => setCurrentPassword(e.target.value)}
+              placeholder="Required when changing password"
+            />
+          )}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <AppInput
               id="newPassword"
-              label="New Password"
+              label={isPasswordSet ? "New Password" : "New Password"}
               type="password"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
-              placeholder="Min 6 characters"
+              placeholder="Min 8 characters, include a number"
             />
             <AppInput
               id="confirmPassword"

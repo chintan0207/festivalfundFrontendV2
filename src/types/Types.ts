@@ -8,6 +8,7 @@ export type User = {
   role: UserRole;
   avatarUrl?: string;
   phoneNumber?: string | null;
+  isPasswordSet?: boolean;
   isDeleted: boolean;
   isActive: boolean;
   createdAt: string;
@@ -36,6 +37,7 @@ export type Organization = {
     festival: number;
   };
   currency: string;
+  timezone?: string;
   isActive: boolean;
   isDeleted: boolean;
   planExpiry?: string;
