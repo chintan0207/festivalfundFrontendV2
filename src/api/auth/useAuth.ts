@@ -1,0 +1,172 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "@tanstack/react-router";
+import { useAuthStore } from "./auth.store";
+import { AuthService } from "./auth.service";
+import { toast } from "sonner";
+import type {
+  SignupPayload,
+  LoginPayload,
+  ForgotPasswordPayload,
+  ResetPasswordPayload,
+  UpdateProfilePayload,
+} from "@/types/Types";
+
+export const useLogin = () => {
+  const setAuth = useAuthStore((s) => s.setAuth);
+  const navigate = useNavigate();
+
+  return useMutation({
+    mutationFn: (data: LoginPayload) => AuthService.login(data),
+    onSuccess: (res) => {
+      const data = res.data;
+      if (!data) {
+        toast.error("Invalid response from server");
+        return;
+      }
+      const { accessToken, refreshToken, loggedInUser, organization } = data;
+      setAuth({ user: loggedInUser, organization, accessToken, refreshToken });
+      toast.success(res.message || "Login successful");
+      navigate({ to: "/dashboard", replace: true });
+    },
+    onError: (error: any) => {
+      toast.error(error?.response?.data?.message || "Login failed");
+    },
+  });
+};
+
+export const useSignup = () => {
+  const setAuth = useAuthStore((s) => s.setAuth);
+  const navigate = useNavigate();
+
+  return useMutation({
+    mutationFn: (data: SignupPayload) => AuthService.signup(data),
+    onSuccess: (res) => {
+      const data = res.data;
+      if (!data) {
+        toast.error("Invalid response from server");
+        return;
+      }
+      const { accessToken, refreshToken, loggedInUser, organization } = data;
+      setAuth({ user: loggedInUser, organization, accessToken, refreshToken });
+      toast.success(res.message || "Organization created successfully");
+      navigate({ to: "/dashboard", replace: true });
+    },
+    onError: (error: any) => {
+      toast.error(error?.response?.data?.message || "Signup failed");
+    },
+  });
+};
+
+export const useCurrentUser = () => {
+  const accessToken = useAuthStore((s) => s.accessToken);
+  const setAuth = useAuthStore((s) => s.setAuth);
+
+  return useQuery({
+    queryKey: ["current-user"],
+    queryFn: async () => {
+      const res = await AuthService.getMe();
+      setAuth({
+        user: res.data,
+      });
+      return res.data;
+    },
+    enabled: !!accessToken,
+    retry: false,
+    staleTime: 5 * 60 * 1000,
+  });
+};
+
+export const useUpdateProfile = () => {
+  const queryClient = useQueryClient();
+  const user = useAuthStore((s) => s.user);
+  const setAuth = useAuthStore((s) => s.setAuth);
+
+  return useMutation({
+    mutationFn: (payload: UpdateProfilePayload) => AuthService.updateProfile(payload),
+    onSuccess: (res) => {
+      queryClient.invalidateQueries({ queryKey: ["current-user"] });
+      if (user && res.data) {
+        setAuth({ user: res.data });
+      }
+      toast.success(res.message || "Profile updated successfully");
+    },
+    onError: (error: any) => {
+      toast.error(error?.response?.data?.message || "Failed to update profile");
+    },
+  });
+};
+
+export const useForgotPassword = () => {
+  return useMutation({
+    mutationFn: (data: ForgotPasswordPayload) => AuthService.forgotPassword(data),
+    onSuccess: (res) => {
+      toast.success(res.message || "Password reset link sent to your email");
+    },
+    onError: (error: any) => {
+      toast.error(error?.response?.data?.message || "Failed to send reset link");
+    },
+  });
+};
+
+export const useResetPassword = () => {
+  const navigate = useNavigate();
+
+  return useMutation({
+    mutationFn: (data: ResetPasswordPayload) => AuthService.resetPassword(data),
+    onSuccess: (res) => {
+      toast.success(res.message || "Password reset successful. Please login.");
+      navigate({ to: "/login", replace: true });
+    },
+    onError: (error: any) => {
+      toast.error(error?.response?.data?.message || "Failed to reset password");
+    },
+  });
+};
+
+export const useLogout = () => {
+  const clearAuth = useAuthStore((s) => s.clearAuth);
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+
+  return async () => {
+    try {
+      await AuthService.logout();
+    } catch (err) {
+      console.error("Logout error on backend:", err);
+    } finally {
+      clearAuth();
+      queryClient.clear();
+      toast.success("Logged out successfully");
+      navigate({ to: "/login", replace: true });
+    }
+  };
+};
+
+export const useGoogleAuth = () => {
+  const setAuth = useAuthStore((s) => s.setAuth);
+  const navigate = useNavigate();
+
+  return useMutation({
+    mutationFn: (payload: {
+      credential?: string;
+      accessToken?: string;
+      inviteToken?: string;
+    } | string) =>
+      AuthService.googleAuth(payload),
+    onSuccess: (res) => {
+      const data = res.data;
+      if (!data) {
+        toast.error("Invalid response from Google auth");
+        return;
+      }
+      const { accessToken, refreshToken, loggedInUser, organization } = data;
+      setAuth({ user: loggedInUser, organization, accessToken, refreshToken });
+      toast.success(res.message || "Logged in with Google successfully");
+      navigate({ to: "/dashboard", replace: true });
+    },
+    onError: (error: any) => {
+      toast.error(error?.response?.data?.message || "Google login failed");
+    },
+  });
+};

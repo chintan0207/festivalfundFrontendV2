@@ -6,7 +6,9 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
+  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --radius-sm: calc(var(--radius) - 4px);
+
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
@@ -52,6 +54,21 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+
+  --color-tertiary: var(--tertiary);
+
+  --animate-fade-up: fade-up 0.6s ease-out forwards;
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @layer base {
@@ -59,7 +76,65 @@
     @apply border-border outline-ring/50;
   }
 
+  html,
+  body {
+    overflow-x: clip;
+  }
+
   body {
     @apply bg-background text-foreground;
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   }
 }
+
+
+@utility gradient-text {
+  background: linear-gradient(135deg, var(--primary), var(--chart-2));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+@utility text-2xs {
+  font-size: 0.65rem;
+  line-height: 0.9rem;
+}
+
+@utility shadow-glow {
+  box-shadow: 0 0 20px color-mix(in srgb, var(--primary) 30%, transparent);
+}
+
+@utility surface-base {
+  background-color: var(--background);
+}
+
+@utility surface-surface {
+  background-color: var(--card);
+}
+
+@utility surface-elevated {
+  background-color: var(--card);
+}
+
+@utility surface-muted {
+  background-color: var(--muted);
+}
+
+@utility surface-hover {
+  background-color: var(--accent);
+}
+
+@utility glass {
+  background-color: color-mix(in srgb, var(--card) 80%, transparent);
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
+}
+
+/* Prevent injected inline padding-bottom from creating extra space on layouts */
+[data-slot="sidebar-inset"] {
+  padding-bottom: 0 !important;
+}
+main.flex-1 {
+  padding-bottom: 0 !important;
+}
+

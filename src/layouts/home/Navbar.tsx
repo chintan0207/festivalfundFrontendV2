@@ -1,106 +1,148 @@
-import { Link } from "react-router-dom";
-import { Menu, User, LayoutDashboard, LogIn } from "lucide-react";
+import { Link } from "@tanstack/react-router";
+import { Menu, User, LayoutDashboard, LogOut } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { useEffect, useState } from "react";
 import { ThemeToggle } from "@/theme/ThemeToggle";
-import { AppButton } from "@/components/common/AppButton";
+import { AppButton, AppLogo } from "@/components/common";
+import { getDashboardRoute } from "@/lib/utils";
+import { useAuthStore } from "@/api/auth/auth.store";
+import { useLogout } from "@/api/auth/useAuth";
+
 const Navbar = () => {
-  
+  const { isAuthenticated, user } = useAuthStore();
+  const logout = useLogout();
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
+      setScrolled(window.scrollY > 40);
     };
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
   const navLinks = [
     { name: "Home", href: "/" },
-    { name: "Features", href: "/#services" },
-    { name: "Pricing", href: "/#pricing" },
-    { name: "Reviews", href: "/#reviews" },
+    { name: "Features", href: "/features" },
+    { name: "Pricing", href: "/pricing" },
+    { name: "Verify Contribution", href: "/contributor-lookup" },
+    { name: "About", href: "/about" },
+    { name: "Contact", href: "/contact" },
   ];
 
   return (
     <nav
-      className={`sticky z-50 transition-all duration-700 ease-[cubic-bezier(0.4,0,0.2,1)] will-change-transform
-  ${
-    scrolled
-      ? "top-3 mx-auto rounded-full border bg-background/70 backdrop-blur-xl shadow-lg px-6 scale-[0.97]"
-      : "top-0 w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-4 scale-100"
-  }`}
+      className={`sticky z-50 transition-all duration-300 ${
+        scrolled
+          ? "top-3 mx-auto w-[calc(100%-1rem)] max-w-7xl rounded-full border border-border/60 bg-background/85 backdrop-blur-sm shadow-lg"
+          : "top-0 w-full bg-transparent border-b border-transparent"
+      }`}
     >
-      {" "}
-      <div className="container mx-auto flex h-16 items-center justify-between md:px-4">
-        {/* Logo */}
-        <div className="flex items-center gap-6">
-          <Link to="/" className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
-              <AppButton>F</AppButton>
-            </div>
-          </Link>
+      <div className="mx-auto flex h-16 max-w-7xl items-center px-4 sm:px-6">
+        {/* Left Section: Logo */}
+        <div className="flex flex-1 items-center">
+          <AppLogo />
+        </div>
 
-          {/* Desktop Links */}
-          <div className="hidden md:flex items-center gap-6">
+        {/* Center Section: Links */}
+        <div className="hidden flex-1 justify-center md:flex">
+          <div className="flex items-center gap-1 rounded-full p-1">
             {navLinks.map((link) => (
-              <AppButton variant={"ghost"} key={link.href}>
-                <Link key={link.href} to={link.href}>
-                  {link.name}
-                </Link>
-              </AppButton>
+              <Link
+                key={link.href}
+                to={link.href}
+                className="px-4 py-1.5 rounded-full text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-card/60 transition-colors"
+              >
+                {link.name}
+              </Link>
             ))}
           </div>
         </div>
 
-        {/* Right Side */}
-        <div className="flex items-center gap-4">
-          {/* Profile Dropdown */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <AppButton variant="ghost" size="icon" className="hidden md:flex">
-                <User className="h-5 w-5" />
-              </AppButton>
-            </DropdownMenuTrigger>
-
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem asChild>
-                <Link to="/dashboard">
-                  <LayoutDashboard className="mr-2 h-4 w-4" />
-                  Dashboard
-                </Link>
-              </DropdownMenuItem>
-
-              <DropdownMenuItem asChild>
-                <Link to="/login">
-                  <LogIn className="mr-2 h-4 w-4" />
-                  Login
-                </Link>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+        {/* Right Section: Auth & Actions */}
+        <div className="flex flex-1 items-center justify-end gap-3">
           <ThemeToggle />
 
-          {/* Desktop Buttons */}
-          <AppButton size="sm" className="hidden md:flex">
-            <Link to="/login">Login</Link>
-          </AppButton>
+          {isAuthenticated && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <AppButton
+                  variant="ghost"
+                  size="icon"
+                  className="hidden rounded-full md:flex border border-border/50"
+                >
+                  <User className="h-4.5 w-4.5" />
+                </AppButton>
+              </DropdownMenuTrigger>
 
-          <AppButton size="sm" className="hidden md:flex">
-            <Link to="/signup">Sign Up</Link>
-          </AppButton>
-          <AppButton size="sm" className="hidden md:flex">
-            <Link to="/dashboard">Dashboard</Link>
-          </AppButton>
+              <DropdownMenuContent
+                align="end"
+                className="w-60 rounded-xl p-1.5 shadow-xl"
+              >
+                <div className="px-3 py-2">
+                  <p className="font-semibold text-sm text-foreground">{user?.name}</p>
+                  <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
+                </div>
 
-          {/* Mobile Menu */}
+                <DropdownMenuSeparator />
+
+                <DropdownMenuItem asChild className="rounded-lg cursor-pointer">
+                  <Link to={getDashboardRoute(user)} className="flex items-center w-full">
+                    <LayoutDashboard className="mr-2 h-4 w-4" />
+                    Dashboard
+                  </Link>
+                </DropdownMenuItem>
+
+                <DropdownMenuSeparator />
+
+                <DropdownMenuItem
+                  onClick={logout}
+                  className="rounded-lg text-destructive focus:text-destructive cursor-pointer"
+                >
+                  <LogOut className="mr-2 h-4 w-4" />
+                  Logout
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
+
+          {/* Desktop Auth CTA */}
+          <div className="hidden items-center gap-2 md:flex">
+            {isAuthenticated ? (
+              <Link
+                to={getDashboardRoute(user)}
+                className="inline-flex items-center justify-center rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-md shadow-primary/20 hover:opacity-90 transition-all"
+              >
+                Dashboard
+              </Link>
+            ) : (
+              <>
+                <Link
+                  to="/login"
+                  className="inline-flex items-center justify-center rounded-xl border border-border/80 px-4 py-2 text-sm font-medium text-foreground hover:bg-muted/60 transition-all"
+                >
+                  Login
+                </Link>
+
+                <Link
+                  to="/signup"
+                  className="inline-flex items-center justify-center rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-md shadow-primary/20 hover:opacity-90 transition-all"
+                >
+                  Get Started
+                </Link>
+              </>
+            )}
+          </div>
+
+          {/* Mobile Sheet Menu */}
           <Sheet>
             <SheetTrigger asChild>
               <AppButton variant="ghost" size="icon" className="md:hidden">
@@ -108,31 +150,66 @@ const Navbar = () => {
               </AppButton>
             </SheetTrigger>
 
-            <SheetContent side="right" className="bg-background p-4">
-              <div className="flex flex-col gap-4 mt-8">
+            <SheetContent side="right" className="w-[85vw] max-w-sm p-6">
+              <SheetTitle className="text-left text-lg font-bold">
+                <AppLogo />
+              </SheetTitle>
+
+              <div className="mt-6 flex flex-col gap-2">
                 {navLinks.map((link) => (
-                  <AppButton
-                    className="justify-start"
-                    variant={"ghost"}
+                  <Link
                     key={link.href}
+                    to={link.href}
+                    className="rounded-xl px-4 py-2.5 text-sm font-medium transition hover:bg-muted text-foreground"
                   >
-                    <Link key={link.href} to={link.href}>
-                      {link.name}
-                    </Link>
-                  </AppButton>
+                    {link.name}
+                  </Link>
                 ))}
 
-                <AppButton variant="outline" className="w-full">
-                  <Link to="/login">Login</Link>
-                </AppButton>
+                <div className="my-3 border-t border-border/60" />
 
-                <AppButton className="w-full">
-                  <Link to="/signup">Sign Up</Link>
-                </AppButton>
+                {isAuthenticated ? (
+                  <>
+                    <div className="rounded-xl border border-border p-3.5 bg-muted/40 mb-2">
+                      <p className="font-semibold text-sm text-foreground">
+                        {user?.name}
+                      </p>
+                      <p className="text-xs text-muted-foreground truncate">
+                        {user?.email}
+                      </p>
+                    </div>
 
-                <AppButton className="w-full">
-                  <Link to="/dashboard">Dashboard</Link>
-                </AppButton>
+                    <Link to={getDashboardRoute(user)}>
+                      <AppButton variant="ghost" className="w-full">
+                        Dashboard
+                      </AppButton>
+                    </Link>
+
+                    <AppButton
+                      variant="outline"
+                      className="w-full rounded-xl"
+                      onClick={logout}
+                    >
+                      Logout
+                    </AppButton>
+                  </>
+                ) : (
+                  <>
+                    <Link
+                      to="/login"
+                      className="flex w-full items-center justify-center rounded-xl border border-border py-2.5 text-sm font-medium text-foreground hover:bg-muted"
+                    >
+                      Login
+                    </Link>
+
+                    <Link
+                      to="/signup"
+                      className="flex w-full items-center justify-center rounded-xl bg-primary py-2.5 text-sm font-semibold text-primary-foreground shadow-md"
+                    >
+                      Get Started
+                    </Link>
+                  </>
+                )}
               </div>
             </SheetContent>
           </Sheet>

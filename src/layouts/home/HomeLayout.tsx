@@ -1,4 +1,4 @@
-import { Outlet } from "react-router-dom";
+import { Outlet } from "@tanstack/react-router";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 
@@ -7,7 +7,7 @@ const HomeLayout = () => {
     <div className="flex min-h-screen flex-col">
       <Navbar />
 
-      <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col">
+      <main className="flex w-full flex-1 flex-col overflow-x-clip">
         <Outlet />
       </main>
 
