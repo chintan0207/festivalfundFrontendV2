@@ -32,7 +32,7 @@ const festivalFormSchema = z
     targetAmount: z.number().min(0, "Target budget must be positive").optional(),
     openingBalance: z.number().min(0, "Opening balance must be positive").optional(),
     status: z.enum(["UPCOMING", "ACTIVE", "COMPLETED", "ARCHIVED"]),
-    category: z.string().min(1, "Category is required"),
+    category: z.string().max(100, "Category must be under 100 characters").optional(),
     location: z.string().optional(),
     startDate: z.string().optional(),
     endDate: z.string().optional(),
@@ -52,10 +52,10 @@ export type FestivalFormValues = z.infer<typeof festivalFormSchema>;
 const emptyValues = (): FestivalFormValues => ({
   name: "",
   year: new Date().getFullYear(),
-  targetAmount: 500000,
-  openingBalance: 0,
-  status: "ACTIVE",
-  category: "Religious & Cultural",
+  targetAmount: undefined,
+  openingBalance: undefined,
+  status: "UPCOMING",
+  category: "",
   location: "",
   startDate: "",
   endDate: "",
@@ -100,10 +100,10 @@ export function FestivalFormPage({ festivalId }: FestivalFormPageProps) {
       reset({
         name: festival.name ?? "",
         year: festival.year ?? new Date().getFullYear(),
-        targetAmount: festival.targetAmount ?? 0,
-        openingBalance: festival.stats?.openingBalance ?? 0,
-        status: festival.status || "ACTIVE",
-        category: festival.category || "Religious & Cultural",
+        targetAmount: festival.targetAmount ?? undefined,
+        openingBalance: festival.stats?.openingBalance ?? undefined,
+        status: festival.status || "UPCOMING",
+        category: festival.category || "",
         location: festival.location || "",
         startDate: festival.startDate ? String(festival.startDate).split("T")[0] : "",
         endDate: festival.endDate ? String(festival.endDate).split("T")[0] : "",
@@ -117,9 +117,12 @@ export function FestivalFormPage({ festivalId }: FestivalFormPageProps) {
     const payload = {
       name: values.name,
       year: Number(values.year),
-      targetAmount: Number(values.targetAmount || 0),
+      targetAmount:
+        typeof values.targetAmount === "number" && !Number.isNaN(values.targetAmount)
+          ? Number(values.targetAmount)
+          : undefined,
       status: values.status,
-      category: values.category,
+      category: values.category || undefined,
       location: values.location || undefined,
       description: values.description || undefined,
       startDate: values.startDate || undefined,
@@ -141,7 +144,14 @@ export function FestivalFormPage({ festivalId }: FestivalFormPageProps) {
       );
     } else {
       createMutation.mutate(
-        { ...payload, openingBalance: Number(values.openingBalance || 0) },
+        {
+          ...payload,
+          openingBalance:
+            typeof values.openingBalance === "number" &&
+            !Number.isNaN(values.openingBalance)
+              ? Number(values.openingBalance)
+              : undefined,
+        },
         {
           onSuccess: (res) => {
             const id = res?.data?._id;
@@ -260,6 +270,7 @@ export function FestivalFormPage({ festivalId }: FestivalFormPageProps) {
             <AppSelect
               id="status"
               label="Status"
+              // eslint-disable-next-line react-hooks/incompatible-library
               value={watch("status")}
               onChange={(val) => setValue("status", val as FestivalStatus, { shouldValidate: true })}
               options={festivalStatusOptions}

@@ -57,7 +57,7 @@ export const FestivalDetailsCard = ({
             <div className="flex items-center gap-2 flex-wrap">
               <h2 className="text-lg font-bold text-foreground tracking-tight">{festival?.name || "Festival Overview"}</h2>
               <span className="text-xs font-mono font-extrabold px-2 py-0.5 rounded-md bg-muted text-muted-foreground">
-                {festival?.year || 2025}
+                {festival?.year ?? "—"}
               </span>
               <span className={cn("text-[10px] font-extrabold px-2.5 py-0.5 rounded-full border uppercase tracking-wide", statusColors[festival?.status] || statusColors.ACTIVE)}>
                 {festival?.status || "ACTIVE"}
@@ -99,7 +99,7 @@ export const FestivalDetailsCard = ({
           <MapPin className="h-4 w-4 text-rose-500 shrink-0" />
           <div className="min-w-0">
             <p className="text-[10px] text-muted-foreground font-semibold">Location / Mandap</p>
-            <p className="font-semibold text-foreground truncate">{festival?.location || "Main Festival Ground"}</p>
+            <p className="font-semibold text-foreground truncate">{festival?.location || "Not set"}</p>
           </div>
         </div>
 
@@ -107,7 +107,7 @@ export const FestivalDetailsCard = ({
           <Tag className="h-4 w-4 text-emerald-600 shrink-0" />
           <div className="min-w-0">
             <p className="text-[10px] text-muted-foreground font-semibold">Category</p>
-            <p className="font-semibold text-foreground truncate">{festival?.category || "Religious & Cultural"}</p>
+            <p className="font-semibold text-foreground truncate">{festival?.category || "Not set"}</p>
           </div>
         </div>
       </div>

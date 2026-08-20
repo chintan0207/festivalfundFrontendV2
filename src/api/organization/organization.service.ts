@@ -31,6 +31,7 @@ export type UpdateOrganizationPayload = {
   website?: string;
   logoUrl?: string;
   currency?: string;
+  timezone?: string;
   isActive?: boolean;
 };
 

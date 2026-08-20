@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { Outlet, useMatches, useRouter } from "@tanstack/react-router";
 import { useFestivals, useSoftDeleteFestival } from "@/api/festival/useFestivals";
 import { useFestivalApiStore } from "@/api/festival/festival.store";
-import { useFestivalStore as useMockFestivalStore } from "@/store/festivalStore";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useIsOrgAdmin } from "@/hooks/useIsOrgAdmin";
 import { gradientColors, getModuleTheme } from "@/theme/colors";
@@ -73,14 +72,14 @@ const calculateDaysLeft = (endDateStr?: string) => {
 const normalizeFestival = (item: any) => ({
   id: item._id || item.id,
   name: item.name,
-  year: item.year || 2026,
-  status: (item.status || "ACTIVE").toUpperCase(),
-  targetAmount: item.targetAmount || 500000,
-  category: item.category || "Religious & Cultural",
-  location: item.location || "Community Grounds",
-  description: item.description || `${item.name} celebration and events.`,
-  startDate: item.startDate || "2026-09-07",
-  endDate: item.endDate || "2026-09-17",
+  year: item.year,
+  status: (item.status || "").toUpperCase(),
+  targetAmount: item.targetAmount,
+  category: item.category,
+  location: item.location,
+  description: item.description,
+  startDate: item.startDate,
+  endDate: item.endDate,
   stats: {
     openingBalance: item.stats?.openingBalance || 0,
     totalCollected: item.stats?.totalCollected || 0,
@@ -132,8 +131,6 @@ export const FestivalsPage = () => {
     setSearch(debouncedSearch);
   }, [debouncedSearch, setSearch]);
 
-  const mockFestivals = useMockFestivalStore((s) => s.festivals);
-
   const queryParams = {
     page,
     limit,
@@ -149,11 +146,9 @@ export const FestivalsPage = () => {
   const { data, isLoading } = useFestivals(queryParams);
   const deleteMutation = useSoftDeleteFestival();
 
-  // Mock fallback: only when the server never returned data (dev mode)
   const serverFetched = data !== undefined;
-  const showMock = !serverFetched && !isLoading && mockFestivals.length > 0;
 
-  const festivals = (serverFetched ? data?.festivals ?? [] : showMock ? mockFestivals : [])
+  const festivals = (data?.festivals ?? [])
     .filter((item: any) => !item?.isDeleted)
     .map(normalizeFestival);
 
@@ -168,22 +163,14 @@ export const FestivalsPage = () => {
     { value: "ALL", label: "All Years" },
     ...(facetData.years && facetData.years.length
       ? facetData.years.map((y) => ({ value: String(y), label: String(y) }))
-      : [
-          { value: "2026", label: "2026" },
-          { value: "2025", label: "2025" },
-          { value: "2024", label: "2024" },
-        ]),
+      : []),
   ];
 
   const locationOptions = [
     { value: "ALL", label: "All Locations" },
     ...(facetData.locations && facetData.locations.length
       ? facetData.locations.map((loc) => ({ value: loc, label: loc }))
-      : [
-          { value: "Community Grounds", label: "Community Grounds" },
-          { value: "Main Hall", label: "Main Hall" },
-          { value: "Temple Complex", label: "Temple Complex" },
-        ]),
+      : []),
   ];
 
   const [deleteTarget, setDeleteTarget] = useState<any | null>(null);
@@ -383,11 +370,12 @@ export const FestivalsPage = () => {
             const cardGradient = gradientColors[index % gradientColors.length];
             const isSelected = activeFestivalId === fest.id;
             const collected = fest.stats?.totalCollected || 0;
-            const target = fest.targetAmount || 500000;
-            const progressPercent = Math.min(
-              100,
-              Math.round((collected / (target || 1)) * 100),
-            );
+            const hasTarget =
+              typeof fest.targetAmount === "number" && fest.targetAmount > 0;
+            const target = hasTarget ? fest.targetAmount : null;
+            const progressPercent = hasTarget
+              ? Math.min(100, Math.round((collected / target) * 100))
+              : 0;
             const daysLeft = calculateDaysLeft(fest.endDate);
             const formattedDates = formatEventDateRange(fest.startDate, fest.endDate);
 
@@ -422,7 +410,9 @@ export const FestivalsPage = () => {
                             ? "Active"
                             : fest.status === "UPCOMING"
                               ? "Upcoming"
-                              : "Completed"}
+                              : fest.status === "COMPLETED"
+                                ? "Completed"
+                                : "Archived"}
                         </span>
                       </span>
                     </div>
@@ -441,7 +431,7 @@ export const FestivalsPage = () => {
                         {fest.name}
                       </h3>
                       <p className="text-[11px] text-muted-foreground mt-0.5 line-clamp-1">
-                        {fest.description}
+                        {fest.description || "No description provided."}
                       </p>
                     </div>
 
@@ -451,19 +441,31 @@ export const FestivalsPage = () => {
                         <span className="font-semibold text-muted-foreground">
                           Collection Progress
                         </span>
-                        <span className="font-bold text-foreground">
-                          {formatCurrencyShort(collected)}{" "}
-                          <span className="text-muted-foreground font-normal">
-                            / {formatCurrencyShort(target)}
+                        {hasTarget ? (
+                          <span className="font-bold text-foreground">
+                            {formatCurrencyShort(collected)}{" "}
+                            <span className="text-muted-foreground font-normal">
+                              / {formatCurrencyShort(target)}
+                            </span>
                           </span>
-                        </span>
+                        ) : (
+                          <span className="font-bold text-foreground">
+                            {formatCurrencyShort(collected)} collected
+                          </span>
+                        )}
                       </div>
-                      <div className="h-1.5 w-full bg-muted/80 rounded-full overflow-hidden">
-                        <div
-                          className="h-full bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full transition-all duration-300"
-                          style={{ width: `${progressPercent}%` }}
-                        />
-                      </div>
+                      {hasTarget ? (
+                        <div className="h-1.5 w-full bg-muted/80 rounded-full overflow-hidden">
+                          <div
+                            className="h-full bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full transition-all duration-300"
+                            style={{ width: `${progressPercent}%` }}
+                          />
+                        </div>
+                      ) : (
+                        <p className="text-[10px] text-muted-foreground font-medium">
+                          Set target balance to track progress.
+                        </p>
+                      )}
                     </div>
 
                     {/* 3 Metric Chips Grid */}

@@ -11,7 +11,6 @@ const Footer = () => {
         { label: "Features", href: "/features" },
         { label: "Pricing", href: "/pricing" },
         { label: "Contribution Lookup", href: "/contributor-lookup" },
-        { label: "App Overview", href: "/app" },
       ],
     },
     {

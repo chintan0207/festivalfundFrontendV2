@@ -17,6 +17,7 @@ import {
 import { AppButton } from "@/components/common/AppButton";
 import { AppInput } from "@/components/common/AppInput";
 import { AppTextArea } from "@/components/common/AppTextArea";
+import { AppSelect } from "@/components/common/AppSelect";
 import { AppBadge } from "@/components/common/AppBadge";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { CardListSkeleton } from "@/components/common/CardListSkeleton";
@@ -47,6 +48,7 @@ import {
 import { getModuleTheme, gradientColors } from "@/theme/colors";
 import { cn, initials } from "@/lib/utils";
 import { sanitizePhone } from "@/lib/phone";
+import { DEFAULT_TIMEZONE, timezoneOptions } from "@/lib/timezones";
 import type { Invitation, User } from "@/types/Types";
 
 const planStyles: Record<string, string> = {
@@ -84,6 +86,7 @@ export const SettingsPage = () => {
   const [orgDescription, setOrgDescription] = useState("");
   const [orgWebsite, setOrgWebsite] = useState("");
   const [orgCurrency, setOrgCurrency] = useState("INR");
+  const [orgTimezone, setOrgTimezone] = useState(DEFAULT_TIMEZONE);
   const [isSaved, setIsSaved] = useState(false);
 
   const [logoUploading, setLogoUploading] = useState(false);
@@ -104,6 +107,7 @@ export const SettingsPage = () => {
       setOrgDescription(profileOrg.description ?? "");
       setOrgWebsite(profileOrg.website ?? "");
       setOrgCurrency(profileOrg.currency ?? "INR");
+      setOrgTimezone(profileOrg.timezone || DEFAULT_TIMEZONE);
     }
   }, [profileOrg]);
 
@@ -134,6 +138,7 @@ export const SettingsPage = () => {
       description: orgDescription || undefined,
       website: orgWebsite || undefined,
       currency: orgCurrency,
+      timezone: orgTimezone,
     });
     if (res) {
       setIsSaved(true);
@@ -214,7 +219,7 @@ export const SettingsPage = () => {
             )}
           </div>
           <p className="text-xs text-muted-foreground mt-1">
-            Configure organization profile, team access, and document numbering.
+            Configure organization profile, team access, and regional preferences.
           </p>
         </div>
 
@@ -292,7 +297,7 @@ export const SettingsPage = () => {
                     Remove Logo
                   </AppButton>
                 )}
-                <p className="text-2xs text-muted-foreground">PNG or JPG, max 2MB</p>
+                <p className="text-2xs text-muted-foreground">PNG or JPG, max 3 MB</p>
               </div>
             </div>
 
@@ -350,6 +355,16 @@ export const SettingsPage = () => {
                 value={orgCurrency}
                 onChange={(e) => setOrgCurrency(e.target.value.toUpperCase())}
               />
+              <div className="flex flex-col gap-1.5">
+                <AppSelect
+                  id="orgTimezone"
+                  label="Timezone"
+                  value={orgTimezone}
+                  options={timezoneOptions}
+                  onChange={setOrgTimezone}
+                  hint="Used for receipt/slip timestamps and scheduling."
+                />
+              </div>
             </div>
 
             <div className="flex justify-end">

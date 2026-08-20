@@ -2,7 +2,6 @@
 import { useState, useMemo } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
-import { useFestivalStore } from "@/store/festivalStore";
 import { useFestivalApiStore } from "@/api/festival/festival.store";
 import { useFestivals } from "@/api/festival/useFestivals";
 import {
@@ -79,14 +78,6 @@ export const ReportsPage = ({
 }) => {
   const navigate = useNavigate();
 
-  // Local & Store fallback state
-  const {
-    festivals: storeFestivals,
-    contributions: storeContributions,
-    expenses: storeExpenses,
-    contributors: storeContributors,
-  } = useFestivalStore();
-
   // Single source of truth: active festival id lives in the shared API store (topbar selector)
   const { activeFestivalId } = useFestivalApiStore();
 
@@ -103,103 +94,98 @@ export const ReportsPage = ({
   const updateExpenseStatus = useUpdateExpenseStatus();
 
   const festivals = useMemo(() => {
-    if (apiFestivalsData?.festivals && apiFestivalsData.festivals.length > 0) {
-      return apiFestivalsData.festivals.map((f) => ({
-        id: f._id,
-        name: f.name,
-        year: f.year || 2025,
-        startDate: typeof f.startDate === "string" ? f.startDate : "",
-        endDate: typeof f.endDate === "string" ? f.endDate : "",
-        targetAmount: f.targetAmount || 0,
-        stats: {
-          openingBalance: f.stats?.openingBalance || 25000,
-          totalCollected: f.stats?.totalCollected || 0,
-          pendingAmount: f.stats?.pendingAmount || 0,
-          totalExpenses: f.stats?.totalExpenses || 0,
-          currentBalance: f.stats?.currentBalance || 0,
-        },
-        status: (f.status || "ACTIVE") as any,
-        location: f.location || "",
-        category: f.category || "",
-        contributorsCount: f.stats?.contributorsCount || 0,
-        description: f.description || "",
-      }));
+    if (!apiFestivalsData?.festivals || apiFestivalsData.festivals.length === 0) {
+      return [];
     }
-    return storeFestivals;
-  }, [apiFestivalsData, storeFestivals]);
+    return apiFestivalsData.festivals.map((f) => ({
+      id: f._id,
+      name: f.name,
+      year: f.year,
+      startDate: typeof f.startDate === "string" ? f.startDate : "",
+      endDate: typeof f.endDate === "string" ? f.endDate : "",
+      targetAmount: f.targetAmount,
+      stats: {
+        openingBalance: f.stats?.openingBalance ?? undefined,
+        totalCollected: f.stats?.totalCollected ?? undefined,
+        pendingAmount: f.stats?.pendingAmount ?? undefined,
+        totalExpenses: f.stats?.totalExpenses ?? undefined,
+        currentBalance: f.stats?.currentBalance ?? undefined,
+        contributorsCount: f.stats?.contributorsCount ?? undefined,
+      },
+      status: f.status as any,
+      location: f.location || "",
+      category: f.category || "",
+      description: f.description || "",
+    }));
+  }, [apiFestivalsData]);
 
   const contributions = useMemo(() => {
     if (
-      apiContributionsData?.contributions &&
-      apiContributionsData.contributions.length > 0
+      !apiContributionsData?.contributions ||
+      apiContributionsData.contributions.length === 0
     ) {
-      return apiContributionsData.contributions.map((c) => ({
-        id: c._id,
-        _id: c._id,
-        contributionCode: c.contributionCode || "",
-        receiptNo: c.contributionCode || c._id.slice(-6),
-        festivalId: c.festival?._id || "",
-        contributorId: c.contributor?._id || "",
-        contributorName: c.contributor?.name || "Contributor",
-        contributorPhone: c.contributor?.phoneNumber || "",
-        contributorCategory: (c.contributor?.category || "PARENT") as any,
-        type: (c.type === "ITEM" ? "ITEM" : "MONEY") as any,
-        amount: c.amount || 0,
-        paymentMode: (c.paymentMode === "UPI" ? "UPI" : "CASH") as any,
-        status: (c.status === "PENDING"
-          ? "PENDING"
-          : c.status === "CANCELLED"
-            ? "CANCELLED"
-            : "DEPOSITED") as any,
-        date: c.date ? c.date.slice(0, 10) : "",
-        notes: "",
-      }));
+      return [];
     }
-    return storeContributions;
-  }, [apiContributionsData, storeContributions]);
+    return apiContributionsData.contributions.map((c) => ({
+      id: c._id,
+      _id: c._id,
+      contributionCode: c.contributionCode || "",
+      receiptNo: c.contributionCode || "",
+      festivalId: c.festival?._id || "",
+      contributorId: c.contributor?._id || "",
+      contributorName: c.contributor?.name || "",
+      contributorPhone: c.contributor?.phoneNumber || "",
+      contributorCategory: c.contributor?.category || "",
+      type: (c.type === "ITEM" ? "ITEM" : "MONEY") as any,
+      amount: c.amount,
+      paymentMode: c.paymentMode as any,
+      status: c.status as any,
+      date: c.date ? c.date.slice(0, 10) : "",
+      notes: "",
+    }));
+  }, [apiContributionsData]);
 
   const expenses = useMemo(() => {
-    if (apiExpensesData?.expenses && apiExpensesData.expenses.length > 0) {
-      return apiExpensesData.expenses.map((e) => ({
-        id: e._id,
-        _id: e._id,
-        expenseCode: e.expenseCode || "",
-        voucherNo: e.expenseCode || e._id.slice(-6),
-        festivalId: e.festival?._id || "",
-        title: e.description || e.vendorName || "Expense",
-        category: (e.category || "OTHER") as any,
-        amount: e.amount || 0,
-        paidTo: e.vendorName || "Vendor",
-        paymentMode: (e.paymentMode === "UPI" ? "UPI" : "CASH") as any,
-        date: e.date ? e.date.slice(0, 10) : "",
-        status: (e.status || "Approved") as any,
-        notes: e.description,
-      }));
+    if (!apiExpensesData?.expenses || apiExpensesData.expenses.length === 0) {
+      return [];
     }
-    return storeExpenses;
-  }, [apiExpensesData, storeExpenses]);
+    return apiExpensesData.expenses.map((e) => ({
+      id: e._id,
+      _id: e._id,
+      expenseCode: e.expenseCode || "",
+      voucherNo: e.expenseCode || "",
+      festivalId: e.festival?._id || "",
+      title: e.description || e.vendorName || "",
+      category: e.category || "",
+      amount: e.amount,
+      paidTo: e.vendorName || "",
+      paymentMode: e.paymentMode as any,
+      date: e.date ? e.date.slice(0, 10) : "",
+      status: e.status as any,
+      notes: e.description,
+    }));
+  }, [apiExpensesData]);
 
   const contributors = useMemo(() => {
     if (
-      apiContributorsData?.contributors &&
-      apiContributorsData.contributors.length > 0
+      !apiContributorsData?.contributors ||
+      apiContributorsData.contributors.length === 0
     ) {
-      return apiContributorsData.contributors.map((c) => ({
-        id: c._id,
-        _id: c._id,
-        festivalId: "",
-        contributorCode: c.contributorCode || "",
-        name: c.name || "",
-        phone: c.phoneNumber || "",
-        email: c.email || "",
-        category: (c.category || "PARENT") as any,
-        totalContributed: 0,
-        status: (c.isActive ? "Active" : "Pending") as any,
-        locality: c.notes || "",
-      }));
+      return [];
     }
-    return storeContributors;
-  }, [apiContributorsData, storeContributors]);
+    return apiContributorsData.contributors.map((c) => ({
+      id: c._id,
+      _id: c._id,
+      festivalId: "",
+      contributorCode: c.contributorCode || "",
+      name: c.name || "",
+      phone: c.phoneNumber || "",
+      email: c.email || "",
+      category: c.category || "",
+      status: c.isActive ? "Active" : "Pending",
+      locality: c.notes || "",
+    }));
+  }, [apiContributorsData]);
 
   // Tab State
   const [activeTab, setActiveTab] = useState<ReportTab>(initialTab || "summary");
@@ -336,16 +322,16 @@ export const ReportsPage = ({
 
   // 2. FINANCIAL STATS & METRICS CALCULATIONS (EXACT MATCH FOR STANDALONE MODULE KPIS)
   const openingBalance =
-    apiStatsData?.openingBalance ?? (activeFest?.stats?.openingBalance || 25000);
+    apiStatsData?.openingBalance ?? activeFest?.stats?.openingBalance ?? 0;
   const totalCollected = filteredContributions.reduce(
-    (acc, c) => acc + (c.status === "DEPOSITED" ? c.amount : 0),
+    (acc, c) => acc + (c.status === "DEPOSITED" ? c.amount ?? 0 : 0),
     0,
   );
   const pendingAmount = filteredContributions.reduce(
-    (acc, c) => acc + (c.status === "PENDING" ? c.amount : 0),
+    (acc, c) => acc + (c.status === "PENDING" ? c.amount ?? 0 : 0),
     0,
   );
-  const totalSpent = filteredExpenses.reduce((acc, e) => acc + e.amount, 0);
+  const totalSpent = filteredExpenses.reduce((acc, e) => acc + (e.amount ?? 0), 0);
   const currentBalance = openingBalance + totalCollected - totalSpent;
   const contributorCount = new Set(
     filteredContributions.map((c) => c.contributorId).filter(Boolean),
@@ -354,17 +340,15 @@ export const ReportsPage = ({
   const itemContributionsCount = filteredContributions.filter(
     (c) => c.type === "ITEM",
   ).length;
-  const pendingExpenseAmount = filteredExpenses
-    .filter((e) => e.status === "PENDING" || e.status === "Pending")
-    .reduce((a, b) => a + b.amount, 0);
-  const paidExpenseAmount = filteredExpenses
-    .filter(
-      (e) => e.status === "PAID" || e.status === "Approved" || e.status === "Deposited",
-    )
-    .reduce((a, b) => a + b.amount, 0);
-  const cancelledExpensesCount = filteredExpenses.filter(
-    (e) => e.status === "CANCELLED" || e.status === "Cancelled",
-  ).length;
+const pendingExpenseAmount = filteredExpenses
+    .filter((e) => e.status === "PENDING")
+    .reduce((a, b) => a + (b.amount ?? 0), 0);
+const paidExpenseAmount = filteredExpenses
+    .filter((e) => e.status === "PAID")
+    .reduce((a, b) => a + (b.amount ?? 0), 0);
+const cancelledExpensesCount = filteredExpenses.filter(
+    (e) => e.status === "CANCELLED",
+).length;
 
   const parentContributorsCount = contributors.filter(
     (c) => c.category === "PARENT",
@@ -375,57 +359,29 @@ export const ReportsPage = ({
   const categoryTotals = {
     FOOD: filteredExpenses
       .filter((e) => e.category === "FOOD")
-      .reduce((a, b) => a + b.amount, 0),
+      .reduce((a, b) => a + (b.amount ?? 0), 0),
     DECORATION: filteredExpenses
       .filter((e) => e.category === "DECORATION")
-      .reduce((a, b) => a + b.amount, 0),
+      .reduce((a, b) => a + (b.amount ?? 0), 0),
     SERVICES: filteredExpenses
       .filter((e) => e.category === "SERVICES")
-      .reduce((a, b) => a + b.amount, 0),
+      .reduce((a, b) => a + (b.amount ?? 0), 0),
     CULTURAL: filteredExpenses
       .filter((e) => e.category === "CULTURAL")
-      .reduce((a, b) => a + b.amount, 0),
+      .reduce((a, b) => a + (b.amount ?? 0), 0),
     OTHER: filteredExpenses
       .filter((e) => e.category === "OTHER")
-      .reduce((a, b) => a + b.amount, 0),
+      .reduce((a, b) => a + (b.amount ?? 0), 0),
   };
 
   // 3. ADAPTIVE TABLE LIST MAPPINGS
   const tableContributions: ContributionListItem[] = useMemo(() => {
-    if (
-      apiContributionsData?.contributions &&
-      apiContributionsData.contributions.length > 0
-    ) {
-      return filteredContributions.map((c) => {
-        const itemObj = c as any;
-        const orig = apiContributionsData.contributions.find(
-          (raw: any) => raw._id === itemObj.id || raw._id === itemObj._id,
-        );
-        if (orig) return orig;
-        return {
-          _id: itemObj.id || itemObj._id,
-          contributionCode: c.receiptNo || c.contributionCode || "",
-          type: c.type || "MONEY",
-          status: c.status || "DEPOSITED",
-          paymentMode: c.paymentMode || "CASH",
-          date: c.date,
-          amount: c.amount,
-          isBalanceApplied: false,
-          contributor: {
-            _id: c.contributorId || "",
-            name: c.contributorName,
-            category: c.contributorCategory,
-            phoneNumber: c.contributorPhone,
-          },
-          festival: {
-            _id: c.festivalId || "",
-            name: activeFest?.name,
-          },
-        } as ContributionListItem;
-      });
-    }
     return filteredContributions.map((c) => {
       const itemObj = c as any;
+      const orig = apiContributionsData?.contributions.find(
+        (raw: any) => raw._id === itemObj.id || raw._id === itemObj._id,
+      );
+      if (orig) return orig;
       return {
         _id: itemObj.id || itemObj._id,
         contributionCode: c.receiptNo || c.contributionCode || "",
@@ -450,37 +406,12 @@ export const ReportsPage = ({
   }, [apiContributionsData, filteredContributions, activeFest]);
 
   const tableExpenses: ExpenseListItem[] = useMemo(() => {
-    if (apiExpensesData?.expenses && apiExpensesData.expenses.length > 0) {
-      return filteredExpenses.map((e) => {
-        const itemObj = e as any;
-        const orig = apiExpensesData.expenses.find(
-          (raw: any) => raw._id === itemObj.id || raw._id === itemObj._id,
-        );
-        if (orig) return orig;
-        return {
-          _id: itemObj.id || itemObj._id,
-          expenseCode: e.voucherNo || e.expenseCode || "",
-          category: e.category || "OTHER",
-          amount: e.amount,
-          description: e.title || e.notes,
-          date: e.date,
-          vendorName: e.paidTo,
-          paymentMode: e.paymentMode || "CASH",
-          status: (e.status === "Approved" || e.status === "PAID"
-            ? "PAID"
-            : e.status === "CANCELLED"
-              ? "CANCELLED"
-              : "PENDING") as ExpenseStatus,
-          isBalanceApplied: false,
-          festival: {
-            _id: e.festivalId || "",
-            name: activeFest?.name,
-          },
-        } as ExpenseListItem;
-      });
-    }
     return filteredExpenses.map((e) => {
       const itemObj = e as any;
+      const orig = apiExpensesData?.expenses.find(
+        (raw: any) => raw._id === itemObj.id || raw._id === itemObj._id,
+      );
+      if (orig) return orig;
       return {
         _id: itemObj.id || itemObj._id,
         expenseCode: e.voucherNo || e.expenseCode || "",
@@ -490,7 +421,7 @@ export const ReportsPage = ({
         date: e.date,
         vendorName: e.paidTo,
         paymentMode: e.paymentMode || "CASH",
-        status: (e.status === "Approved" || e.status === "PAID"
+        status: (e.status === "PAID"
           ? "PAID"
           : e.status === "CANCELLED"
             ? "CANCELLED"
@@ -505,31 +436,12 @@ export const ReportsPage = ({
   }, [apiExpensesData, filteredExpenses, activeFest]);
 
   const tableContributors: Contributor[] = useMemo(() => {
-    if (
-      apiContributorsData?.contributors &&
-      apiContributorsData.contributors.length > 0
-    ) {
-      return filteredContributors.map((c) => {
-        const itemObj = c as any;
-        const orig = apiContributorsData.contributors.find(
-          (raw: any) => raw._id === itemObj.id || raw._id === itemObj._id,
-        );
-        if (orig) return orig;
-        return {
-          _id: itemObj.id || itemObj._id,
-          organizationId: "",
-          contributorCode: c.contributorCode || "",
-          name: c.name,
-          phoneNumber: c.phone,
-          email: c.email,
-          category: c.category || "PARENT",
-          isActive: c.status === "Active",
-          createdAt: new Date().toISOString(),
-        } as Contributor;
-      });
-    }
     return filteredContributors.map((c) => {
       const itemObj = c as any;
+      const orig = apiContributorsData?.contributors.find(
+        (raw: any) => raw._id === itemObj.id || raw._id === itemObj._id,
+      );
+      if (orig) return orig;
       return {
         _id: itemObj.id || itemObj._id,
         organizationId: "",
