@@ -18,7 +18,7 @@ import type {
 import { formatINR, formatDate } from "../lib/dashboardFormat";
 
 function ContributionRow({ c }: { c: DashboardContributionRecent }) {
-  const amount = c.type === "MONEY" ? c.amount : c.estimatedValue || 0;
+  const isMoney = c.type === "MONEY";
   return (
     <Link
       to="/dashboard/contributions/$contributionId"
@@ -52,9 +52,17 @@ function ContributionRow({ c }: { c: DashboardContributionRecent }) {
       </div>
 
       <div className="text-right shrink-0">
-        <p className="text-sm font-bold text-foreground tabular-nums">
-          {formatINR(amount)}
-        </p>
+        {isMoney ? (
+          <p className="text-sm font-bold text-foreground tabular-nums">
+            {formatINR(c.amount)}
+          </p>
+        ) : c.estimatedValue ? (
+          <p className="text-sm font-bold text-foreground tabular-nums">
+            {formatINR(c.estimatedValue)}
+          </p>
+        ) : (
+          <p className="text-sm font-semibold text-muted-foreground">Item</p>
+        )}
         <p className="text-[10px] text-muted-foreground">{c.paymentMode}</p>
       </div>
     </Link>

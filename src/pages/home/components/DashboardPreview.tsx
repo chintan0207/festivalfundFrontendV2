@@ -1,17 +1,33 @@
 import { AppBadge, AppCard } from "@/components/common";
-import { Area, AreaChart, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
-import {
-  kpiData,
-  monthlyData,
-  categoryData,
-  tenantOrgs,
-} from "@/lib/data/landingPageData";
-import { cn } from "@/lib/utils";
+import { Calendar, Users, Wallet, Receipt, FileText, ShieldCheck } from "lucide-react";
+
+const previewHighlights = [
+  {
+    icon: Calendar,
+    title: "Festivals",
+    description: "Plan budgets, dates, and status across every celebration.",
+  },
+  {
+    icon: Users,
+    title: "Contributors",
+    description: "Profiles with auto-generated codes and contribution history.",
+  },
+  {
+    icon: Wallet,
+    title: "Contributions",
+    description: "Record cash and in-kind donations with a clear status workflow.",
+  },
+  {
+    icon: Receipt,
+    title: "Expenses",
+    description: "Track categorized spending against live festival balances.",
+  },
+];
 
 const DashboardPreview = () => {
   return (
     <div className="relative mx-auto mt-16 max-w-5xl animate-fade-up px-4 sm:px-6">
-      <div className="absolute -inset-4 rounded-3xl  pointer-events-none" />
+      <div className="absolute -inset-4 rounded-3xl pointer-events-none" />
       <AppCard className="relative overflow-hidden p-0 border-border/60">
         <div className="flex h-10 items-center gap-2 border-b border-border bg-muted/50 px-4">
           <div className="flex gap-1.5">
@@ -28,7 +44,7 @@ const DashboardPreview = () => {
             <div>
               <p className="text-sm font-bold text-foreground">Dashboard Overview</p>
               <p className="text-2xs text-muted-foreground">
-                Shri Ganesh Temple Trust · 2025-26
+                Your organization&apos;s festival hub
               </p>
             </div>
             <AppBadge className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-semibold">
@@ -37,129 +53,53 @@ const DashboardPreview = () => {
             </AppBadge>
           </div>
 
-          <div className="mb-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
-            {kpiData.map((kpi, i) => (
-              <div key={i} className="rounded-xl border border-border/60 bg-muted/50 p-3">
-                <p className="text-2xs text-muted-foreground">{kpi.label}</p>
-                <p className="mt-0.5 text-lg font-bold text-foreground">{kpi.value}</p>
-                <div className="mt-1 flex items-center justify-between">
-                  <span
-                    className={cn(
-                      "text-2xs font-semibold",
-                      kpi.change.startsWith("+")
-                        ? "text-emerald-600 dark:text-emerald-400"
-                        : "text-rose-500",
-                    )}
-                  >
-                    {kpi.change}
-                  </span>
-                  <Sparkline data={kpi.spark} />
+          <div className="mb-5 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            {previewHighlights.map((item) => {
+              const Icon = item.icon;
+              return (
+                <div key={item.title} className="rounded-xl border border-border/60 bg-muted/50 p-3">
+                  <div className="flex items-center gap-2">
+                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                      <Icon className="h-3.5 w-3.5" />
+                    </span>
+                    <p className="text-xs font-bold text-foreground">{item.title}</p>
+                  </div>
+                  <p className="mt-2 text-2xs text-muted-foreground leading-relaxed">
+                    {item.description}
+                  </p>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
-          <div className="grid gap-3 sm:grid-cols-3">
-            <div className="rounded-xl border border-border/60 bg-muted/50 p-4 sm:col-span-2">
-              <p className="mb-3 text-xs font-semibold text-muted-foreground">
-                Collection Trend
-              </p>
-              <ResponsiveContainer width="100%" height={140}>
-                <AreaChart data={monthlyData}>
-                  <defs>
-                    <linearGradient id="collectionTrend" x1="0" y1="0" x2="0" y2="1">
-                      <stop
-                        offset="0%"
-                        stopColor="hsl(var(--primary))"
-                        stopOpacity={0.2}
-                      />
-                      <stop
-                        offset="100%"
-                        stopColor="hsl(var(--primary))"
-                        stopOpacity={0}
-                      />
-                    </linearGradient>
-                  </defs>
-                  <Area
-                    type="monotone"
-                    dataKey="value"
-                    stroke="hsl(var(--primary))"
-                    fill="url(#collectionTrend)"
-                    strokeWidth={2}
-                    dot={false}
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
-            </div>
-            <div className="rounded-xl border border-border/60 bg-muted/50 p-4">
-              <p className="mb-3 text-xs font-semibold text-muted-foreground">
-                By Category
-              </p>
-              <div className="flex items-center justify-center">
-                <ResponsiveContainer width="100%" height={140}>
-                  <PieChart>
-                    <Pie
-                      data={categoryData}
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={35}
-                      outerRadius={60}
-                      dataKey="value"
-                      paddingAngle={2}
-                    >
-                      {categoryData.map((entry, idx) => (
-                        <Cell key={idx} fill={entry.color} />
-                      ))}
-                    </Pie>
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
-              <div className="mt-2 flex flex-wrap justify-center gap-2">
-                {categoryData.map((cat) => (
-                  <div
-                    key={cat.label}
-                    className="flex items-center gap-1 text-2xs text-muted-foreground"
-                  >
-                    <span
-                      className="inline-block h-2 w-2 rounded-full"
-                      style={{ backgroundColor: cat.color }}
-                    />
-                    {cat.label}
-                  </div>
-                ))}
-              </div>
+          <div className="rounded-xl border border-border/60 bg-muted/50 p-4">
+            <p className="mb-3 text-xs font-semibold text-muted-foreground">
+              Everything in one place
+            </p>
+            <div className="grid gap-3 sm:grid-cols-2">
+              {[
+                "Real-time contribution & expense tracking",
+                "Automatic receipt (slip) generation with QR codes",
+                "Public contributor lookup portal",
+                "Exportable PDF & Excel financial reports",
+              ].map((text) => (
+                <div key={text} className="flex items-start gap-2">
+                  <ShieldCheck className="mt-0.5 h-3.5 w-3.5 shrink-0 text-emerald-600" />
+                  <span className="text-xs text-foreground">{text}</span>
+                </div>
+              ))}
             </div>
           </div>
         </div>
       </AppCard>
-      <div className="mt-16 mb-2 text-center">
-        <p className="mb-6 text-sm text-muted-foreground font-medium">
-          Trusted by organizations of all sizes
+      <div className="mt-8 mb-2 text-center">
+        <p className="text-sm text-muted-foreground font-medium">
+          <FileText className="mr-1.5 inline h-4 w-4 text-primary" />
+          Built for mandals, trusts, and community committees across India
         </p>
-        <div className="flex flex-wrap items-center justify-center gap-6 opacity-60 sm:gap-10">
-          {tenantOrgs?.map((org) => (
-            <span key={org} className="text-sm font-semibold text-muted-foreground">
-              {org}
-            </span>
-          ))}
-        </div>
       </div>
     </div>
   );
 };
 
 export default DashboardPreview;
-
-const Sparkline = ({ data }: { data: number[] }) => {
-  const points = data.map((d, i) => `${i * 8},${16 - (d / 60) * 16}`).join(" ");
-  return (
-    <svg width="48" height="16" viewBox="0 0 48 16">
-      <polyline
-        fill="none"
-        stroke="hsl(var(--primary))"
-        strokeWidth="1.5"
-        points={points}
-      />
-    </svg>
-  );
-};

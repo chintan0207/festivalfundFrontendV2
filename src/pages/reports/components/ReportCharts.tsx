@@ -13,11 +13,24 @@ import {
 } from "recharts";
 import GroupedBarChart, { type GroupedBarRow } from "@/components/charts/GroupedBarChart";
 import { chartCategoryColor } from "@/theme/colors";
-import type { Contribution, Expense } from "@/lib/data/mockData";
+
+type ChartContribution = {
+  paymentMode?: string;
+  status?: string;
+  amount?: number;
+  date?: string;
+};
+
+type ChartExpense = {
+  category?: string;
+  amount?: number;
+  date?: string;
+  status?: string;
+};
 
 interface ReportChartsProps {
-  contributions: Contribution[];
-  expenses: Expense[];
+  contributions: ChartContribution[];
+  expenses: ChartExpense[];
   openingBalance?: number;
   onSelectCategory?: (
     category: "FOOD" | "DECORATION" | "SERVICES" | "CULTURAL" | "OTHER",
@@ -48,11 +61,8 @@ export const ReportCharts = ({
   };
 
   expenses.forEach((exp) => {
-    if (categoryTotals[exp.category] !== undefined) {
-      categoryTotals[exp.category] += exp.amount;
-    } else {
-      categoryTotals.OTHER += exp.amount;
-    }
+    const cat = exp.category && categoryTotals[exp.category] !== undefined ? exp.category : "OTHER";
+    categoryTotals[cat] += exp.amount ?? 0;
   });
 
   const categoryPieData = Object.entries(categoryTotals)
@@ -68,21 +78,35 @@ export const ReportCharts = ({
   const paymentTotals: Record<string, number> = {
     CASH: 0,
     UPI: 0,
+    BANK_TRANSFER: 0,
+    CHEQUE: 0,
+    OTHER: 0,
   };
 
   contributions.forEach((c) => {
-    const pm = (c.paymentMode || "CASH").toUpperCase();
+    const pm = (c.paymentMode || "OTHER").toUpperCase();
     if (paymentTotals[pm] !== undefined) {
-      paymentTotals[pm] += c.amount;
+      paymentTotals[pm] += c.amount ?? 0;
     } else {
-      paymentTotals.CASH += c.amount;
+      paymentTotals.OTHER += c.amount ?? 0;
     }
   });
 
-  const paymentData = [
-    { name: "Cash", value: paymentTotals.CASH, color: "#10b981" },
-    { name: "UPI / QR", value: paymentTotals.UPI, color: "#3b82f6" },
-  ].filter((item) => item.value > 0);
+  const PAYMENT_LABELS: Record<string, string> = {
+    CASH: "Cash",
+    UPI: "UPI / QR",
+    BANK_TRANSFER: "Bank Transfer",
+    CHEQUE: "Cheque",
+    OTHER: "Other",
+  };
+
+  const paymentData = Object.entries(paymentTotals)
+    .filter(([, value]) => value > 0)
+    .map(([mode, value]) => ({
+      name: PAYMENT_LABELS[mode] || mode,
+      value,
+      color: chartCategoryColor(mode),
+    }));
 
   // 3. Prepare Time-series Cash Flow Trend Data (Grouped by Date)
   const dateMap: Record<string, { date: string; income: number; expense: number }> = {};
@@ -92,7 +116,7 @@ export const ReportCharts = ({
       if (!dateMap[c.date]) {
         dateMap[c.date] = { date: c.date, income: 0, expense: 0 };
       }
-      dateMap[c.date].income += c.amount;
+      dateMap[c.date].income += c.amount ?? 0;
     }
   });
 
@@ -101,7 +125,7 @@ export const ReportCharts = ({
       if (!dateMap[e.date]) {
         dateMap[e.date] = { date: e.date, income: 0, expense: 0 };
       }
-      dateMap[e.date].expense += e.amount;
+      dateMap[e.date].expense += e.amount ?? 0;
     }
   });
 

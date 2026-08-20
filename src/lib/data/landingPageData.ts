@@ -8,9 +8,9 @@ import {
   Shield,
   Search,
   UserCheck,
-  Wallet,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+import { gradientColors } from "@/theme/colors";
 
 export interface Feature {
   title: string;
@@ -49,71 +49,6 @@ export interface SecurityFeature {
   description: string;
   icon: LucideIcon;
 }
-
-export interface KPI {
-  label: string;
-  value: string;
-  change: string;
-  spark: number[];
-}
-
-export interface ChartDataPoint {
-  label: string;
-  value: number;
-}
-
-export interface CategoryDataPoint extends ChartDataPoint {
-  color: string;
-}
-
-export const monthlyData: ChartDataPoint[] = [
-  { label: "Jan", value: 45 },
-  { label: "Feb", value: 52 },
-  { label: "Mar", value: 48 },
-  { label: "Apr", value: 61 },
-  { label: "May", value: 55 },
-  { label: "Jun", value: 67 },
-  { label: "Jul", value: 72 },
-  { label: "Aug", value: 65 },
-  { label: "Sep", value: 78 },
-  { label: "Oct", value: 85 },
-  { label: "Nov", value: 92 },
-  { label: "Dec", value: 88 },
-];
-
-export const categoryData: CategoryDataPoint[] = [
-  { label: "Donations", value: 45, color: "#10b981" },
-  { label: "Sponsorships", value: 25, color: "#6366f1" },
-  { label: "Pooja", value: 20, color: "#06b6d4" },
-  { label: "Other", value: 10, color: "#f59e0b" },
-];
-
-export const kpiData: KPI[] = [
-  {
-    label: "Today's Collection",
-    value: "₹1.2L",
-    change: "+12%",
-    spark: [20, 35, 30, 45, 40, 55, 60],
-  },
-  {
-    label: "Monthly Collection",
-    value: "₹18.5L",
-    change: "+8%",
-    spark: [30, 28, 35, 40, 38, 45, 50],
-  },
-  {
-    label: "Expenses",
-    value: "₹4.2L",
-    change: "-3%",
-    spark: [40, 35, 30, 25, 20, 18, 15],
-  },
-  {
-    label: "Contributors",
-    value: "1,247",
-    change: "+24",
-    spark: [10, 15, 20, 25, 30, 35, 40],
-  },
-];
 
 export const features: Feature[] = [
   {
@@ -301,59 +236,5 @@ export const securityFeatures: SecurityFeature[] = [
     icon: Search,
   },
 ];
-
-export interface FestivalMetric {
-  label: string;
-  value: string;
-  icon: LucideIcon;
-  color: string;
-  trend?: string;
-  trendUp?: boolean;
-}
-
-export const festivalSummary: FestivalMetric[] = [
-  {
-    label: "Total Collected",
-    value: "₹18.5L",
-    icon: IndianRupee,
-    color: "#10b981",
-    trend: "+12%",
-    trendUp: true,
-  },
-  {
-    label: "Total Expenses",
-    value: "₹4.2L",
-    icon: Receipt,
-    color: "#ef4444",
-    trend: "-3%",
-    trendUp: false,
-  },
-  {
-    label: "Current Balance",
-    value: "₹14.3L",
-    icon: Wallet,
-    color: "#6366f1",
-    trendUp: true,
-  },
-  {
-    label: "Active Contributors",
-    value: "1,247",
-    icon: Users,
-    color: "#f59e0b",
-    trend: "+24",
-    trendUp: true,
-  },
-];
-
-export const tenantOrgs = [
-  "Shri Ganesh Mandal",
-  "Navyuvak Mandal",
-  "Seva Society",
-  "Navratri Committee",
-  "Shri Temple Trust",
-  "Community NGO",
-];
-
-import { gradientColors } from "@/theme/colors";
 
 export const iconGradients = gradientColors;

@@ -1,6 +1,6 @@
 import { Link, useLocation } from "@tanstack/react-router";
 import { useAuthStore } from "@/api/auth/auth.store";
-import { useFestivalStore } from "@/store/festivalStore";
+import { useFestivalApiStore } from "@/api/festival/festival.store";
 import { GlobalRoleEnum } from "@/lib/constants";
 import { AppButton } from "@/components/common/AppButton";
 import { AppLogo } from "@/components/common/AppLogo";
@@ -39,7 +39,7 @@ export const Sidebar = () => {
   const location = useLocation();
   const { setOpenMobile } = useSidebar();
 
-  const { festivals } = useFestivalStore();
+  const { festivals } = useFestivalApiStore();
 
   const isAdmin = user?.role === GlobalRoleEnum.ORG_ADMIN;
 
@@ -208,7 +208,7 @@ export const Sidebar = () => {
                   {user?.name || "Org Admin"}
                 </span>
                 <span className="text-2xs text-muted-foreground truncate">
-                  {organization?.name || user?.email || "admin@festivalfund.org"}
+                  {organization?.name || user?.email || ""}
                 </span>
               </div>
               <ChevronDown className="h-4 w-4 text-muted-foreground shrink-0 group-data-[collapsible=icon]:hidden" />

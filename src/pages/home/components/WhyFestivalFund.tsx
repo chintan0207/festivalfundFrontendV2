@@ -1,7 +1,6 @@
 import { AppSectionHeader, AppCard, AppIconBadge } from "@/components/common";
-import { reasons, festivalSummary } from "@/lib/data/landingPageData";
-import { Check, TrendingUp, TrendingDown } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { reasons } from "@/lib/data/landingPageData";
+import { Check, ShieldCheck } from "lucide-react";
 
 const WhyFestivalFund = () => {
   return (
@@ -25,35 +24,18 @@ const WhyFestivalFund = () => {
             ))}
           </div>
           <AppCard className="p-5 border-border/60 bg-card/90">
-            <p className="mb-4 text-sm font-bold text-foreground">Today&apos;s Financial Summary</p>
-            <div className="grid grid-cols-2 gap-3">
-              {festivalSummary.map((m, i) => (
-                <div
-                  key={m.label}
-                  className="rounded-xl border border-border/50 bg-muted/30 p-3"
-                >
-                  <div className="flex items-center justify-between">
-                    <AppIconBadge icon={<m.icon className="h-4 w-4" />} colorIndex={i} size="sm" />
-                    {m.trend && (
-                      <span
-                        className={cn(
-                          "flex items-center gap-0.5 text-[11px] font-semibold",
-                          m.trendUp
-                            ? "text-emerald-600 dark:text-emerald-400"
-                            : "text-rose-500",
-                        )}
-                      >
-                        {m.trendUp ? (
-                          <TrendingUp className="h-3 w-3" />
-                        ) : (
-                          <TrendingDown className="h-3 w-3" />
-                        )}
-                        {m.trend}
-                      </span>
-                    )}
-                  </div>
-                  <p className="mt-2 text-lg font-bold text-foreground">{m.value}</p>
-                  <p className="text-[11px] text-muted-foreground font-medium">{m.label}</p>
+            <p className="mb-4 text-sm font-bold text-foreground">What you get out of the box</p>
+            <div className="space-y-3">
+              {[
+                "Transparent, auditable financial records",
+                "Instant PDF receipts for every contribution",
+                "Role-based access for admins and viewers",
+                "Fully isolated data per organization",
+                "Mobile-friendly for on-the-go management",
+              ].map((point) => (
+                <div key={point} className="flex items-start gap-2.5">
+                  <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
+                  <span className="text-xs sm:text-sm text-foreground">{point}</span>
                 </div>
               ))}
             </div>
