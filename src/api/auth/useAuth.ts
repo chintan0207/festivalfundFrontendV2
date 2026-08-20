@@ -47,7 +47,6 @@ export const useSignup = () => {
         toast.error("Invalid response from server");
         return;
       }
-      console.log("Signup response data:", data);
       const { accessToken, refreshToken, loggedInUser, organization } = data;
       setAuth({ user: loggedInUser, organization, accessToken, refreshToken });
       toast.success(res.message || "Organization created successfully");
