@@ -34,10 +34,13 @@ import { Route as AuthResetPasswordRouteImport } from './routes/_auth/reset-pass
 import { Route as AuthLoginRouteImport } from './routes/_auth/login'
 import { Route as AuthForgotPasswordRouteImport } from './routes/_auth/forgot-password'
 import { Route as AuthAcceptInviteRouteImport } from './routes/_auth/accept-invite'
+import { Route as DashboardTasksNotesIndexRouteImport } from './routes/dashboard/tasks-notes.index'
 import { Route as DashboardFestivalsIndexRouteImport } from './routes/dashboard/festivals.index'
 import { Route as DashboardExpensesIndexRouteImport } from './routes/dashboard/expenses.index'
 import { Route as DashboardContributorsIndexRouteImport } from './routes/dashboard/contributors.index'
 import { Route as DashboardContributionsIndexRouteImport } from './routes/dashboard/contributions.index'
+import { Route as DashboardTasksTaskIdRouteImport } from './routes/dashboard/tasks.$taskId'
+import { Route as DashboardNotesNoteIdRouteImport } from './routes/dashboard/notes.$noteId'
 import { Route as DashboardFestivalsNewRouteImport } from './routes/dashboard/festivals.new'
 import { Route as DashboardFestivalsFestivalIdRouteImport } from './routes/dashboard/festivals.$festivalId'
 import { Route as DashboardExpensesExpenseIdRouteImport } from './routes/dashboard/expenses.$expenseId'
@@ -169,6 +172,12 @@ const AuthAcceptInviteRoute = AuthAcceptInviteRouteImport.update({
   path: '/accept-invite',
   getParentRoute: () => AuthRouteRoute,
 } as any)
+const DashboardTasksNotesIndexRoute =
+  DashboardTasksNotesIndexRouteImport.update({
+    id: '/tasks-notes/',
+    path: '/tasks-notes/',
+    getParentRoute: () => DashboardRouteRoute,
+  } as any)
 const DashboardFestivalsIndexRoute = DashboardFestivalsIndexRouteImport.update({
   id: '/festivals/',
   path: '/festivals/',
@@ -191,6 +200,16 @@ const DashboardContributionsIndexRoute =
     path: '/contributions/',
     getParentRoute: () => DashboardRouteRoute,
   } as any)
+const DashboardTasksTaskIdRoute = DashboardTasksTaskIdRouteImport.update({
+  id: '/tasks/$taskId',
+  path: '/tasks/$taskId',
+  getParentRoute: () => DashboardRouteRoute,
+} as any)
+const DashboardNotesNoteIdRoute = DashboardNotesNoteIdRouteImport.update({
+  id: '/notes/$noteId',
+  path: '/notes/$noteId',
+  getParentRoute: () => DashboardRouteRoute,
+} as any)
 const DashboardFestivalsNewRoute = DashboardFestivalsNewRouteImport.update({
   id: '/festivals/new',
   path: '/festivals/new',
@@ -256,10 +275,13 @@ export interface FileRoutesByFullPath {
   '/dashboard/expenses/$expenseId': typeof DashboardExpensesExpenseIdRoute
   '/dashboard/festivals/$festivalId': typeof DashboardFestivalsFestivalIdRouteWithChildren
   '/dashboard/festivals/new': typeof DashboardFestivalsNewRoute
+  '/dashboard/notes/$noteId': typeof DashboardNotesNoteIdRoute
+  '/dashboard/tasks/$taskId': typeof DashboardTasksTaskIdRoute
   '/dashboard/contributions/': typeof DashboardContributionsIndexRoute
   '/dashboard/contributors/': typeof DashboardContributorsIndexRoute
   '/dashboard/expenses/': typeof DashboardExpensesIndexRoute
   '/dashboard/festivals/': typeof DashboardFestivalsIndexRoute
+  '/dashboard/tasks-notes/': typeof DashboardTasksNotesIndexRoute
   '/dashboard/festivals/$festivalId/edit': typeof DashboardFestivalsFestivalIdEditRoute
 }
 export interface FileRoutesByTo {
@@ -290,10 +312,13 @@ export interface FileRoutesByTo {
   '/dashboard/expenses/$expenseId': typeof DashboardExpensesExpenseIdRoute
   '/dashboard/festivals/$festivalId': typeof DashboardFestivalsFestivalIdRouteWithChildren
   '/dashboard/festivals/new': typeof DashboardFestivalsNewRoute
+  '/dashboard/notes/$noteId': typeof DashboardNotesNoteIdRoute
+  '/dashboard/tasks/$taskId': typeof DashboardTasksTaskIdRoute
   '/dashboard/contributions': typeof DashboardContributionsIndexRoute
   '/dashboard/contributors': typeof DashboardContributorsIndexRoute
   '/dashboard/expenses': typeof DashboardExpensesIndexRoute
   '/dashboard/festivals': typeof DashboardFestivalsIndexRoute
+  '/dashboard/tasks-notes': typeof DashboardTasksNotesIndexRoute
   '/dashboard/festivals/$festivalId/edit': typeof DashboardFestivalsFestivalIdEditRoute
 }
 export interface FileRoutesById {
@@ -328,10 +353,13 @@ export interface FileRoutesById {
   '/dashboard/expenses/$expenseId': typeof DashboardExpensesExpenseIdRoute
   '/dashboard/festivals/$festivalId': typeof DashboardFestivalsFestivalIdRouteWithChildren
   '/dashboard/festivals/new': typeof DashboardFestivalsNewRoute
+  '/dashboard/notes/$noteId': typeof DashboardNotesNoteIdRoute
+  '/dashboard/tasks/$taskId': typeof DashboardTasksTaskIdRoute
   '/dashboard/contributions/': typeof DashboardContributionsIndexRoute
   '/dashboard/contributors/': typeof DashboardContributorsIndexRoute
   '/dashboard/expenses/': typeof DashboardExpensesIndexRoute
   '/dashboard/festivals/': typeof DashboardFestivalsIndexRoute
+  '/dashboard/tasks-notes/': typeof DashboardTasksNotesIndexRoute
   '/dashboard/festivals/$festivalId/edit': typeof DashboardFestivalsFestivalIdEditRoute
 }
 export interface FileRouteTypes {
@@ -365,10 +393,13 @@ export interface FileRouteTypes {
     | '/dashboard/expenses/$expenseId'
     | '/dashboard/festivals/$festivalId'
     | '/dashboard/festivals/new'
+    | '/dashboard/notes/$noteId'
+    | '/dashboard/tasks/$taskId'
     | '/dashboard/contributions/'
     | '/dashboard/contributors/'
     | '/dashboard/expenses/'
     | '/dashboard/festivals/'
+    | '/dashboard/tasks-notes/'
     | '/dashboard/festivals/$festivalId/edit'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -399,10 +430,13 @@ export interface FileRouteTypes {
     | '/dashboard/expenses/$expenseId'
     | '/dashboard/festivals/$festivalId'
     | '/dashboard/festivals/new'
+    | '/dashboard/notes/$noteId'
+    | '/dashboard/tasks/$taskId'
     | '/dashboard/contributions'
     | '/dashboard/contributors'
     | '/dashboard/expenses'
     | '/dashboard/festivals'
+    | '/dashboard/tasks-notes'
     | '/dashboard/festivals/$festivalId/edit'
   id:
     | '__root__'
@@ -436,10 +470,13 @@ export interface FileRouteTypes {
     | '/dashboard/expenses/$expenseId'
     | '/dashboard/festivals/$festivalId'
     | '/dashboard/festivals/new'
+    | '/dashboard/notes/$noteId'
+    | '/dashboard/tasks/$taskId'
     | '/dashboard/contributions/'
     | '/dashboard/contributors/'
     | '/dashboard/expenses/'
     | '/dashboard/festivals/'
+    | '/dashboard/tasks-notes/'
     | '/dashboard/festivals/$festivalId/edit'
   fileRoutesById: FileRoutesById
 }
@@ -626,6 +663,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthAcceptInviteRouteImport
       parentRoute: typeof AuthRouteRoute
     }
+    '/dashboard/tasks-notes/': {
+      id: '/dashboard/tasks-notes/'
+      path: '/tasks-notes'
+      fullPath: '/dashboard/tasks-notes/'
+      preLoaderRoute: typeof DashboardTasksNotesIndexRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
     '/dashboard/festivals/': {
       id: '/dashboard/festivals/'
       path: '/festivals'
@@ -652,6 +696,20 @@ declare module '@tanstack/react-router' {
       path: '/contributions'
       fullPath: '/dashboard/contributions/'
       preLoaderRoute: typeof DashboardContributionsIndexRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
+    '/dashboard/tasks/$taskId': {
+      id: '/dashboard/tasks/$taskId'
+      path: '/tasks/$taskId'
+      fullPath: '/dashboard/tasks/$taskId'
+      preLoaderRoute: typeof DashboardTasksTaskIdRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
+    '/dashboard/notes/$noteId': {
+      id: '/dashboard/notes/$noteId'
+      path: '/notes/$noteId'
+      fullPath: '/dashboard/notes/$noteId'
+      preLoaderRoute: typeof DashboardNotesNoteIdRouteImport
       parentRoute: typeof DashboardRouteRoute
     }
     '/dashboard/festivals/new': {
@@ -780,10 +838,13 @@ interface DashboardRouteRouteChildren {
   DashboardExpensesExpenseIdRoute: typeof DashboardExpensesExpenseIdRoute
   DashboardFestivalsFestivalIdRoute: typeof DashboardFestivalsFestivalIdRouteWithChildren
   DashboardFestivalsNewRoute: typeof DashboardFestivalsNewRoute
+  DashboardNotesNoteIdRoute: typeof DashboardNotesNoteIdRoute
+  DashboardTasksTaskIdRoute: typeof DashboardTasksTaskIdRoute
   DashboardContributionsIndexRoute: typeof DashboardContributionsIndexRoute
   DashboardContributorsIndexRoute: typeof DashboardContributorsIndexRoute
   DashboardExpensesIndexRoute: typeof DashboardExpensesIndexRoute
   DashboardFestivalsIndexRoute: typeof DashboardFestivalsIndexRoute
+  DashboardTasksNotesIndexRoute: typeof DashboardTasksNotesIndexRoute
 }
 
 const DashboardRouteRouteChildren: DashboardRouteRouteChildren = {
@@ -799,10 +860,13 @@ const DashboardRouteRouteChildren: DashboardRouteRouteChildren = {
   DashboardFestivalsFestivalIdRoute:
     DashboardFestivalsFestivalIdRouteWithChildren,
   DashboardFestivalsNewRoute: DashboardFestivalsNewRoute,
+  DashboardNotesNoteIdRoute: DashboardNotesNoteIdRoute,
+  DashboardTasksTaskIdRoute: DashboardTasksTaskIdRoute,
   DashboardContributionsIndexRoute: DashboardContributionsIndexRoute,
   DashboardContributorsIndexRoute: DashboardContributorsIndexRoute,
   DashboardExpensesIndexRoute: DashboardExpensesIndexRoute,
   DashboardFestivalsIndexRoute: DashboardFestivalsIndexRoute,
+  DashboardTasksNotesIndexRoute: DashboardTasksNotesIndexRoute,
 }
 
 const DashboardRouteRouteWithChildren = DashboardRouteRoute._addFileChildren(
