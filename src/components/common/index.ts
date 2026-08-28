@@ -28,3 +28,5 @@ export * from "./DetailPageSkeleton";
 export * from "./AppTextArea";
 export * from "./BannerUploader";
 export * from "./AccountMenu";
+export * from "./ResponsiveFormDrawer";
+

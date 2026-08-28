@@ -92,6 +92,11 @@ export const moduleGradientColors: Record<string, string> = {
   contributors: gradientColors[2],
   contributions: gradientColors[4],
   expenses: gradientColors[3],
+  tasksnotes: gradientColors[8],
+  "tasks-notes": gradientColors[8],
+  tasksNotes: gradientColors[8],
+  tasks: gradientColors[8],
+  notes: gradientColors[8],
   billing: gradientColors[7],
   reports: gradientColors[6],
   analytics: gradientColors[6],
@@ -112,6 +117,11 @@ export const moduleIconColors: Record<string, string> = {
   contributors: "text-green-500 dark:text-green-400",
   contributions: "text-violet-500 dark:text-violet-400",
   expenses: "text-rose-500 dark:text-rose-400",
+  tasksnotes: "text-emerald-500 dark:text-emerald-400",
+  "tasks-notes": "text-emerald-500 dark:text-emerald-400",
+  tasksNotes: "text-emerald-500 dark:text-emerald-400",
+  tasks: "text-emerald-500 dark:text-emerald-400",
+  notes: "text-emerald-500 dark:text-emerald-400",
   billing: "text-amber-500 dark:text-amber-400",
   reports: "text-red-500 dark:text-red-400",
   analytics: "text-red-500 dark:text-red-400",
@@ -138,6 +148,16 @@ export const moduleFillColors: Record<string, string> = {
     "bg-gradient-to-r from-violet-500/20 via-purple-500/10 to-transparent border-l-4 border-violet-500 text-foreground font-semibold shadow-xs",
   expenses:
     "bg-gradient-to-r from-rose-500/20 via-red-500/10 to-transparent border-l-4 border-rose-500 text-foreground font-semibold shadow-xs",
+  tasksnotes:
+    "bg-gradient-to-r from-emerald-500/20 via-green-500/10 to-transparent border-l-4 border-emerald-500 text-foreground font-semibold shadow-xs",
+  "tasks-notes":
+    "bg-gradient-to-r from-emerald-500/20 via-green-500/10 to-transparent border-l-4 border-emerald-500 text-foreground font-semibold shadow-xs",
+  tasksNotes:
+    "bg-gradient-to-r from-emerald-500/20 via-green-500/10 to-transparent border-l-4 border-emerald-500 text-foreground font-semibold shadow-xs",
+  tasks:
+    "bg-gradient-to-r from-emerald-500/20 via-green-500/10 to-transparent border-l-4 border-emerald-500 text-foreground font-semibold shadow-xs",
+  notes:
+    "bg-gradient-to-r from-emerald-500/20 via-green-500/10 to-transparent border-l-4 border-emerald-500 text-foreground font-semibold shadow-xs",
   billing:
     "bg-gradient-to-r from-amber-500/20 via-orange-500/10 to-transparent border-l-4 border-amber-500 text-foreground font-semibold shadow-xs",
   reports:
@@ -171,6 +191,11 @@ export const moduleBadgeColors: Record<string, string> = {
   contributions:
     "bg-violet-500/15 text-violet-600 dark:text-violet-400 border border-violet-500/20",
   expenses: "bg-rose-500/15 text-rose-600 dark:text-rose-400 border border-rose-500/20",
+  tasksnotes: "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20",
+  "tasks-notes": "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20",
+  tasksNotes: "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20",
+  tasks: "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20",
+  notes: "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20",
   billing:
     "bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/20",
   reports: "bg-cyan-500/15 text-cyan-600 dark:text-cyan-400 border border-cyan-500/20",
@@ -230,12 +255,25 @@ export interface ModuleTheme {
  * Returns gradient, iconColor, fillColor, and badgeColor for the requested module.
  */
 export function getModuleTheme(moduleName: string = "default"): ModuleTheme {
-  const key = moduleName.toLowerCase();
+  const rawKey = moduleName.toLowerCase();
+  const normalizedKey = rawKey.replace(/[-_\s]/g, "");
   return {
-    gradient: moduleGradientColors[key] || moduleGradientColors.default,
-    iconColor: moduleIconColors[key] || moduleIconColors.default,
-    fillColor: moduleFillColors[key] || moduleFillColors.default,
-    badgeColor: moduleBadgeColors[key] || moduleBadgeColors.default,
+    gradient:
+      moduleGradientColors[rawKey] ||
+      moduleGradientColors[normalizedKey] ||
+      moduleGradientColors.default,
+    iconColor:
+      moduleIconColors[rawKey] ||
+      moduleIconColors[normalizedKey] ||
+      moduleIconColors.default,
+    fillColor:
+      moduleFillColors[rawKey] ||
+      moduleFillColors[normalizedKey] ||
+      moduleFillColors.default,
+    badgeColor:
+      moduleBadgeColors[rawKey] ||
+      moduleBadgeColors[normalizedKey] ||
+      moduleBadgeColors.default,
   };
 }
 

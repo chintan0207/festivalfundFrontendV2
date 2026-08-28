@@ -23,6 +23,37 @@ export function getFileUrl(url?: string | null): string {
   return `${base}${url.startsWith("/") ? "" : "/"}${url}`;
 }
 
+export function looksLikeImage(url?: string | null): boolean {
+  if (!url) return false;
+  try {
+    const cleanUrl = url.split("?")[0].split("#")[0].toLowerCase();
+    return /\.(jpe?g|png|gif|webp|svg|bmp|avif)$/i.test(cleanUrl);
+  } catch {
+    return /\.(jpe?g|png|gif|webp|svg|bmp|avif)([?#].*)?$/i.test(url);
+  }
+}
+
+export function looksLikePdf(url?: string | null): boolean {
+  if (!url) return false;
+  try {
+    const cleanUrl = url.split("?")[0].split("#")[0].toLowerCase();
+    return cleanUrl.endsWith(".pdf") || /\.pdf$/i.test(cleanUrl);
+  } catch {
+    return /\.pdf([?#].*)?$/i.test(url);
+  }
+}
+
+export function getFileNameFromUrl(url?: string | null, fallback = "Attachment"): string {
+  if (!url) return fallback;
+  try {
+    const cleanUrl = url.split("?")[0].split("#")[0];
+    const name = cleanUrl.split("/").pop();
+    return name ? decodeURIComponent(name) : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
 export function initials(name: string): string {
   return name
     .split(" ")
