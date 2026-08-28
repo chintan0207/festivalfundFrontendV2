@@ -21,24 +21,29 @@ import { DashboardRecentContributions } from "./components/DashboardRecentContri
 import { DashboardRecentExpenses } from "./components/DashboardRecentExpenses";
 import { DashboardActivityFeed } from "./components/DashboardActivityFeed";
 import { DashboardCollectionStatus } from "./components/DashboardCollectionStatus";
+import { DashboardTasks } from "./components/DashboardTasks";
+import { DashboardNotes } from "./components/DashboardNotes";
 
 const Dashboard = () => {
   const theme = getModuleTheme("dashboard");
   const { activeFestivalId } = useFestivalApiStore();
 
-  // Resolve a valid festival: the top navbar is the single source of truth,
-  // but it auto-falls-back to the first festival. Guard against a stale id so
-  // the dashboard never queries a deleted festival.
-  const { data: festivalsData } = useFestivals();
+  const { data: festivalsData, isLoading: isLoadingFestivals } = useFestivals();
   const festivals = (festivalsData?.festivals ?? []).filter((f) => !f.isDeleted);
   const resolvedFestivalId =
     activeFestivalId && festivals.some((f) => f._id === activeFestivalId)
       ? activeFestivalId
       : festivals[0]?._id || "";
 
-  const { data, isLoading, isError, error, refetch } = useDashboard(resolvedFestivalId);
+  const {
+    data,
+    isLoading: isLoadingDashboard,
+    isError,
+    error,
+    refetch,
+  } = useDashboard(resolvedFestivalId);
 
-  const title = data
+  const title = data?.festival?.name
     ? `${data.festival.name} ${data.festival.year}`
     : "Festival Dashboard";
 
@@ -49,7 +54,7 @@ const Dashboard = () => {
         title={title}
         description="Live overview of collections, expenses, contributors and recent activity."
         badge={
-          data ? (
+          data?.festival ? (
             <AppBadge size="sm" className={theme.badgeColor}>
               {data.festival.status}
             </AppBadge>
@@ -58,7 +63,14 @@ const Dashboard = () => {
         actions={<DashboardQuickActions />}
       />
 
-      {!resolvedFestivalId ? (
+      {isError ? (
+        <DashboardError
+          message={error instanceof Error ? error.message : undefined}
+          onRetry={refetch}
+        />
+      ) : isLoadingFestivals || (resolvedFestivalId && isLoadingDashboard) ? (
+        <DashboardSkeleton />
+      ) : !resolvedFestivalId ? (
         <div className="rounded-2xl bg-card border border-border/80 shadow-sm">
           <EmptyState
             icon={CalendarPlus}
@@ -73,13 +85,8 @@ const Dashboard = () => {
             }
           />
         </div>
-      ) : isLoading || !data ? (
+      ) : !data ? (
         <DashboardSkeleton />
-      ) : isError ? (
-        <DashboardError
-          message={error instanceof Error ? error.message : undefined}
-          onRetry={refetch}
-        />
       ) : (
         <div className="space-y-4 sm:space-y-5">
           {/* KPI row */}
@@ -92,11 +99,16 @@ const Dashboard = () => {
             <DashboardContributorCategories data={data} />
           </div>
 
+          {/* Tasks & Notes Widgets */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 items-stretch">
+            <DashboardTasks data={data} limit={4} isWidget={true} />
+            <DashboardNotes data={data} limit={4} isWidget={true} />
+          </div>
+
           {/* Financial overview — full width */}
           <DashboardOverview data={data} />
 
-          {/* Lower grid: 40% stacked cards (left) / 60% activity (right), equal height.
-              On mobile, order utilities put Recent Activity on top. */}
+          {/* Lower grid */}
           <div className="grid grid-cols-1 md:grid-cols-[minmax(0,45fr)_minmax(0,55fr)] lg:grid-cols-[minmax(0,40fr)_minmax(0,60fr)] gap-3 sm:gap-4 items-stretch">
             <div className="order-2 md:order-1 grid gap-3 sm:gap-4 min-h-0">
               <DashboardRecentExpenses data={data} limit={4} />

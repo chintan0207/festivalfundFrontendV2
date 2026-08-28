@@ -44,46 +44,83 @@ function PeriodSummary({ income, expense }: { income: number; expense: number })
 }
 
 export function DashboardOverview({ data }: DashboardOverviewProps) {
-  const { trends } = data;
+  const trends = data?.trends || { income: { value: 0, previous: 0, pct: null }, expense: { value: 0, previous: 0, pct: null } };
 
   const rows: GroupedBarRow[] = useMemo(() => {
     const map = new Map<string, { date: string; income: number; expense: number }>();
-    data.contributions.timeSeries.forEach((p) => {
-      const existing = map.get(p.date) || { date: p.date, income: 0, expense: 0 };
-      existing.income = (existing.income || 0) + p.income;
-      map.set(p.date, existing);
+    (data?.contributions?.timeSeries || []).forEach((p) => {
+      if (!p || !p.date) return;
+      const key = String(p.date).split("T")[0];
+      const existing = map.get(key) || { date: key, income: 0, expense: 0 };
+      existing.income = (existing.income || 0) + (p.income || 0);
+      map.set(key, existing);
     });
-    data.expenses.timeSeries.forEach((p) => {
-      const existing = map.get(p.date) || { date: p.date, income: 0, expense: 0 };
-      existing.expense = (existing.expense || 0) + p.expense;
-      map.set(p.date, existing);
+    (data?.expenses?.timeSeries || []).forEach((p) => {
+      if (!p || !p.date) return;
+      const key = String(p.date).split("T")[0];
+      const existing = map.get(key) || { date: key, income: 0, expense: 0 };
+      existing.expense = (existing.expense || 0) + (p.expense || 0);
+      map.set(key, existing);
     });
-    return Array.from(map.values());
-  }, [data.contributions.timeSeries, data.expenses.timeSeries]);
+
+    // Fallback: If timeSeries produced no items, construct rows from recent records
+    if (map.size === 0) {
+      (data?.contributions?.recent || []).forEach((c) => {
+        if (!c || !c.date) return;
+        const key = String(c.date).split("T")[0];
+        const existing = map.get(key) || { date: key, income: 0, expense: 0 };
+        const amt = c.type === "MONEY" ? (c.amount || 0) : (c.estimatedValue || 0);
+        existing.income += amt;
+        map.set(key, existing);
+      });
+      (data?.expenses?.recent || []).forEach((e) => {
+        if (!e || !e.date) return;
+        const key = String(e.date).split("T")[0];
+        const existing = map.get(key) || { date: key, income: 0, expense: 0 };
+        existing.expense += e.amount || 0;
+        map.set(key, existing);
+      });
+    }
+
+    return Array.from(map.values()).sort(
+      (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
+    );
+  }, [
+    data?.contributions?.timeSeries,
+    data?.expenses?.timeSeries,
+    data?.contributions?.recent,
+    data?.expenses?.recent,
+  ]);
 
   const periodTotals = useMemo(() => {
-    const income = data.contributions.timeSeries.reduce(
-      (sum, p) => sum + Number(p.income || 0),
+    let income = (data?.contributions?.timeSeries || []).reduce(
+      (sum, p) => sum + Number(p?.income || 0),
       0,
     );
-    const expense = data.expenses.timeSeries.reduce(
-      (sum, p) => sum + Number(p.expense || 0),
+    let expense = (data?.expenses?.timeSeries || []).reduce(
+      (sum, p) => sum + Number(p?.expense || 0),
       0,
     );
+    if (income === 0 && expense === 0 && rows.length > 0) {
+      rows.forEach((r) => {
+        income += r.income;
+        expense += r.expense;
+      });
+    }
     return { income, expense };
-  }, [data.contributions.timeSeries, data.expenses.timeSeries]);
+  }, [data?.contributions?.timeSeries, data?.expenses?.timeSeries, rows]);
 
   const incomeTrendChip = (
     <span
       className={
         "inline-flex items-center gap-1 font-semibold text-xs " +
-        (trends.income.pct != null && trends.income.pct >= 0
+        (trends.income?.pct != null && trends.income.pct >= 0
           ? "text-emerald-600 dark:text-emerald-400"
           : "text-muted-foreground")
       }
     >
       <TrendingUp className="h-3.5 w-3.5" />
-      {trends.income.pct != null && `7d ${formatPct(trends.income.pct)}`}
+      {trends.income?.pct != null && `7d ${formatPct(trends.income.pct)}`}
     </span>
   );
 
@@ -91,20 +128,20 @@ export function DashboardOverview({ data }: DashboardOverviewProps) {
     <span
       className={
         "inline-flex items-center gap-1 font-semibold text-xs " +
-        (trends.expense.pct != null && trends.expense.pct >= 0
+        (trends.expense?.pct != null && trends.expense.pct >= 0
           ? "text-rose-500 dark:text-rose-400"
           : "text-muted-foreground")
       }
     >
       <TrendingDown className="h-3.5 w-3.5" />
-      {trends.expense.pct != null && `7d ${formatPct(trends.expense.pct)}`}
+      {trends.expense?.pct != null && `7d ${formatPct(trends.expense.pct)}`}
     </span>
   );
 
   return (
     <GroupedBarChart
       rows={rows}
-      openingBalance={data.stats.openingBalance}
+      openingBalance={data?.stats?.openingBalance}
       title="Financial Overview"
       subtitle="Daily contributions vs expenses"
       trendChips={

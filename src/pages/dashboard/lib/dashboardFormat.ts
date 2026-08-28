@@ -27,14 +27,19 @@ export function formatDate(value?: string | number | Date | null): string {
   });
 }
 
-export function formatDateTime(value?: string | number | Date | null): string {
+export function formatDateTime(value?: string | number | Date | { date?: string; time?: string; full?: string; iso?: string } | null): string {
   if (!value) return "—";
-  const d = new Date(value);
+  if (typeof value === "object" && !(value instanceof Date)) {
+    if (value.full) return value.full;
+    if (value.date && value.time) return `${value.date}, ${value.time}`;
+  }
+  const d = new Date(value as string | number | Date);
   if (Number.isNaN(d.getTime())) return "—";
-  const date = d.toLocaleDateString("en-IN", { day: "2-digit", month: "short" });
+  const date = d.toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" });
   const time = d.toLocaleTimeString("en-IN", {
     hour: "2-digit",
     minute: "2-digit",
+    hour12: true,
   });
   return `${date}, ${time}`;
 }
