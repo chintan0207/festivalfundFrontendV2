@@ -1,4 +1,4 @@
-import { Check, type LucideIcon } from "lucide-react";
+import { type LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getModuleTheme } from "@/theme/colors";
 
@@ -22,7 +22,7 @@ interface CategoryQuickPickProps {
 
 /**
  * Radio-style category quick-select chips.
- * Selected chip fills with the module gradient + check mark, so the user can
+ * Selected chip fills with the module gradient so the user can
  * pick a category directly without opening a dropdown.
  */
 export function CategoryQuickPick({
@@ -88,12 +88,6 @@ export function CategoryQuickPick({
                 </span>
               )}
             </span>
-
-            {isSelected && (
-              <span className="absolute top-2 right-2 flex items-center justify-center h-4 w-4 rounded-full bg-white text-foreground shrink-0">
-                <Check className="h-3 w-3" />
-              </span>
-            )}
           </button>
         );
       })}

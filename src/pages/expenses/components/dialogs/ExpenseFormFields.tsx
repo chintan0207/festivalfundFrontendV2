@@ -1,6 +1,8 @@
 import { AppInput } from "@/components/common/AppInput";
+import { AppTextArea } from "@/components/common/AppTextArea";
 import { AppSelect, type AppSelectOption } from "@/components/common/AppSelect";
 import { CategoryQuickPick } from "../CategoryQuickPick";
+import { StatusQuickPick } from "../StatusQuickPick";
 import { ExpenseAttachmentsInput } from "./ExpenseAttachmentsInput";
 import { expenseCategoryMeta, expensePaymentOptions } from "../../lib/expenseMeta";
 
@@ -47,6 +49,7 @@ export function ExpenseFormFields({
         </div>
       )}
 
+      {/* Category Quick Pick */}
       <div className="col-span-1 min-[360px]:col-span-2">
         <label
           htmlFor={`${prefix}-category`}
@@ -68,6 +71,39 @@ export function ExpenseFormFields({
         {errors.category?.message && (
           <p className="mt-1 text-xs text-destructive">{errors.category.message}</p>
         )}
+      </div>
+
+      {/* Status Quick Pick - Creation Mode Only */}
+      {mode === "add" && (
+        <div className="col-span-1 min-[360px]:col-span-2">
+          <label
+            htmlFor={`${prefix}-status`}
+            className="mb-1.5 block text-xs font-semibold text-foreground"
+          >
+            Initial Status
+          </label>
+          <StatusQuickPick
+            value={watch("status") || "PENDING"}
+            onChange={(val) => setValue("status", val, { shouldValidate: true })}
+            disabled={disabled}
+          />
+          {errors.status?.message && (
+            <p className="mt-1 text-xs text-destructive">{errors.status.message}</p>
+          )}
+        </div>
+      )}
+
+      {/* Description / Quick Notes - Both Creation and Edit Modes */}
+      <div className="col-span-1 min-[360px]:col-span-2">
+        <AppTextArea
+          id={`${prefix}-description`}
+          label="Description / Notes"
+          placeholder="e.g. Stage lighting and sound system for evening cultural event..."
+          rows={3}
+          {...register("description")}
+          error={errors.description?.message}
+          disabled={disabled}
+        />
       </div>
 
       <AppInput
