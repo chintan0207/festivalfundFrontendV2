@@ -1,4 +1,4 @@
-import * as z from "zod";
+import { z } from "zod";
 import { isValidPhone, PHONE_ERROR } from "@/lib/phone";
 
 const baseShape = {
@@ -6,8 +6,15 @@ const baseShape = {
   contributorMode: z.enum(["existing", "new"]).default("existing"),
   contributorId: z.string().optional(),
   name: z.string().optional(),
-  phoneNumber: z.string().optional(),
-  email: z.string().optional(),
+  phoneNumber: z
+    .string()
+    .refine((value) => !value || /^\d{10}$/.test(value), "Enter a valid 10-digit mobile number")
+    .optional(),
+  email: z
+    .preprocess(
+      (val) => (typeof val === "string" && val.trim() === "" ? undefined : val),
+      z.string().trim().email("Invalid email format").optional(),
+    ),
   address: z.string().optional(),
   category: z.enum(["PARENT", "BOY", "GIRL"]).optional(),
 
@@ -16,7 +23,7 @@ const baseShape = {
 
   // Contribution
   type: z.enum(["MONEY", "ITEM"]),
-  status: z.enum(["PENDING", "DEPOSITED", "CANCELLED"]),
+  status: z.enum(["PENDING", "DEPOSITED", "CANCELLED"]).optional(),
   date: z.string().optional(),
   amount: z.coerce.number().optional(),
   itemName: z.string().optional(),

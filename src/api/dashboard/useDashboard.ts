@@ -7,19 +7,34 @@ export const DASHBOARD_QUERY_KEYS = {
 };
 
 /**
- * Optimized single-request dashboard. The query key is scoped to the active
- * festival, so switching the festival in the top navbar automatically triggers
- * a fresh fetch and can never render stale data from the previous festival.
+ * Single-request dashboard query with fallback handlers for tasks and notes.
  */
 export const useDashboard = (festivalId: string) => {
-  return useQuery({
+  const { data: dashboardData, isLoading, isError, error, refetch } = useQuery({
     queryKey: DASHBOARD_QUERY_KEYS.festival(festivalId),
     queryFn: async () => {
       const res = await DashboardService.getDashboard(festivalId);
-      return res.data;
+      const tasksRes = await DashboardService.getTasks(festivalId).catch(() => ({ data: [] }));
+      const notesRes = await DashboardService.getNotes(festivalId).catch(() => ({ data: [] }));
+
+      const dataObj = res?.data;
+
+      return {
+        ...dataObj,
+        tasks: Array.isArray(tasksRes?.data) ? tasksRes.data : (dataObj?.tasks || []),
+        notes: Array.isArray(notesRes?.data) ? notesRes.data : (dataObj?.notes || []),
+      };
     },
     enabled: !!festivalId && festivalId !== "ALL",
     staleTime: 30 * 1000,
     refetchOnWindowFocus: false,
   });
+
+  return {
+    data: dashboardData,
+    isLoading,
+    isError,
+    error,
+    refetch,
+  };
 };

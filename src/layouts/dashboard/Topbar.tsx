@@ -19,7 +19,9 @@ import {
   Check,
 } from "lucide-react";
 import { NotificationBell } from "./NotificationBell";
+import { MobileNotificationSheet } from "./MobileNotificationSheet";
 import { AccountMenu } from "@/components/common/AccountMenu";
+
 
 const Topbar = () => {
   const { user, organization } = useAuthStore();
@@ -96,10 +98,16 @@ const Topbar = () => {
 
       {/* RIGHT ACTION ITEMS: NOTIFICATIONS, THEME TOGGLE & PROFILE */}
       <div className="flex items-center gap-2 shrink-0 min-w-0">
-        {/* Notifications bell driven by recent festival activity */}
-        <NotificationBell />
+        {/* Desktop notification dropdown bell */}
+        <div className="hidden md:block">
+          <NotificationBell />
+        </div>
+
+        {/* Mobile notification bottom sheet */}
+        <MobileNotificationSheet />
 
         {/* Theme Toggle Button */}
+
         <ThemeToggle />
 
         {/* User Profile Summary -> shared account menu (same as sidebar) */}

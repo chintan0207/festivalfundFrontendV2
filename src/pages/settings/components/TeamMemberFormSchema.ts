@@ -7,8 +7,8 @@ export const teamMemberFormSchema = z.object({
   password: z
     .string()
     .optional()
-    .refine((v) => !v || v.length >= 6, {
-      message: "Password must be at least 6 characters",
+    .refine((v) => !v || v.length >= 8, {
+      message: "Password must be at least 8 characters",
     }),
   role: z.enum(["ORG_ADMIN", "ORG_VIEWER"]),
   phoneNumber: OPTIONAL_PHONE_NULLABLE,

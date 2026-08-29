@@ -30,6 +30,7 @@ import {
   Wallet,
   Receipt,
   BarChart3,
+  ClipboardList,
   Settings,
   ChevronDown,
 } from "lucide-react";
@@ -77,6 +78,12 @@ export const Sidebar = () => {
           icon: Receipt,
           href: "/dashboard/expenses",
           module: "expenses",
+        },
+        {
+          title: "Tasks & Notes",
+          icon: ClipboardList,
+          href: "/dashboard/tasks-notes",
+          module: "tasksNotes",
         },
         {
           title: "Reports & Analytics",

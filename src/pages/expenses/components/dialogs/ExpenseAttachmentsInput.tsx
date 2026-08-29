@@ -20,6 +20,7 @@ interface ExpenseAttachmentsInputProps {
   disabled?: boolean;
   label?: string;
   className?: string;
+  folder?: string;
 }
 
 const IMAGE_EXT = [".jpg", ".jpeg", ".png", ".gif", ".webp", ".svg", ".bmp", ".avif"];
@@ -39,6 +40,7 @@ export function ExpenseAttachmentsInput({
   disabled = false,
   label = "Receipts & Attachments",
   className,
+  folder = "expenses",
 }: ExpenseAttachmentsInputProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [uploadingCount, setUploadingCount] = useState(0);
@@ -62,7 +64,7 @@ export function ExpenseAttachmentsInput({
       }
 
       try {
-        const result = await UploadService.uploadFile(file, "expenses");
+        const result = await UploadService.uploadFile(file, folder);
         if (result?.url) {
           newUrls.push(result.url);
         }
@@ -271,3 +273,5 @@ export function ExpenseAttachmentsInput({
     </div>
   );
 }
+
+export const FileAttachmentsInput = ExpenseAttachmentsInput;

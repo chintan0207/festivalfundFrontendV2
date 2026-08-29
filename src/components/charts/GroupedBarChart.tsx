@@ -39,8 +39,14 @@ function fmtINRCompact(value: number): string {
   }).format(Number(value || 0))}`;
 }
 
-function parseISODate(iso: string): Date {
-  const [y, m, d] = iso.split("-").map(Number);
+function parseISODate(iso?: string): Date {
+  if (!iso || typeof iso !== "string") return new Date();
+  const parts = iso.split("-").map(Number);
+  if (parts.length < 3 || parts.some(isNaN)) {
+    const parsed = new Date(iso);
+    return isNaN(parsed.getTime()) ? new Date() : parsed;
+  }
+  const [y, m, d] = parts;
   return new Date(Date.UTC(y, m - 1, d));
 }
 
@@ -93,9 +99,12 @@ export function GroupedBarChart({
   const hasBalance = openingBalance != null;
 
   const points = useMemo(() => {
-    if (!rows || rows.length === 0) return [];
+    if (!rows || !Array.isArray(rows) || rows.length === 0) return [];
 
-    const sorted = [...rows].sort((a, b) => a.date.localeCompare(b.date));
+    const validRows = rows.filter((r) => r && typeof r.date === "string" && r.date.trim().length > 0);
+    if (validRows.length === 0) return [];
+
+    const sorted = [...validRows].sort((a, b) => (a.date || "").localeCompare(b.date || ""));
     const buckets = new Map<
       string,
       { label: string; fullLabel: string; income: number; expense: number }
@@ -133,8 +142,8 @@ export function GroupedBarChart({
       }
 
       const bucket = buckets.get(key) || { label, fullLabel, income: 0, expense: 0 };
-      bucket.income += r.income;
-      bucket.expense += r.expense;
+      bucket.income += r.income || 0;
+      bucket.expense += r.expense || 0;
       buckets.set(key, bucket);
     });
 

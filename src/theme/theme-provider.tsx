@@ -9,7 +9,9 @@ type ModuleTheme =
   | "module-contributors"
   | "module-contributions"
   | "module-expenses"
-  | "module-reports";
+  | "module-reports"
+  | "module-tasksnotes"
+  | "module-tasks-notes";
 
 type ThemeProviderState = {
   theme: Theme;

@@ -38,7 +38,6 @@ import {
   Pencil,
   Plus,
   Crown,
-  Hash,
   Loader2,
   Send,
   Ban,
@@ -415,34 +414,6 @@ export const SettingsPage = () => {
               </div>
             </div>
           </div>
-
-          {/* RECEIPT & VOUCHER SEQUENCES (read-only) */}
-          <div className="p-5 rounded-2xl bg-card border border-border shadow-sm space-y-4">
-            <div className="flex items-center gap-2 border-b border-border pb-3">
-              <Hash className={`h-5 w-5 ${theme.iconColor}`} />
-              <h2 className="text-base font-bold text-foreground">Document Numbering</h2>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
-              {(["contributor", "receipt", "expense", "festival"] as const).map((key) => (
-                <div
-                  key={key}
-                  className="p-4 rounded-xl bg-muted/40 border border-border"
-                >
-                  <p className="text-2xs text-muted-foreground capitalize mb-1">
-                    {key} Counter
-                  </p>
-                  <p className="text-lg font-bold text-foreground">
-                    {profileOrg?.sequences?.[key] ?? "0"}
-                  </p>
-                </div>
-              ))}
-            </div>
-            <p className="text-2xs text-muted-foreground">
-              Auto-generated sequential counters (CTR / CON / EXP / FES) are managed by
-              the system.
-            </p>
-          </div>
-
           {/* TEAM MEMBERS & ACCESS */}
           <div className="p-5 rounded-2xl bg-card border border-border shadow-sm space-y-4">
             <div className="flex flex-col gap-3 border-b border-border pb-3 sm:flex-row sm:items-center sm:justify-between">

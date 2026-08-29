@@ -3,7 +3,7 @@ import { REQUIRED_PHONE } from "@/lib/phone";
 
 export const loginSchema = z.object({
   email: z.string().email("Invalid email"),
-  password: z.string().min(6, "Minimum 6 characters"),
+  password: z.string().min(8, "Password must be at least 8 characters").max(128, "Password must be under 128 characters"),
 });
 
 export type FormData = z.infer<typeof loginSchema>;
@@ -17,7 +17,7 @@ export const registerSchema = z
     email: z.string().email("Invalid email"),
     phone: REQUIRED_PHONE,
 
-    adminPassword: z.string().min(6, "Min 6 characters"),
+    adminPassword: z.string().min(8, "Password must be at least 8 characters").max(128, "Password must be under 128 characters"),
     confirmPassword: z.string(),
   })
   .refine((d) => d.adminPassword === d.confirmPassword, {
@@ -35,7 +35,7 @@ export type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>;
 
 export const resetPasswordSchema = z
   .object({
-    password: z.string().min(6, "Password must be at least 6 characters"),
+    password: z.string().min(8, "Password must be at least 8 characters").max(128, "Password must be under 128 characters"),
     confirmPassword: z.string(),
   })
   .refine((d) => d.password === d.confirmPassword, {
@@ -48,7 +48,7 @@ export type ResetPasswordFormData = z.infer<typeof resetPasswordSchema>;
 export const acceptInvitationSchema = z
   .object({
     name: z.string().min(2, "Name required"),
-    password: z.string().min(6, "Minimum 6 characters"),
+    password: z.string().min(8, "Password must be at least 8 characters").max(128, "Password must be under 128 characters"),
     confirmPassword: z.string(),
   })
   .refine((d) => d.password === d.confirmPassword, {

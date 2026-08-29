@@ -28,3 +28,11 @@
 .module-reports {
   --primary: oklch(0.72 0.19 55);
 }
+
+/* Tasks & Notes – Emerald */
+
+.module-tasksnotes,
+.module-tasks-notes {
+  --primary: oklch(0.70 0.18 150);
+}
+
