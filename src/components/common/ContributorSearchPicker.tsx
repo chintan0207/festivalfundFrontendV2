@@ -38,6 +38,7 @@ export function ContributorSearchPicker({
   const containerRef = useRef<HTMLDivElement>(null);
   const cellRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
+  const isKeyboardNavRef = useRef(false);
 
   const debouncedQuery = useDebounce(query.trim(), 250);
 
@@ -94,7 +95,11 @@ export function ContributorSearchPicker({
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") setOpen(false);
     };
-    const handleScroll = () => updatePanelPos();
+    const handleScroll = (e: Event) => {
+      // Ignore scroll events originating from inside the panel itself
+      if (panelRef.current?.contains(e.target as Node)) return;
+      updatePanelPos();
+    };
     const handleResize = () => updatePanelPos();
     document.addEventListener("mousedown", handlePointerDown);
     document.addEventListener("touchstart", handlePointerDown);
@@ -110,8 +115,10 @@ export function ContributorSearchPicker({
     };
   }, [open]);
 
-  // Keep highlighted item in view
+  // Keep highlighted item in view ONLY on keyboard navigation (prevent scrollbar locking on hover/scroll)
   useEffect(() => {
+    if (!isKeyboardNavRef.current) return;
+    isKeyboardNavRef.current = false;
     if (safeActiveIndex < 0) return;
     listRef.current
       ?.querySelector<HTMLElement>(`[data-index="${safeActiveIndex}"]`)
@@ -159,12 +166,14 @@ export function ContributorSearchPicker({
     if (e.key === "ArrowDown") {
       e.preventDefault();
       setOpen(true);
+      isKeyboardNavRef.current = true;
       setActiveIndex((i) => {
         const base = i >= 0 && i < suggestions.length + footerCount ? i : -1;
         return Math.min(base + 1, lastIndex);
       });
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
+      isKeyboardNavRef.current = true;
       setActiveIndex((i) => {
         const base =
           i >= 0 && i < suggestions.length + footerCount
@@ -317,7 +326,9 @@ export function ContributorSearchPicker({
                 {suggestions.length > 0 && (
                   <div
                     ref={listRef}
-                    className="max-h-64 overflow-y-auto overscroll-contain space-y-0.5 pr-0.5 [scrollbar-width:thin] [scrollbar-color:var(--color-border)_transparent]"
+                    onWheel={(e) => e.stopPropagation()}
+                    onTouchMove={(e) => e.stopPropagation()}
+                    className="max-h-64 overflow-y-auto overscroll-contain touch-pan-y space-y-0.5 pr-0.5 [scrollbar-width:thin] [scrollbar-color:var(--color-border)_transparent]"
                   >
                     {suggestions.map((c, index) => (
                       <button
