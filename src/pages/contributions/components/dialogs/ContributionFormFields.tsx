@@ -187,7 +187,7 @@ export function ContributionFormFields({
           <div className="col-span-1 min-[360px]:col-span-2">
             <AppInput
               id={`${prefix}-itemName`}
-              label="Item Name"
+              label="Item Name *"
               placeholder="e.g. Colors & Pichkari set"
               {...register("itemName")}
               error={errors.itemName?.message}
@@ -195,7 +195,7 @@ export function ContributionFormFields({
           </div>
           <AppInput
             id={`${prefix}-quantity`}
-            label="Quantity"
+            label="Quantity (Optional)"
             type="number"
             step="1"
             min="1"
@@ -205,7 +205,7 @@ export function ContributionFormFields({
           />
           <AppInput
             id={`${prefix}-estimatedValue`}
-            label="Estimated Value (₹)"
+            label="Estimated Value (₹) (Optional)"
             type="number"
             step="1"
             min="0"

@@ -1,7 +1,8 @@
 import { useState, useMemo } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { DashboardService, type DashboardTask, type DashboardData } from "@/api/dashboard/dashboard.service";
+import { useOptimisticTasks } from "@/api/dashboard/useOptimisticTasks";
 import { Plus, Pencil, Trash2, ArrowRight, LayoutGrid, List, CheckCircle2, Circle, Search, Calendar, X } from "lucide-react";
 import { useFestivals } from "@/api/festival/useFestivals";
 import { AppCard } from "@/components/common/AppCard";
@@ -50,7 +51,6 @@ export const DashboardTasks = ({
   embedded = false,
 }: DashboardTasksProps) => {
   const theme = getModuleTheme("tasks-notes");
-  const queryClient = useQueryClient();
   const { activeFestivalId } = useFestivalApiStore();
   const { data: festivalsData } = useFestivals();
   const festivals = (festivalsData?.festivals ?? []).filter((f) => !f.isDeleted);
@@ -61,6 +61,13 @@ export const DashboardTasks = ({
 
   const navigate = useNavigate();
   const { data: tasksData = initialData?.tasks || [], isLoading } = useDashboardTasks(resolvedFestivalId);
+
+  const {
+    toggleTaskMutation,
+    updateTaskMutation,
+    deleteTaskMutation,
+    createTaskMutation,
+  } = useOptimisticTasks(resolvedFestivalId);
 
   const tasks: DashboardTask[] = useMemo(() => {
     const rawTasks =
@@ -134,24 +141,10 @@ export const DashboardTasks = ({
 
   const totalPages = Math.ceil(filteredTasks.length / pageSize);
 
-  const invalidateTasks = () => {
-    queryClient.invalidateQueries({
-      queryKey: ["dashboard", "tasks", resolvedFestivalId],
-    });
-    queryClient.invalidateQueries({
-      queryKey: ["dashboard", resolvedFestivalId],
-    });
-  };
-
-  const handleToggleComplete = async (task: DashboardTask) => {
+  const handleToggleComplete = (task: DashboardTask) => {
     if (!resolvedFestivalId) return;
-    try {
-      await DashboardService.toggleTask(resolvedFestivalId, task._id);
-      toast.success(task.isCompleted || task.status === "COMPLETED" ? "To-do reopened" : "To-do completed");
-      invalidateTasks();
-    } catch {
-      toast.error("Failed to update to-do status");
-    }
+    // Immediate optimistic toggle - no await, no disruptive toast
+    toggleTaskMutation.mutate(task);
   };
 
   const openCreateModal = () => {
@@ -211,8 +204,7 @@ export const DashboardTasks = ({
           description: description.trim(),
           dueDate: dueDate ? new Date(dueDate).toISOString() : undefined,
         };
-        await DashboardService.updateTask(resolvedFestivalId, editingTask._id, payload);
-        toast.success("To-do updated successfully");
+        await updateTaskMutation.mutateAsync({ taskId: editingTask._id, payload });
       } else {
         const finalItems = [...todoItems];
         if (newTodoTitle.trim()) {
@@ -230,24 +222,17 @@ export const DashboardTasks = ({
         }
 
         for (const item of finalItems) {
-          await DashboardService.createTask(resolvedFestivalId, {
+          await createTaskMutation.mutateAsync({
             title: item.title,
             description: item.description,
             dueDate: item.dueDate,
           });
         }
-
-        toast.success(
-          finalItems.length > 1
-            ? `${finalItems.length} to-dos created successfully`
-            : "To-do created successfully"
-        );
       }
 
       setIsFormOpen(false);
-      invalidateTasks();
     } catch {
-      toast.error("Failed to save to-do");
+      // Error handled in mutation
     } finally {
       setIsSubmitting(false);
     }
@@ -257,12 +242,10 @@ export const DashboardTasks = ({
     if (!deletingTaskId || !resolvedFestivalId) return;
     try {
       setIsDeleting(true);
-      await DashboardService.deleteTask(resolvedFestivalId, deletingTaskId);
-      toast.success("To-do deleted successfully");
+      await deleteTaskMutation.mutateAsync(deletingTaskId);
       setDeletingTaskId(null);
-      invalidateTasks();
     } catch {
-      toast.error("Failed to delete to-do");
+      // Error handled in mutation
     } finally {
       setIsDeleting(false);
     }

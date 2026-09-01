@@ -33,9 +33,13 @@ export function MembersList({ members }: { members: PublicContributorMember[] })
               </div>
             </div>
             {member.phoneNumber && (
-              <span className="shrink-0 rounded-lg border border-border/40 bg-background/70 px-2 py-1 font-mono text-[11px] text-muted-foreground">
-                {member.phoneNumber}
-              </span>
+              <a
+                href={`tel:${member.phoneNumber}`}
+                className="shrink-0 rounded-lg border border-border/40 bg-background/70 px-2 py-1 font-mono text-[11px] text-muted-foreground hover:text-indigo-600 hover:border-indigo-500/40 transition-colors"
+                title="Click to call"
+              >
+                📞 {member.phoneNumber}
+              </a>
             )}
           </div>
         ))}

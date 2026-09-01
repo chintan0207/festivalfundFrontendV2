@@ -132,10 +132,14 @@ function ContributorCard({
             <div className="space-y-1.5 pl-[10px]">
               {contributor.phoneNumber && (
                 <div className="flex items-center justify-between gap-2">
-                  <div className="flex items-center gap-1.5 text-muted-foreground">
-                    <Phone className="h-3 w-3 text-indigo-500" />
-                    <span className="text-[11px]">{contributor.phoneNumber}</span>
-                  </div>
+                  <a
+                    href={`tel:${contributor.phoneNumber}`}
+                    onClick={(e) => e.stopPropagation()}
+                    className="flex items-center gap-1.5 text-muted-foreground hover:text-indigo-600 transition-colors"
+                  >
+                    <Phone className="h-3 w-3 text-indigo-500 shrink-0" />
+                    <span className="text-[11px] underline decoration-dotted underline-offset-2">{contributor.phoneNumber}</span>
+                  </a>
                   {contributor.createdAt && (
                     <span className="text-[11px] text-muted-foreground/70">
                       {formatDate(contributor.createdAt)}
@@ -145,10 +149,14 @@ function ContributorCard({
               )}
 
               {contributor.email && (
-                <div className="flex items-center gap-1.5 text-muted-foreground">
+                <a
+                  href={`mailto:${contributor.email}`}
+                  onClick={(e) => e.stopPropagation()}
+                  className="flex items-center gap-1.5 text-muted-foreground hover:text-indigo-600 transition-colors"
+                >
                   <Mail className="h-3 w-3 shrink-0 text-indigo-500" />
-                  <span className="text-[11px] truncate">{contributor.email}</span>
-                </div>
+                  <span className="text-[11px] truncate underline decoration-dotted underline-offset-2">{contributor.email}</span>
+                </a>
               )}
 
               {contributor.address && (

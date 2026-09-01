@@ -81,8 +81,9 @@ export const ContributionService = {
     return response.data;
   },
 
-  getContributionSlip: async (id: string) => {
+  getContributionSlip: async (id: string, version?: number) => {
     const response = await ApiClient.get(`/contributions/${id}/slip`, {
+      params: version ? { v: version } : { _t: Date.now() },
       responseType: "blob",
     });
     return response.data as Blob;

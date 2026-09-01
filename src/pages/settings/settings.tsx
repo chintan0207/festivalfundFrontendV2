@@ -395,13 +395,13 @@ export const SettingsPage = () => {
               <div className="p-4 rounded-xl bg-muted/40 border border-border">
                 <p className="text-2xs text-muted-foreground mb-1">Festivals / Year</p>
                 <p className="text-lg font-bold text-foreground">
-                  {profileOrg?.limits?.festivalsPerYear ?? "—"}
+                  Unlimited
                 </p>
               </div>
               <div className="p-4 rounded-xl bg-muted/40 border border-border">
                 <p className="text-2xs text-muted-foreground mb-1">Contributor Limit</p>
                 <p className="text-lg font-bold text-foreground">
-                  {profileOrg?.limits?.contributors?.toLocaleString() ?? "—"}
+                  Unlimited
                 </p>
               </div>
               <div className="p-4 rounded-xl bg-muted/40 border border-border">

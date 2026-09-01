@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
 import {
   DashboardService,
@@ -8,6 +8,7 @@ import {
   type NoteImage,
   type NoteChecklistItem,
 } from "@/api/dashboard/dashboard.service";
+import { useOptimisticNotes } from "@/api/dashboard/useOptimisticNotes";
 import { FileAttachmentsInput } from "@/pages/expenses/components/dialogs/ExpenseAttachmentsInput";
 import {
   FileText,
@@ -39,7 +40,6 @@ import { RowActionsMenu, type RowAction } from "@/components/common/RowActionsMe
 import { useFestivalApiStore } from "@/api/festival/festival.store";
 import { formatDate, cn, getFileUrl, looksLikeImage, looksLikePdf, getFileNameFromUrl } from "@/lib/utils";
 import { getModuleTheme } from "@/theme/colors";
-import { toast } from "sonner";
 
 export type { DashboardNote };
 
@@ -73,7 +73,6 @@ export const DashboardNotes = ({
   embedded = false,
 }: DashboardNotesProps) => {
   const theme = getModuleTheme("tasks-notes");
-  const queryClient = useQueryClient();
   const navigate = useNavigate();
   const { activeFestivalId } = useFestivalApiStore();
   const { data: festivalsData } = useFestivals();
@@ -84,6 +83,13 @@ export const DashboardNotes = ({
       : festivals[0]?._id || "";
 
   const { data: notesData = initialData?.notes || [], isLoading } = useDashboardNotes(resolvedFestivalId);
+
+  const {
+    toggleNotePinMutation,
+    updateNoteMutation,
+    deleteNoteMutation,
+    createNoteMutation,
+  } = useOptimisticNotes(resolvedFestivalId);
 
   // View & Filter states
   const [viewMode, setViewMode] = useState<"list" | "grid">("grid");
@@ -152,15 +158,6 @@ export const DashboardNotes = ({
 
   const totalPages = Math.ceil(filteredNotes.length / pageSize);
 
-  const invalidateNotes = () => {
-    queryClient.invalidateQueries({
-      queryKey: ["dashboard", "notes", resolvedFestivalId],
-    });
-    queryClient.invalidateQueries({
-      queryKey: ["dashboard", resolvedFestivalId],
-    });
-  };
-
   const openCreateModal = () => {
     setEditingNote(null);
     setTitle("");
@@ -226,60 +223,33 @@ export const DashboardNotes = ({
       };
 
       if (editingNote) {
-        await DashboardService.updateNote(resolvedFestivalId, editingNote._id, payload);
-        toast.success("Note updated successfully");
+        await updateNoteMutation.mutateAsync({ noteId: editingNote._id, payload });
       } else {
-        await DashboardService.createNote(resolvedFestivalId, payload);
-        toast.success("Note created successfully");
+        await createNoteMutation.mutateAsync(payload);
       }
 
       setIsFormOpen(false);
-      invalidateNotes();
-    } catch (err: unknown) {
-      const msg =
-        err && typeof err === "object" && "response" in err
-          ? (err as { response?: { data?: { message?: string } } }).response?.data?.message
-          : undefined;
-      toast.error(msg || "Failed to save note");
+    } catch {
+      // Error handled in mutation
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleTogglePin = async (note: DashboardNote) => {
+  const handleTogglePin = (note: DashboardNote) => {
     if (!resolvedFestivalId) return;
-    try {
-      if (note.isPinned) {
-        await DashboardService.unpinNote(resolvedFestivalId, note._id);
-        toast.success("Note unpinned");
-      } else {
-        await DashboardService.pinNote(resolvedFestivalId, note._id);
-        toast.success("Note pinned");
-      }
-      invalidateNotes();
-    } catch (err: unknown) {
-      const msg =
-        err && typeof err === "object" && "response" in err
-          ? (err as { response?: { data?: { message?: string } } }).response?.data?.message
-          : undefined;
-      toast.error(msg || "Failed to toggle pin status");
-    }
+    // Immediate optimistic toggle - no await, no disruptive toast
+    toggleNotePinMutation.mutate(note);
   };
 
   const handleDeleteConfirm = async () => {
     if (!deletingNoteId || !resolvedFestivalId) return;
     try {
       setIsDeleting(true);
-      await DashboardService.deleteNote(resolvedFestivalId, deletingNoteId);
-      toast.success("Note deleted successfully");
+      await deleteNoteMutation.mutateAsync(deletingNoteId);
       setDeletingNoteId(null);
-      invalidateNotes();
-    } catch (err: unknown) {
-      const msg =
-        err && typeof err === "object" && "response" in err
-          ? (err as { response?: { data?: { message?: string } } }).response?.data?.message
-          : undefined;
-      toast.error(msg || "Failed to delete note");
+    } catch {
+      // Error handled in mutation
     } finally {
       setIsDeleting(false);
     }

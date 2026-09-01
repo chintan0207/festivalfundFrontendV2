@@ -28,6 +28,7 @@ interface ReportKpiCardsProps {
   parentContributorsCount?: number;
   boyContributorsCount?: number;
   girlContributorsCount?: number;
+  isLoading?: boolean;
 }
 
 export const ReportKpiCards = ({
@@ -46,6 +47,7 @@ export const ReportKpiCards = ({
   parentContributorsCount = 0,
   boyContributorsCount = 0,
   girlContributorsCount = 0,
+  isLoading = false,
 }: ReportKpiCardsProps) => {
   // 1. CONTRIBUTIONS TAB (EXACTLY MATCHES CONTRIBUTION KPIS ON CONTRIBUTIONS PAGE)
   if (activeTab === "contributions") {
@@ -57,6 +59,7 @@ export const ReportKpiCards = ({
           icon={<CheckCircle className="h-5 w-5" />}
           accent="emerald"
           subtext="Confirmed receipts"
+          isLoading={isLoading}
         />
         <KPICard
           label="Pending"
@@ -64,6 +67,7 @@ export const ReportKpiCards = ({
           icon={<Clock className="h-5 w-5" />}
           accent="rose"
           subtext="Awaiting deposit"
+          isLoading={isLoading}
         />
         <KPICard
           label="Total Raised"
@@ -71,6 +75,7 @@ export const ReportKpiCards = ({
           icon={<Wallet className="h-5 w-5" />}
           accent="blue"
           subtext="All contributions"
+          isLoading={isLoading}
         />
         <KPICard
           label="Item Contributions"
@@ -78,6 +83,7 @@ export const ReportKpiCards = ({
           icon={<Package className="h-5 w-5" />}
           accent="amber"
           subtext="In-kind donations"
+          isLoading={isLoading}
         />
       </KPIGrid>
     );
@@ -93,6 +99,7 @@ export const ReportKpiCards = ({
           icon={<Clock className="h-5 w-5" />}
           accent="amber"
           subtext="Records awaiting payment"
+          isLoading={isLoading}
         />
         <KPICard
           label="Paid"
@@ -100,6 +107,7 @@ export const ReportKpiCards = ({
           icon={<CheckCircle className="h-5 w-5" />}
           accent="emerald"
           subtext="Counted in festival balance"
+          isLoading={isLoading}
         />
         <KPICard
           label="Cancelled"
@@ -107,6 +115,7 @@ export const ReportKpiCards = ({
           icon={<XCircle className="h-5 w-5" />}
           accent="rose"
           subtext="Voided expenses"
+          isLoading={isLoading}
         />
         <KPICard
           label="Total Expenses"
@@ -114,6 +123,7 @@ export const ReportKpiCards = ({
           icon={<Wallet className="h-5 w-5" />}
           accent="blue"
           subtext="All recorded expenses"
+          isLoading={isLoading}
         />
       </KPIGrid>
     );
@@ -129,6 +139,7 @@ export const ReportKpiCards = ({
           icon={<Users className="h-5 w-5" />}
           accent="cyan"
           subtext="Registered donors"
+          isLoading={isLoading}
         />
         <KPICard
           label="Parents"
@@ -136,6 +147,7 @@ export const ReportKpiCards = ({
           icon={<Users className="h-5 w-5" />}
           accent="emerald"
           subtext="Head of families"
+          isLoading={isLoading}
         />
         <KPICard
           label="Boys & Youth"
@@ -143,6 +155,7 @@ export const ReportKpiCards = ({
           icon={<Users className="h-5 w-5" />}
           accent="blue"
           subtext="Youth team members"
+          isLoading={isLoading}
         />
         <KPICard
           label="Girls & Youth"
@@ -150,6 +163,7 @@ export const ReportKpiCards = ({
           icon={<Users className="h-5 w-5" />}
           accent="rose"
           subtext="Cultural performers"
+          isLoading={isLoading}
         />
       </KPIGrid>
     );
@@ -164,6 +178,7 @@ export const ReportKpiCards = ({
         accent="blue"
         icon={<IndianRupee className="h-4 w-4" />}
         subtext="Seed Fund"
+        isLoading={isLoading}
       />
       <KPICard
         label="Collected"
@@ -171,6 +186,7 @@ export const ReportKpiCards = ({
         accent="emerald"
         icon={<TrendingUp className="h-4 w-4" />}
         subtext="Deposited"
+        isLoading={isLoading}
       />
       <KPICard
         label="Total Spent"
@@ -178,6 +194,7 @@ export const ReportKpiCards = ({
         accent="rose"
         icon={<TrendingDown className="h-4 w-4" />}
         subtext="Approved Expenses"
+        isLoading={isLoading}
       />
       <KPICard
         label="Net Balance"
@@ -185,6 +202,7 @@ export const ReportKpiCards = ({
         accent="purple"
         icon={<Activity className="h-4 w-4" />}
         subtext="Available Fund"
+        isLoading={isLoading}
       />
       <KPICard
         label="Pending"
@@ -192,6 +210,7 @@ export const ReportKpiCards = ({
         accent="amber"
         icon={<Clock className="h-4 w-4" />}
         subtext="Uncollected Pledges"
+        isLoading={isLoading}
       />
       <KPICard
         label="Contributors"
@@ -199,6 +218,7 @@ export const ReportKpiCards = ({
         accent="emerald"
         icon={<Users className="h-4 w-4" />}
         subtext="Active Donors"
+        isLoading={isLoading}
       />
     </div>
   );

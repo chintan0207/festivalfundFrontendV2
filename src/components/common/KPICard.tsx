@@ -2,6 +2,7 @@ import { type ReactNode } from "react";
 import { TrendingUp, TrendingDown, Minus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { gradientColorNames } from "@/theme/colors";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export type KPIAccentColor =
   | "emerald"
@@ -24,6 +25,8 @@ export interface KPICardProps {
   gradient?: string;
   subtext?: string;
   className?: string;
+  isLoading?: boolean;
+  size?: "sm" | "md" | "lg";
 }
 
 const ACCENT_STYLES: Record<KPIAccentColor, { gradient: string; spark: string }> = {
@@ -72,6 +75,8 @@ export function KPICard({
   gradient,
   subtext,
   className,
+  isLoading = false,
+  size = "md",
 }: KPICardProps) {
   const style = ACCENT_STYLES[accent] || ACCENT_STYLES.emerald;
 
@@ -80,27 +85,41 @@ export function KPICard({
   const isNegative =
     changeType === "negative" || (change && change.startsWith("-"));
 
+  const isSmall = size === "sm";
+
   return (
     <div
       className={cn(
-        "p-4 rounded-xl bg-card border border-border/70 shadow-2xs hover:shadow-sm transition-all duration-200 flex flex-col justify-between relative overflow-hidden",
+        "rounded-xl bg-card border border-border/70 shadow-2xs hover:shadow-sm transition-all duration-200 flex flex-col justify-between relative overflow-hidden",
+        isSmall ? "p-2.5 sm:p-3" : "p-4",
         className
       )}
     >
-      <div className="flex items-start justify-between gap-2">
-        <div className="space-y-0.5 min-w-0">
-          <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider truncate">
+      <div className="flex items-start justify-between gap-1.5">
+        <div className="space-y-0.5 min-w-0 flex-1">
+          <p className={cn(
+            "font-semibold text-muted-foreground uppercase tracking-wider truncate",
+            isSmall ? "text-[9px]" : "text-[10px]"
+          )}>
             {label}
           </p>
-          <p className="text-xl sm:text-2xl font-bold tracking-tight text-foreground min-w-0 break-words tabular-nums">
-            {value}
-          </p>
+          {isLoading ? (
+            <Skeleton className="h-6 w-16 rounded-md my-0.5" />
+          ) : (
+            <p className={cn(
+              "font-bold tracking-tight text-foreground whitespace-nowrap tabular-nums leading-snug",
+              isSmall ? "text-xs sm:text-sm" : "text-sm sm:text-base md:text-lg"
+            )}>
+              {value}
+            </p>
+          )}
         </div>
 
         {icon && (
           <div
             className={cn(
-              "h-9 w-9 rounded-xl flex items-center justify-center text-white shrink-0",
+              "flex items-center justify-center text-white shrink-0",
+              isSmall ? "h-7 w-7 rounded-lg text-xs" : "h-9 w-9 rounded-xl",
               gradient ?? style.gradient
             )}
           >
@@ -110,7 +129,9 @@ export function KPICard({
       </div>
 
       <div className="flex items-center justify-between gap-2 pt-2 mt-1">
-        {change ? (
+        {isLoading ? (
+          <Skeleton className="h-3.5 w-16 rounded-md" />
+        ) : change ? (
           <div className="flex items-center gap-1">
             <span
               className={cn(

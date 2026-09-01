@@ -95,8 +95,8 @@ export function useContributionDialogs({
       payload.amount = values.amount;
     } else {
       payload.itemName = values.itemName?.trim();
-      payload.quantity = values.quantity;
-      payload.estimatedValue = values.estimatedValue;
+      payload.quantity = values.quantity && values.quantity > 0 ? values.quantity : undefined;
+      payload.estimatedValue = values.estimatedValue && values.estimatedValue > 0 ? values.estimatedValue : undefined;
     }
 
     return payload;
@@ -113,8 +113,8 @@ export function useContributionDialogs({
       payload.amount = values.amount;
     } else {
       payload.itemName = values.itemName?.trim();
-      payload.quantity = values.quantity;
-      payload.estimatedValue = values.estimatedValue;
+      payload.quantity = values.quantity && values.quantity > 0 ? values.quantity : undefined;
+      payload.estimatedValue = values.estimatedValue && values.estimatedValue > 0 ? values.estimatedValue : undefined;
     }
 
     return payload;

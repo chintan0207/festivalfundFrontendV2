@@ -32,6 +32,7 @@ import {
 } from "./lib/contributionMeta";
 import { categoryLabel } from "@/lib/categoryMeta";
 import type { ContributionListItem, ContributionStatus } from "@/types/Types";
+import { useFestivals } from "@/api/festival/useFestivals";
 
 export default function ContributionsPage() {
   const theme = getModuleTheme("contributions");
@@ -159,7 +160,8 @@ export default function ContributionsPage() {
     ...(festivalId ? { festivalId } : {}),
   };
 
-  const { isLoading } = useContributions(queryParams);
+  const { isLoading, isFetching } = useContributions(queryParams);
+  const { isLoading: isLoadingFestivals, isFetching: isFetchingFestivals } = useFestivals();
 
   // Status + slip actions for mobile cards
   const updateStatusMutation = useUpdateContributionStatus();
@@ -262,7 +264,10 @@ export default function ContributionsPage() {
         }
       />
 
-      <ContributionKPIs themeGradient={theme.gradient} />
+      <ContributionKPIs
+        themeGradient={theme.gradient}
+        isLoading={isLoading || isFetching || isLoadingFestivals || isFetchingFestivals}
+      />
 
       <PageFilterToolbar
         module="contributions"

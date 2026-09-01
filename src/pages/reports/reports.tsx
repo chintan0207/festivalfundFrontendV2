@@ -82,12 +82,22 @@ export const ReportsPage = ({
   const { activeFestivalId } = useFestivalApiStore();
 
   // Dynamic API queries & mutations
-  const { data: apiFestivalsData } = useFestivals();
-  const { data: apiContributionsData, isLoading: isLoadingContributions } =
+  const { data: apiFestivalsData, isLoading: isLoadingFestivals, isFetching: isFetchingFestivals } = useFestivals();
+  const { data: apiContributionsData, isLoading: isLoadingContributions, isFetching: isFetchingContributions } =
     useContributions();
-  const { data: apiExpensesData, isLoading: isLoadingExpenses } = useExpenses();
-  const { data: apiContributorsData, isLoading: isLoadingContributors } =
+  const { data: apiExpensesData, isLoading: isLoadingExpenses, isFetching: isFetchingExpenses } = useExpenses();
+  const { data: apiContributorsData, isLoading: isLoadingContributors, isFetching: isFetchingContributors } =
     useContributors();
+
+  const isReportsLoading =
+    isLoadingFestivals ||
+    isFetchingFestivals ||
+    isLoadingContributions ||
+    isFetchingContributions ||
+    isLoadingExpenses ||
+    isFetchingExpenses ||
+    isLoadingContributors ||
+    isFetchingContributors;
   const reportExport = useReportPdfExport();
   const updateContributionStatus = useUpdateContributionStatus();
   const downloadContributionSlip = useDownloadContributionSlip();
@@ -827,6 +837,7 @@ const cancelledExpensesCount = filteredExpenses.filter(
         parentContributorsCount={parentContributorsCount}
         boyContributorsCount={boyContributorsCount}
         girlContributorsCount={girlContributorsCount}
+        isLoading={isReportsLoading}
       />
 
       {/* 5. TAB CONTENT RENDERING */}

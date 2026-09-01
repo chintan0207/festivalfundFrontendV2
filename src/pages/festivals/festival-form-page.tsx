@@ -28,10 +28,15 @@ const festivalFormSchema = z
       .string()
       .min(2, "Festival title must be at least 2 characters")
       .max(100, "Festival title must be under 100 characters"),
-    year: z.number().min(1900, "Year must be 1900 or later").max(2100, "Invalid year"),
-    targetAmount: z.number().min(0, "Target budget must be positive").optional(),
-    openingBalance: z.number().min(0, "Opening balance must be positive").optional(),
-    status: z.enum(["UPCOMING", "ACTIVE", "COMPLETED", "ARCHIVED"]),
+    year: z
+      .number()
+      .min(1900, "Year must be 1900 or later")
+      .max(2100, "Invalid year")
+      .optional()
+      .or(z.nan()),
+    targetAmount: z.number().min(0, "Target budget must be positive").optional().or(z.nan()),
+    openingBalance: z.number().min(0, "Opening balance must be positive").optional().or(z.nan()),
+    status: z.enum(["UPCOMING", "ACTIVE", "COMPLETED", "ARCHIVED"]).optional(),
     category: z.string().max(100, "Category must be under 100 characters").optional(),
     location: z.string().optional(),
     startDate: z.string().optional(),
@@ -54,7 +59,7 @@ const emptyValues = (): FestivalFormValues => ({
   year: new Date().getFullYear(),
   targetAmount: undefined,
   openingBalance: undefined,
-  status: "UPCOMING",
+  status: "ACTIVE",
   category: "",
   location: "",
   startDate: "",
@@ -114,14 +119,19 @@ export function FestivalFormPage({ festivalId }: FestivalFormPageProps) {
   }, [isEditing, festival, reset]);
 
   const onSubmit = (values: FestivalFormValues) => {
+    const yearValue =
+      typeof values.year === "number" && !Number.isNaN(values.year)
+        ? Number(values.year)
+        : undefined;
+
     const payload = {
       name: values.name,
-      year: Number(values.year),
+      year: yearValue,
       targetAmount:
         typeof values.targetAmount === "number" && !Number.isNaN(values.targetAmount)
           ? Number(values.targetAmount)
           : undefined,
-      status: values.status,
+      status: values.status || "ACTIVE",
       category: values.category || undefined,
       location: values.location || undefined,
       description: values.description || undefined,
@@ -225,7 +235,7 @@ export function FestivalFormPage({ festivalId }: FestivalFormPageProps) {
           {/* Festival Name */}
           <AppInput
             id="name"
-            label="Festival Title"
+            label="Festival Title *"
             placeholder="e.g. Ganesh Chaturthi"
             leftIcon={<Tag className="h-3.5 w-3.5 text-muted-foreground" />}
             error={errors.name?.message}
@@ -237,6 +247,8 @@ export function FestivalFormPage({ festivalId }: FestivalFormPageProps) {
             <AppInput
               id="year"
               label="Event Year"
+              placeholder={`e.g. ${new Date().getFullYear()}`}
+              hint="Optional. Defaults to current year if omitted."
               type="number"
               leftIcon={<Calendar className="h-3.5 w-3.5 text-muted-foreground" />}
               error={errors.year?.message}

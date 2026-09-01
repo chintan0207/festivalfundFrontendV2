@@ -6,6 +6,7 @@ import { useFestivals } from "@/api/festival/useFestivals";
 
 interface ContributionKPIsProps {
   themeGradient?: string;
+  isLoading?: boolean;
 }
 
 const fmt = (value: number) => (value ? `₹${value.toLocaleString("en-IN")}` : "₹0");
@@ -16,7 +17,7 @@ const emptyStats = {
   itemCount: 0,
 };
 
-export function ContributionKPIs(_: ContributionKPIsProps) {
+export function ContributionKPIs({ themeGradient: _, isLoading }: ContributionKPIsProps) {
   const { activeFestivalId } = useFestivalApiStore();
   const { data } = useFestivals();
   const festivals = data?.festivals ?? [];
@@ -34,32 +35,32 @@ export function ContributionKPIs(_: ContributionKPIsProps) {
         value={fmt(deposited)}
         icon={<CheckCircle className="h-5 w-5" />}
         accent="emerald"
-        // gradient={themeGradient}
         subtext="Confirmed receipts"
+        isLoading={isLoading}
       />
       <KPICard
         label="Pending"
         value={fmt(pending)}
         icon={<Clock className="h-5 w-5" />}
         accent="rose"
-        // gradient={themeGradient}
         subtext="Awaiting deposit"
+        isLoading={isLoading}
       />
       <KPICard
         label="Total Raised"
         value={fmt(deposited + pending)}
         icon={<Wallet className="h-5 w-5" />}
         accent="blue"
-        // gradient={themeGradient}
         subtext="All contributions"
+        isLoading={isLoading}
       />
       <KPICard
         label="Item Contributions"
         value={stats.itemCount || 0}
         icon={<Package className="h-5 w-5" />}
         accent="amber"
-        // gradient={themeGradient}
         subtext="In-kind donations"
+        isLoading={isLoading}
       />
     </KPIGrid>
   );

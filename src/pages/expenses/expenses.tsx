@@ -121,7 +121,7 @@ export default function ExpensesPage() {
     ...(festivalId ? { festivalId } : {}),
   };
 
-  const { isLoading } = useExpenses(queryParams);
+  const { isLoading, isFetching } = useExpenses(queryParams);
 
   // Status actions
   const updateStatusMutation = useUpdateExpenseStatus();
@@ -225,7 +225,7 @@ export default function ExpensesPage() {
         }
       />
 
-      <ExpenseKPIs />
+      <ExpenseKPIs isLoading={isLoading || isFetching} />
 
       {/* Category strip (desktop full-width) / stacked card (mobile) */}
       <div className="hidden lg:block">

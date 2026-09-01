@@ -72,7 +72,14 @@ export function ContributionTable({
         <div>
           <p className="font-bold text-foreground">{c.contributor?.name || "—"}</p>
           {c.contributor?.phoneNumber && (
-            <p className="text-[11px] text-muted-foreground">{c.contributor.phoneNumber}</p>
+            <a
+              href={`tel:${c.contributor.phoneNumber}`}
+              onClick={(e) => e.stopPropagation()}
+              className="text-[11px] text-muted-foreground hover:text-indigo-600 transition-colors underline decoration-dotted underline-offset-2"
+              title="Click to call"
+            >
+              📞 {c.contributor.phoneNumber}
+            </a>
           )}
         </div>
       ),
