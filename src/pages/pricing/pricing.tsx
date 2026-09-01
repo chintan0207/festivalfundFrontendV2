@@ -7,7 +7,7 @@ import {
   AppCTASection,
 } from "@/components/common";
 import { pricingPlans } from "@/lib/data/landingPageData";
-import { Check, ChevronRight, Star, ArrowRight } from "lucide-react";
+import { Check, ChevronRight, Star, ArrowRight, Sparkles } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { cn } from "@/lib/utils";
 
@@ -18,26 +18,23 @@ const faqItems = [
   },
   {
     question: "Is there a free trial?",
-    answer: "Yes! All paid plans come with a 14-day free trial. No credit card required. You can cancel anytime during the trial with no charges.",
+    answer: "During our launch period, all plans are completely free with full access to all features. No credit card is required to sign up.",
   },
   {
     question: "What payment methods do you accept?",
-    answer: "We accept all major credit/debit cards, UPI, and bank transfers. For annual plans, we offer a 15% discount.",
+    answer: "We accept UPI, Net Banking, Credit/Debit cards, and major digital wallets via our secure payment gateway.",
   },
   {
-    question: "Can I customize my plan?",
-    answer: "Yes, contact our sales team for custom plans tailored to your organization's specific needs. We offer volume discounts for large organizations.",
+    question: "What happens to my data if I downgrade?",
+    answer: "All your existing data remains safe and accessible. If your new plan has lower limits, you won't be able to add new items beyond the limit, but existing data is never deleted.",
   },
   {
-    question: "Is my data secure?",
-    answer: "Absolutely. We use bank-level encryption, secure JWT authentication, and complete data isolation between organizations. Your data is backed up daily.",
-  },
-  {
-    question: "Do you offer support?",
-    answer: "All plans include email support. Standard and Premium plans include priority support with faster response times. Premium plans also include a dedicated account manager.",
+    question: "Do you offer discounts for non-profits or community trusts?",
+    answer: "Yes! Special pricing is available for registered non-profit organizations and charitable trusts. Contact our support team for details.",
   },
 ];
 
+// Pricing page component - 3-column pricing grid
 const Pricing = () => {
   return (
     <div className="bg-background">
@@ -57,57 +54,73 @@ const Pricing = () => {
         }
         description="All FestivalFund plans are currently free. Enjoy full access during our launch period."
       >
-        <div className="mx-auto max-w-5xl pt-4">
-          <div className="grid gap-6 md:grid-cols-3 text-left">
+        <div className="mx-auto max-w-6xl pt-6">
+          <div className="grid gap-6 md:grid-cols-3 text-left items-stretch">
             {pricingPlans.map((plan, i) => (
               <AppCard
                 key={i}
                 className={cn(
-                  "relative flex flex-col border-border/60 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg p-6 bg-card/90",
-                  plan.featured && "border-primary/60 shadow-md shadow-primary/10",
+                  "relative flex flex-col justify-between border-border/60 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl p-6 sm:p-7 bg-card/90 rounded-2xl overflow-visible",
+                  plan.featured
+                    ? "border-primary/80 shadow-lg shadow-primary/10 ring-2 ring-primary/20 bg-primary/[0.02] z-10"
+                    : "hover:border-border z-0",
                 )}
               >
                 {plan.featured && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                    <AppBadge className="bg-primary text-primary-foreground text-xs px-4 py-1 font-semibold shadow-md">
+                  <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 z-30">
+                    <AppBadge className="bg-primary text-primary-foreground text-xs px-3.5 py-1 font-bold shadow-lg inline-flex items-center gap-1.5 rounded-full whitespace-nowrap">
+                      <Sparkles className="h-3.5 w-3.5" />
                       Most Popular
                     </AppBadge>
                   </div>
                 )}
-                <div className={cn("flex flex-col gap-6", plan.featured && "pt-2")}>
+                
+                <div className="space-y-6">
                   <div>
-                    <h3 className="text-lg font-bold text-foreground">{plan.name}</h3>
-                    <p className="text-sm text-muted-foreground mt-1">{plan.description}</p>
+                    <h3 className="text-xl font-bold text-foreground">{plan.name}</h3>
+                    <p className="text-xs sm:text-sm text-muted-foreground mt-1.5 leading-relaxed min-h-[36px]">
+                      {plan.description}
+                    </p>
                   </div>
-                  <div className="flex flex-col gap-1">
-                    <div className="flex items-baseline gap-1.5">
-                      <span className="text-3xl font-extrabold text-foreground">₹0</span>
-                      <span className="text-sm text-muted-foreground font-semibold">/month</span>
-                      <span className="text-sm text-muted-foreground/70 line-through ml-1.5 font-medium">
+
+                  <div className="p-4 rounded-xl bg-muted/40 border border-border/50 flex flex-col gap-1.5">
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-3xl sm:text-4xl font-black text-foreground">₹0</span>
+                      <span className="text-xs font-semibold text-muted-foreground">/month</span>
+                      <span className="text-xs sm:text-sm text-muted-foreground/70 line-through ml-auto font-medium">
                         ₹{plan.regularPrice}/month
                       </span>
                     </div>
-                    <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2.5 py-0.5 rounded-full w-max mt-1">
-                      Currently Free
-                    </span>
+                    <div className="flex items-center justify-between mt-1">
+                      <span className="text-[11px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2.5 py-0.5 rounded-full">
+                        Currently Free
+                      </span>
+                      <span className="text-[10px] text-muted-foreground/80 font-medium">
+                        Planned regular price
+                      </span>
+                    </div>
                   </div>
-                  <Link to="/signup" className="w-full">
+
+                  <ul className="space-y-3 pt-2">
+                    {plan.features.map((feature, idx) => (
+                      <li key={idx} className="flex items-start gap-2.5 text-xs sm:text-sm font-medium text-foreground/90">
+                        <Check className="h-4 w-4 shrink-0 text-primary mt-0.5" />
+                        <span className="leading-snug">{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div className="pt-6 mt-6 border-t border-border/50">
+                  <Link to="/signup" className="w-full block">
                     <AppButton
                       variant={plan.featured ? "default" : "outline"}
-                      className="w-full"
+                      className="w-full py-2.5 text-sm font-semibold shadow-sm"
                       rightIcon={<ChevronRight className="h-4 w-4" />}
                     >
                       {plan.cta}
                     </AppButton>
                   </Link>
-                  <ul className="space-y-3 pt-2 border-t border-border/50">
-                    {plan.features.map((feature) => (
-                      <li key={feature} className="flex items-center gap-2.5 text-sm font-medium text-foreground/90">
-                        <Check className="h-4 w-4 shrink-0 text-primary" />
-                        <span>{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
                 </div>
               </AppCard>
             ))}
