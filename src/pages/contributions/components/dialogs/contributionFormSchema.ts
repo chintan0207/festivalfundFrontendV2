@@ -27,8 +27,14 @@ const baseShape = {
   date: z.string().optional(),
   amount: z.coerce.number().optional(),
   itemName: z.string().optional(),
-  quantity: z.coerce.number().optional(),
-  estimatedValue: z.coerce.number().optional(),
+  quantity: z.preprocess(
+    (val) => (val === "" || val === null || (typeof val === "number" && isNaN(val)) ? undefined : val),
+    z.coerce.number().optional(),
+  ),
+  estimatedValue: z.preprocess(
+    (val) => (val === "" || val === null || (typeof val === "number" && isNaN(val)) ? undefined : val),
+    z.coerce.number().optional(),
+  ),
   paymentMode: z.string().optional(),
 } as const;
 
