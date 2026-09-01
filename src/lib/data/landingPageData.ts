@@ -20,11 +20,17 @@ export interface Feature {
 }
 
 export interface PricingPlan {
+  id: string;
   name: string;
   description: string;
-  price: string;
+  currentPrice: number;
+  regularPrice: number;
+  currency: string;
+  interval: string;
+  currentStatus: "free" | "active";
+  featured?: boolean;
+  recommended?: boolean;
   cta: string;
-  featured: boolean;
   features: string[];
 }
 
@@ -52,58 +58,51 @@ export interface SecurityFeature {
 
 export const features: Feature[] = [
   {
-    title: "Festival Management",
+    title: "Festival Lifecycle Management",
     description:
-      "Create and manage festivals with budgets, timelines, and real-time progress tracking across your organization.",
-    color: "#10b981",
+      "Create, track, and archive festival campaigns with distinct budgets, timelines, and venues.",
+    color: gradientColors.festivals.primary,
     icon: Calendar,
   },
   {
-    title: "Contributor Profiles",
+    title: "Contributor Relationship Management",
     description:
-      "Maintain detailed profiles with auto-generated codes, categories, contribution history, and contact information.",
-    color: "#6366f1",
+      "Maintain a centralized contributor directory with key identity tracking, history, and auto-generated codes.",
+    color: gradientColors.contributors.primary,
     icon: Users,
   },
   {
-    title: "Contribution Tracking",
+    title: "Collection & Receipt System",
     description:
-      "Record cash and in-kind donations with status workflow, multiple payment modes, and automatic receipt generation.",
-    color: "#f59e0b",
+      "Record cash and item contributions with auto-generated receipt numbers and downloadable PDF slips.",
+    color: gradientColors.contributions.primary,
     icon: IndianRupee,
   },
   {
-    title: "Expense Management",
+    title: "Expense & Vendor Tracking",
     description:
-      "Track categorized expenses — Mahaprasad, Decoration, Mandap, Sound, and more — with payment tracking.",
-    color: "#06b6d4",
+      "Categorize festival expenditures with receipt upload, approval workflows, and net balance calculation.",
+    color: gradientColors.expenses.primary,
     icon: Receipt,
   },
   {
-    title: "PDF Receipts & Reports",
+    title: "Financial Statements & Export",
     description:
-      "Generate professional contribution slips and comprehensive festival financial reports with one click.",
-    color: "#8b5cf6",
+      "Generate comprehensive PDF & CSV financial reports, collection summaries, and audit logs with one click.",
+    color: gradientColors.reports.primary,
     icon: FileText,
   },
   {
-    title: "Multi-Organization",
+    title: "Multi-Tenant Organization Structure",
     description:
-      "Serve multiple mandals, trusts, and committees from a single platform with complete data isolation.",
-    color: "#ef4444",
+      "Role-based access control with SuperAdmin, OrgAdmin, and Treasurer privileges for complete isolation.",
+    color: gradientColors.settings.primary,
     icon: Building2,
   },
 ];
 
 export const reasons: Reason[] = [
   {
-    title: "Complete Transparency",
-    description:
-      "Every contribution and expense is tracked, logged, and reportable. Build trust with your community through clear financial records.",
-  },
-  {
-    title: "Mobile-Friendly Design",
-    description:
       "Works beautifully on smartphones and tablets. Add contributions, check reports, and manage expenses on the go.",
   },
   {
@@ -148,46 +147,73 @@ export const steps: Step[] = [
 
 export const pricingPlans: PricingPlan[] = [
   {
-    name: "Starter",
-    description: "For small mandals",
-    price: "Free",
+    id: "basic",
+    name: "Basic",
+    description: "Core FestivalFund functionality for small mandals and committees",
+    currentPrice: 0,
+    regularPrice: 99,
+    currency: "INR",
+    interval: "month",
+    currentStatus: "free",
+    recommended: false,
+    featured: false,
     cta: "Get Started",
-    featured: false,
     features: [
-      "Up to 100 contributors",
-      "1 festival per year",
-      "Basic reports",
-      "Email support",
-      "Receipt generation",
+      "Unlimited Festivals",
+      "Contributor management",
+      "Contributions & receipt generation",
+      "Expense tracking & categories",
+      "Notes & Tasks management",
+      "Activity history & dashboard",
+      "Basic reports & PDF export",
+      "Search and filtering",
     ],
   },
   {
+    id: "standard",
     name: "Standard",
-    description: "For growing organizations",
-    price: "₹999",
-    cta: "Start Free Trial",
+    description: "Everything in Basic plus advanced insights for growing organizations",
+    currentPrice: 0,
+    regularPrice: 299,
+    currency: "INR",
+    interval: "month",
+    currentStatus: "free",
+    recommended: true,
     featured: true,
+    cta: "Get Started",
     features: [
-      "Unlimited contributors",
-      "Unlimited festivals",
-      "Advanced reports",
-      "Priority support",
-      "Contribution slip PDFs",
-      "Expense reports",
+      "Everything in Basic +",
+      "Unlimited Festivals",
+      "Advanced financial reports",
+      "Advanced insights & analytics",
+      "Enhanced interactive dashboard",
+      "Full PDF & document export capabilities",
+      "Enhanced activity & audit visibility",
+      "Priority customer support",
     ],
   },
   {
+    id: "premium",
     name: "Premium",
-    description: "For large organizations",
-    price: "₹2,999",
-    cta: "Contact Sales",
+    description: "Everything in Standard plus premium capabilities for large committees",
+    currentPrice: 0,
+    regularPrice: 399,
+    currency: "INR",
+    interval: "month",
+    currentStatus: "free",
+    recommended: false,
     featured: false,
+    cta: "Get Started",
     features: [
-      "Everything in Standard",
-      "Multi-organization view",
-      "Dedicated support",
-      "SLA guarantee",
-      "Priority feature access",
+      "Everything in Standard +",
+      "Unlimited Festivals",
+      "Advanced analytics suite",
+      "Comprehensive multi-module reporting",
+      "Advanced dashboard capabilities",
+      "Extended export & archival capabilities",
+      "Advanced organization administration",
+      "Premium document & slip capabilities",
+      "Dedicated 24/7 priority support",
     ],
   },
 ];

@@ -46,17 +46,16 @@ const Pricing = () => {
         badge={
           <span className="inline-flex items-center gap-2">
             <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-500" />
-            Simple Pricing
+            Launch Period
           </span>
         }
         badgeIcon={<Star className="h-4 w-4 text-primary" />}
         title={
           <>
-            Transparent pricing for{" "}
-            <span className="gradient-text">every organization</span>
+            Simple plans. <span className="gradient-text">Full access.</span>
           </>
         }
-        description="Choose the plan that fits your mandal, trust, or committee. Upgrade or downgrade anytime with no hidden fees."
+        description="All FestivalFund plans are currently free. Enjoy full access during our launch period."
       >
         <div className="mx-auto max-w-5xl pt-4">
           <div className="grid gap-6 md:grid-cols-3 text-left">
@@ -80,11 +79,17 @@ const Pricing = () => {
                     <h3 className="text-lg font-bold text-foreground">{plan.name}</h3>
                     <p className="text-sm text-muted-foreground mt-1">{plan.description}</p>
                   </div>
-                  <div className="flex items-baseline gap-1">
-                    <span className="text-3xl font-extrabold text-foreground">{plan.price}</span>
-                    {plan.price !== "Free" && (
-                      <span className="text-sm text-muted-foreground font-medium">/month</span>
-                    )}
+                  <div className="flex flex-col gap-1">
+                    <div className="flex items-baseline gap-1.5">
+                      <span className="text-3xl font-extrabold text-foreground">₹0</span>
+                      <span className="text-sm text-muted-foreground font-semibold">/month</span>
+                      <span className="text-sm text-muted-foreground/70 line-through ml-1.5 font-medium">
+                        ₹{plan.regularPrice}/month
+                      </span>
+                    </div>
+                    <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2.5 py-0.5 rounded-full w-max mt-1">
+                      Currently Free
+                    </span>
                   </div>
                   <Link to="/signup" className="w-full">
                     <AppButton
@@ -108,7 +113,7 @@ const Pricing = () => {
             ))}
           </div>
           <p className="mt-6 text-center text-xs sm:text-sm text-muted-foreground font-medium">
-            All plans include a 14-day free trial. No credit card required. Cancel anytime.
+            All FestivalFund plans are currently free. Enjoy full access during our launch period.
           </p>
         </div>
       </AppPageHero>
@@ -119,7 +124,7 @@ const Pricing = () => {
           <AppSectionHeader
             badge="Comparison"
             title="Compare plans in detail"
-            subtitle="Find the perfect plan for your organization's needs."
+            subtitle="Explore plan capabilities. All features are fully unlocked while all plans remain free."
           />
           <div className="mt-10 overflow-hidden rounded-2xl border border-border/60 bg-card shadow-sm">
             <div className="overflow-x-auto">
@@ -127,27 +132,26 @@ const Pricing = () => {
                 <thead>
                   <tr className="border-b border-border/60 bg-muted/60">
                     <th className="px-6 py-4 text-left font-semibold text-foreground">Feature</th>
-                    <th className="px-6 py-4 text-center font-semibold text-foreground">Starter</th>
+                    <th className="px-6 py-4 text-center font-semibold text-foreground">Basic</th>
                     <th className="px-6 py-4 text-center font-semibold text-primary">Standard</th>
                     <th className="px-6 py-4 text-center font-semibold text-foreground">Premium</th>
                   </tr>
                 </thead>
                 <tbody>
                   {[
-                    { feature: "Contributors", starter: "Up to 100", standard: "Unlimited", premium: "Unlimited" },
-                    { feature: "Festivals per year", starter: "1", standard: "Unlimited", premium: "Unlimited" },
-                    { feature: "Receipt Generation", starter: "Yes", standard: "Yes", premium: "Yes" },
-                    { feature: "Basic Reports", starter: "Yes", standard: "Yes", premium: "Yes" },
-                    { feature: "Advanced Reports", starter: "—", standard: "Yes", premium: "Yes" },
-                    { feature: "Expense Reports", starter: "—", standard: "Yes", premium: "Yes" },
-                    { feature: "Multi-Organization", starter: "—", standard: "—", premium: "Yes" },
-                    { feature: "Email Support", starter: "Basic", standard: "Priority", premium: "Priority" },
-                    { feature: "Dedicated Manager", starter: "—", standard: "—", premium: "Yes" },
-                    { feature: "SLA Guarantee", starter: "—", standard: "—", premium: "Yes" },
+                    { feature: "Current Price", basic: "₹0 (Free)", standard: "₹0 (Free)", premium: "₹0 (Free)" },
+                    { feature: "Planned Regular Price", basic: "₹99 / month", standard: "₹299 / month", premium: "₹399 / month" },
+                    { feature: "Festivals per year", basic: "Unlimited", standard: "Unlimited", premium: "Unlimited" },
+                    { feature: "Contributors", basic: "Unlimited", standard: "Unlimited", premium: "Unlimited" },
+                    { feature: "Receipt Generation", basic: "Yes", standard: "Yes", premium: "Yes" },
+                    { feature: "Basic Reports & Export", basic: "Yes", standard: "Yes", premium: "Yes" },
+                    { feature: "Advanced Insights", basic: "Basic", standard: "Advanced", premium: "Comprehensive" },
+                    { feature: "Export Capabilities", basic: "PDF / CSV", standard: "Full Export", premium: "Extended Archival" },
+                    { feature: "Support", basic: "Standard", standard: "Priority", premium: "Dedicated 24/7" },
                   ].map((row, i) => (
                     <tr key={i} className={cn("border-b border-border/40 last:border-b-0", i % 2 === 1 && "bg-muted/20")}>
                       <td className="px-6 py-3.5 font-medium text-foreground">{row.feature}</td>
-                      <td className="px-6 py-3.5 text-center text-muted-foreground">{row.starter}</td>
+                      <td className="px-6 py-3.5 text-center text-muted-foreground">{row.basic}</td>
                       <td className="px-6 py-3.5 text-center text-foreground font-semibold">{row.standard}</td>
                       <td className="px-6 py-3.5 text-center text-muted-foreground">{row.premium}</td>
                     </tr>
