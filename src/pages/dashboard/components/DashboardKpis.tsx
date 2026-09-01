@@ -5,9 +5,10 @@ import { formatINR, formatPct } from "../lib/dashboardFormat";
 
 interface DashboardKpisProps {
   data: DashboardData;
+  isLoading?: boolean;
 }
 
-export function DashboardKpis({ data }: DashboardKpisProps) {
+export function DashboardKpis({ data, isLoading }: DashboardKpisProps) {
   const { stats, trends, contributions } = data;
 
   const incomeSpark = contributions.timeSeries.map((p) => p.income);
@@ -28,6 +29,7 @@ export function DashboardKpis({ data }: DashboardKpisProps) {
         icon={<Landmark className="h-5 w-5" />}
         accent="blue"
         subtext="Starting funds"
+        isLoading={isLoading}
       />
       <KPICard
         label="Total Collected"
@@ -44,6 +46,7 @@ export function DashboardKpis({ data }: DashboardKpisProps) {
             : "neutral"
         }
         subtext={`${contributions.statusCounts.DEPOSITED.count} deposited contributions`}
+        isLoading={isLoading}
       />
       <KPICard
         label="Total Spent"
@@ -60,6 +63,7 @@ export function DashboardKpis({ data }: DashboardKpisProps) {
             : "neutral"
         }
         subtext={`${data.expenses.statusCounts.PAID.count} paid expenses`}
+        isLoading={isLoading}
       />
       <KPICard
         label="Current Balance"
@@ -67,6 +71,7 @@ export function DashboardKpis({ data }: DashboardKpisProps) {
         icon={<Activity className="h-5 w-5" />}
         accent="indigo"
         subtext="Available funds"
+        isLoading={isLoading}
       />
       <KPICard
         label="Pending Balance"
@@ -74,6 +79,7 @@ export function DashboardKpis({ data }: DashboardKpisProps) {
         icon={<Clock className="h-5 w-5" />}
         accent="amber"
         subtext={`${contributions.statusCounts.PENDING.count} pending contributions`}
+        isLoading={isLoading}
       />
     </KPIGrid>
   );

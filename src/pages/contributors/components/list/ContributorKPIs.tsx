@@ -5,9 +5,10 @@ import { useContributorApiStore } from "@/api/contributor/contributor.store";
 
 interface ContributorKPIsProps {
   themeGradient?: string;
+  isLoading?: boolean;
 }
 
-export function ContributorKPIs(_: ContributorKPIsProps) {
+export function ContributorKPIs({ themeGradient: _, isLoading }: ContributorKPIsProps) {
   const categoryCounts = useContributorApiStore((s) => s.categoryCounts);
 
   return (
@@ -17,32 +18,32 @@ export function ContributorKPIs(_: ContributorKPIsProps) {
         value={categoryCounts.total}
         icon={<Users className="h-5 w-5" />}
         accent="cyan"
-        // gradient={themeGradient}
         subtext="Registered donors"
+        isLoading={isLoading}
       />
       <KPICard
         label="Parents"
         value={categoryCounts.PARENT}
         icon={<Users className="h-5 w-5" />}
         accent="emerald"
-        // gradient={themeGradient}
         subtext="Head of families"
+        isLoading={isLoading}
       />
       <KPICard
         label="Boys & Youth"
         value={categoryCounts.BOY}
         icon={<Users className="h-5 w-5" />}
         accent="blue"
-        // gradient={themeGradient}
         subtext="Youth team members"
+        isLoading={isLoading}
       />
       <KPICard
         label="Girls & Youth"
         value={categoryCounts.GIRL}
         icon={<Users className="h-5 w-5" />}
         accent="rose"
-        // gradient={themeGradient}
         subtext="Cultural performers"
+        isLoading={isLoading}
       />
     </KPIGrid>
   );

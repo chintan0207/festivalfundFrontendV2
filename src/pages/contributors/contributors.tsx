@@ -23,6 +23,7 @@ import { ContributorDialogs } from "./components/dialogs/ContributorDialogs";
 import { useContributorDialogs } from "./useContributorDialogs";
 import { categoryLabel } from "@/lib/categoryMeta";
 import type { Contributor } from "@/types/Types";
+import { ContributorKPIs } from "./components/list/ContributorKPIs";
 
 export default function ContributorsPage() {
   const theme = getModuleTheme("contributors");
@@ -122,7 +123,7 @@ export default function ContributorsPage() {
     ...(isActive ? { isActive } : {}),
   };
 
-  const { isLoading } = useContributors(queryParams);
+  const { isLoading, isFetching } = useContributors(queryParams);
 
   // Handlers
   const handleSort = useCallback(
@@ -193,7 +194,10 @@ export default function ContributorsPage() {
         }
       />
 
-      {/* <ContributorKPIs themeGradient={theme.gradient} /> */}
+      <ContributorKPIs
+        themeGradient={theme.gradient}
+        isLoading={isLoading || isFetching}
+      />
 
       <PageFilterToolbar
         module="contributors"

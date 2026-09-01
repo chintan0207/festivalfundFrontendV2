@@ -38,6 +38,7 @@ const Dashboard = () => {
   const {
     data,
     isLoading: isLoadingDashboard,
+    isFetching: isFetchingDashboard,
     isError,
     error,
     refetch,
@@ -90,7 +91,7 @@ const Dashboard = () => {
       ) : (
         <div className="space-y-4 sm:space-y-5">
           {/* KPI row */}
-          <DashboardKpis data={data} />
+          <DashboardKpis data={data} isLoading={isLoadingDashboard || isFetchingDashboard} />
 
           {/* Row 2: festival summary / payment channels / contributor categories */}
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4 items-stretch">

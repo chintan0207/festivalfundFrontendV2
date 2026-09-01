@@ -4,7 +4,11 @@ import { useExpenseApiStore } from "@/api/expense/expense.store";
 
 const fmt = (value: number) => (value ? `₹${value.toLocaleString("en-IN")}` : "₹0");
 
-export function ExpenseKPIs() {
+interface ExpenseKPIsProps {
+  isLoading?: boolean;
+}
+
+export function ExpenseKPIs({ isLoading }: ExpenseKPIsProps) {
   const statusCounts = useExpenseApiStore((s) => s.statusCounts);
   const statusAmounts = useExpenseApiStore((s) => s.statusAmounts);
 
@@ -16,6 +20,7 @@ export function ExpenseKPIs() {
         icon={<Clock className="h-5 w-5" />}
         accent="amber"
         subtext={`${statusCounts?.PENDING ?? 0} records awaiting payment`}
+        isLoading={isLoading}
       />
       <KPICard
         label="Paid"
@@ -23,6 +28,7 @@ export function ExpenseKPIs() {
         icon={<CheckCircle className="h-5 w-5" />}
         accent="emerald"
         subtext="Counted in festival balance"
+        isLoading={isLoading}
       />
       <KPICard
         label="Cancelled"
@@ -30,6 +36,7 @@ export function ExpenseKPIs() {
         icon={<XCircle className="h-5 w-5" />}
         accent="rose"
         subtext="Voided expenses"
+        isLoading={isLoading}
       />
       <KPICard
         label="Total Expenses"
@@ -37,6 +44,7 @@ export function ExpenseKPIs() {
         icon={<Wallet className="h-5 w-5" />}
         accent="blue"
         subtext="All recorded expenses"
+        isLoading={isLoading}
       />
     </KPIGrid>
   );
