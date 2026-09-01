@@ -5,8 +5,12 @@ import "./index.css";
 import { RouterProvider } from "@tanstack/react-router";
 import { router } from "./router";
 import { setNavigator } from "./lib/navigation";
+import { wakeUpBackend } from "@/api/wakeUp";
 import "./theme/tokens.css";
 import "./theme/modules.css";
+
+// Start lightweight background backend wake-up immediately on app startup
+wakeUpBackend();
 
 setNavigator((opts) => {
   router.navigate({ to: opts.to as any, replace: opts.replace });
