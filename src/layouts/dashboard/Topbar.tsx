@@ -5,6 +5,7 @@ import { useFestivals } from "@/api/festival/useFestivals";
 import { useAuthStore } from "@/api/auth/auth.store";
 import { Badge } from "@/components/ui/badge";
 import { ThemeToggle } from "@/theme/ThemeToggle";
+import { useNavigate } from "@tanstack/react-router";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,6 +18,7 @@ import {
   ChevronDown,
   Calendar,
   Check,
+  Plus,
 } from "lucide-react";
 import { NotificationBell } from "./NotificationBell";
 import { MobileNotificationSheet } from "./MobileNotificationSheet";
@@ -24,6 +26,7 @@ import { AccountMenu } from "@/components/common/AccountMenu";
 
 
 const Topbar = () => {
+  const navigate = useNavigate();
   const { user, organization } = useAuthStore();
   const { data } = useFestivals();
   const festivals = data?.festivals ?? [];
@@ -64,21 +67,31 @@ const Topbar = () => {
               Select Active Festival
             </DropdownMenuLabel>
             <DropdownMenuSeparator className="my-1" />
-            {festivals.map((f) => (
-              <DropdownMenuItem
-                key={f._id}
-                onClick={() => setActiveFestivalId(f._id)}
-                className={`flex items-center justify-between cursor-pointer rounded-lg px-2.5 py-2 text-xs ${
-                  activeFestivalId === f._id ? "bg-primary/10 text-primary font-semibold" : ""
-                }`}
-              >
-                <div className="flex flex-col min-w-0">
-                  <span className="truncate">{f.name}</span>
-                  <span className="text-2xs text-muted-foreground">{f.year}</span>
-                </div>
-                {activeFestivalId === f._id && <Check className="h-4 w-4 text-primary shrink-0" />}
-              </DropdownMenuItem>
-            ))}
+            <div className="max-h-60 overflow-y-auto space-y-0.5">
+              {festivals.map((f) => (
+                <DropdownMenuItem
+                  key={f._id}
+                  onClick={() => setActiveFestivalId(f._id)}
+                  className={`flex items-center justify-between cursor-pointer rounded-lg px-2.5 py-2 text-xs ${
+                    activeFestivalId === f._id ? "bg-primary/10 text-primary font-semibold" : ""
+                  }`}
+                >
+                  <div className="flex flex-col min-w-0">
+                    <span className="truncate">{f.name}</span>
+                    <span className="text-2xs text-muted-foreground">{f.year}</span>
+                  </div>
+                  {activeFestivalId === f._id && <Check className="h-4 w-4 text-primary shrink-0" />}
+                </DropdownMenuItem>
+              ))}
+            </div>
+            <DropdownMenuSeparator className="my-1" />
+            <DropdownMenuItem
+              onClick={() => navigate({ to: "/dashboard/festivals/new" })}
+              className="flex items-center gap-2 cursor-pointer rounded-lg px-2.5 py-2 text-xs font-semibold text-primary hover:bg-primary/10 transition-colors"
+            >
+              <Plus className="h-4 w-4 shrink-0 text-primary" />
+              <span>Create New Festival</span>
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
 

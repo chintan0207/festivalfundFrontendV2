@@ -71,16 +71,24 @@ export function ContributorDetailHeader({
         <div className="w-full space-y-1.5">
           <div className="flex flex-col sm:flex-row flex-wrap gap-y-1 sm:gap-x-6 text-[11px] sm:text-xs text-muted-foreground">
             {contributor.phoneNumber && (
-              <span className="flex items-center gap-1.5">
-                <Phone className="h-3 w-3 shrink-0" />
-                <span className="truncate">{contributor.phoneNumber}</span>
-              </span>
+              <a
+                href={`tel:${contributor.phoneNumber}`}
+                className="flex items-center gap-1.5 hover:text-indigo-600 transition-colors font-mono"
+                title="Click to call"
+              >
+                <Phone className="h-3 w-3 shrink-0 text-indigo-500" />
+                <span className="truncate underline decoration-dotted underline-offset-2">{contributor.phoneNumber}</span>
+              </a>
             )}
             {contributor.email && (
-              <span className="flex items-center gap-1.5">
-                <Mail className="h-3 w-3 shrink-0" />
-                <span className="truncate">{contributor.email}</span>
-              </span>
+              <a
+                href={`mailto:${contributor.email}`}
+                className="flex items-center gap-1.5 hover:text-indigo-600 transition-colors"
+                title="Click to email"
+              >
+                <Mail className="h-3 w-3 shrink-0 text-indigo-500" />
+                <span className="truncate underline decoration-dotted underline-offset-2">{contributor.email}</span>
+              </a>
             )}
             {contributor.address && (
               <span className="flex items-start gap-1.5 min-w-0">

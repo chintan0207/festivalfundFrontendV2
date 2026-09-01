@@ -107,8 +107,8 @@ export function KPICard({
             <Skeleton className="h-6 w-16 rounded-md my-0.5" />
           ) : (
             <p className={cn(
-              "font-bold tracking-tight text-foreground min-w-0 whitespace-nowrap truncate tabular-nums",
-              isSmall ? "text-sm sm:text-base" : "text-lg sm:text-xl md:text-2xl"
+              "font-bold tracking-tight text-foreground whitespace-nowrap tabular-nums leading-snug",
+              isSmall ? "text-xs sm:text-sm" : "text-sm sm:text-base md:text-lg"
             )}>
               {value}
             </p>

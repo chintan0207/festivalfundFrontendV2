@@ -10,7 +10,7 @@ export const DASHBOARD_QUERY_KEYS = {
  * Single-request dashboard query with fallback handlers for tasks and notes.
  */
 export const useDashboard = (festivalId: string) => {
-  const { data: dashboardData, isLoading, isError, error, refetch } = useQuery({
+  const { data: dashboardData, isLoading, isFetching, isError, error, refetch } = useQuery({
     queryKey: DASHBOARD_QUERY_KEYS.festival(festivalId),
     queryFn: async () => {
       const res = await DashboardService.getDashboard(festivalId);
@@ -33,6 +33,7 @@ export const useDashboard = (festivalId: string) => {
   return {
     data: dashboardData,
     isLoading,
+    isFetching,
     isError,
     error,
     refetch,

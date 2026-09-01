@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams, Link } from "@tanstack/react-router";
 import {
   DashboardService,
@@ -7,6 +7,7 @@ import {
   type NoteImage,
   type NoteChecklistItem,
 } from "@/api/dashboard/dashboard.service";
+import { useOptimisticNotes } from "@/api/dashboard/useOptimisticNotes";
 import {
   ArrowLeft,
   Pin,
@@ -45,7 +46,6 @@ export default function NoteDetailPage() {
   const params = useParams({ strict: false }) as { noteId?: string };
   const noteId = params.noteId || "";
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
 
   const { activeFestivalId } = useFestivalApiStore();
   const { data: festivalsData, isLoading: isFestivalsLoading } = useFestivals();
@@ -66,6 +66,13 @@ export default function NoteDetailPage() {
     queryFn: () => DashboardService.getNoteById(resolvedFestivalId, noteId).then((r) => r.data),
     enabled: !!noteId,
   });
+
+  const {
+    toggleNotePinMutation,
+    toggleChecklistMutation,
+    updateNoteMutation,
+    deleteNoteMutation,
+  } = useOptimisticNotes(resolvedFestivalId);
 
   // Inline Editing State
   const [isEditing, setIsEditing] = useState(false);
@@ -94,12 +101,6 @@ export default function NoteDetailPage() {
     }
   }, [note]);
 
-  const invalidateNote = () => {
-    queryClient.invalidateQueries({ queryKey: ["dashboard", "note", resolvedFestivalId, noteId] });
-    queryClient.invalidateQueries({ queryKey: ["dashboard", "notes", resolvedFestivalId] });
-    queryClient.invalidateQueries({ queryKey: ["dashboard", resolvedFestivalId] });
-  };
-
   const handleStartEditing = () => {
     if (!note) return;
     setEditTitle(note.title || "");
@@ -125,35 +126,18 @@ export default function NoteDetailPage() {
     setIsEditing(false);
   };
 
-  const handleTogglePin = async () => {
+  const handleTogglePin = () => {
     if (!note || !resolvedFestivalId) return;
-    try {
-      if (note.isPinned) {
-        await DashboardService.unpinNote(resolvedFestivalId, note._id);
-        toast.success("Note unpinned");
-      } else {
-        await DashboardService.pinNote(resolvedFestivalId, note._id);
-        toast.success("Note pinned");
-      }
-      invalidateNote();
-    } catch {
-      toast.error("Failed to update pin status");
-    }
+    // Immediate optimistic toggle - no await, no disruptive toast
+    toggleNotePinMutation.mutate(note);
   };
 
-  const handleToggleChecklistDetail = async (itemId?: string) => {
+  const handleToggleChecklistDetail = (itemId?: string) => {
     if (!note || !resolvedFestivalId || isEditing) return;
     const updatedChecklist = (note.checklist || []).map((item) =>
       item.id === itemId ? { ...item, isCompleted: !item.isCompleted } : item,
     );
-    try {
-      await DashboardService.updateNote(resolvedFestivalId, note._id, {
-        checklist: updatedChecklist,
-      });
-      invalidateNote();
-    } catch {
-      toast.error("Failed to update checklist item");
-    }
+    toggleChecklistMutation.mutate({ noteId: note._id, itemId, checklist: updatedChecklist });
   };
 
   const handleSaveInline = async () => {
@@ -173,19 +157,20 @@ export default function NoteDetailPage() {
         }));
       const docUrls = editAttachmentUrls.filter((url) => !looksLikeImage(url));
 
-      await DashboardService.updateNote(resolvedFestivalId, note._id, {
-        title: editTitle.trim(),
-        content: editContent.trim(),
-        images: imagesPayload,
-        attachmentUrls: docUrls,
-        checklist: editChecklist,
+      await updateNoteMutation.mutateAsync({
+        noteId: note._id,
+        payload: {
+          title: editTitle.trim(),
+          content: editContent.trim(),
+          images: imagesPayload,
+          attachmentUrls: docUrls,
+          checklist: editChecklist,
+        },
       });
 
-      toast.success("Note saved successfully");
       setIsEditing(false);
-      invalidateNote();
     } catch {
-      toast.error("Failed to save note changes");
+      // Error handled in mutation
     } finally {
       setIsSubmitting(false);
     }
@@ -195,11 +180,10 @@ export default function NoteDetailPage() {
     if (!note || !resolvedFestivalId) return;
     try {
       setIsDeleting(true);
-      await DashboardService.deleteNote(resolvedFestivalId, note._id);
-      toast.success("Note deleted");
+      await deleteNoteMutation.mutateAsync(note._id);
       navigate({ to: "/dashboard/tasks-notes" });
     } catch {
-      toast.error("Failed to delete note");
+      // Error handled in mutation
     } finally {
       setIsDeleting(false);
     }

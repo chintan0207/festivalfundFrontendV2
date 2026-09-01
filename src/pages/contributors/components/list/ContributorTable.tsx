@@ -67,10 +67,15 @@ export function ContributorTable({
       sortable: false,
       render: (c) =>
         c.phoneNumber ? (
-          <div className="flex items-center gap-1 text-muted-foreground">
-            <Phone className="h-3 w-3 text-indigo-500" />
-            <span>{c.phoneNumber}</span>
-          </div>
+          <a
+            href={`tel:${c.phoneNumber}`}
+            onClick={(e) => e.stopPropagation()}
+            className="flex items-center gap-1.5 text-muted-foreground hover:text-indigo-600 transition-colors font-mono text-xs"
+            title="Click to call"
+          >
+            <Phone className="h-3 w-3 text-indigo-500 shrink-0" />
+            <span className="underline decoration-dotted underline-offset-2">{c.phoneNumber}</span>
+          </a>
         ) : null,
     },
     {

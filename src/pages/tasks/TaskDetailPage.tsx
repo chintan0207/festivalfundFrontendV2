@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams, Link } from "@tanstack/react-router";
 import { DashboardService, type DashboardTask } from "@/api/dashboard/dashboard.service";
+import { useOptimisticTasks } from "@/api/dashboard/useOptimisticTasks";
 import {
   ArrowLeft,
   CheckCircle2,
@@ -21,7 +22,6 @@ import { ResponsiveFormDrawer } from "@/components/common/ResponsiveFormDrawer";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { formatDate, cn } from "@/lib/utils";
 import { getModuleTheme } from "@/theme/colors";
-import { toast } from "sonner";
 
 interface AuthorItem {
   _id?: string;
@@ -34,7 +34,6 @@ export default function TaskDetailPage() {
   const params = useParams({ strict: false }) as { taskId?: string };
   const taskId = params.taskId || "";
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
 
   const { activeFestivalId } = useFestivalApiStore();
   const { data: festivalsData, isLoading: isFestivalsLoading } = useFestivals();
@@ -67,11 +66,11 @@ export default function TaskDetailPage() {
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  const invalidateTask = () => {
-    queryClient.invalidateQueries({ queryKey: ["dashboard", "task", resolvedFestivalId, taskId] });
-    queryClient.invalidateQueries({ queryKey: ["dashboard", "tasks", resolvedFestivalId] });
-    queryClient.invalidateQueries({ queryKey: ["dashboard", resolvedFestivalId] });
-  };
+  const {
+    toggleTaskMutation,
+    updateTaskMutation,
+    deleteTaskMutation,
+  } = useOptimisticTasks(resolvedFestivalId);
 
   const openEditModal = () => {
     if (!task) return;
@@ -81,16 +80,10 @@ export default function TaskDetailPage() {
     setIsEditOpen(true);
   };
 
-  const handleToggleComplete = async () => {
+  const handleToggleComplete = () => {
     if (!task || !resolvedFestivalId) return;
-    try {
-      await DashboardService.toggleTask(resolvedFestivalId, task._id);
-      const isDone = task.isCompleted || task.status === "COMPLETED";
-      toast.success(isDone ? "To-do reopened" : "To-do completed");
-      invalidateTask();
-    } catch {
-      toast.error("Failed to update to-do status");
-    }
+    // Immediate optimistic toggle - no await, no disruptive toast
+    toggleTaskMutation.mutate(task);
   };
 
   const handleSaveEdit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -99,17 +92,18 @@ export default function TaskDetailPage() {
 
     try {
       setIsSubmitting(true);
-      await DashboardService.updateTask(resolvedFestivalId, task._id, {
-        title: editTitle.trim(),
-        description: editDescription.trim(),
-        dueDate: editDueDate ? new Date(editDueDate).toISOString() : undefined,
+      await updateTaskMutation.mutateAsync({
+        taskId: task._id,
+        payload: {
+          title: editTitle.trim(),
+          description: editDescription.trim(),
+          dueDate: editDueDate ? new Date(editDueDate).toISOString() : undefined,
+        },
       });
 
-      toast.success("To-do updated successfully");
       setIsEditOpen(false);
-      invalidateTask();
     } catch {
-      toast.error("Failed to save to-do");
+      // Error handled in mutation
     } finally {
       setIsSubmitting(false);
     }
@@ -119,11 +113,10 @@ export default function TaskDetailPage() {
     if (!task || !resolvedFestivalId) return;
     try {
       setIsDeleting(true);
-      await DashboardService.deleteTask(resolvedFestivalId, task._id);
-      toast.success("To-do deleted");
+      await deleteTaskMutation.mutateAsync(task._id);
       navigate({ to: "/dashboard/tasks-notes" });
     } catch {
-      toast.error("Failed to delete to-do");
+      // Error handled in mutation
     } finally {
       setIsDeleting(false);
     }

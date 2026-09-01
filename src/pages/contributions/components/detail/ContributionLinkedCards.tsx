@@ -50,10 +50,15 @@ export function ContributionLinkedCards({
           </AppBadge>
         </div>
         {contributor?.phoneNumber && (
-          <div className="flex items-center gap-1.5 mt-2.5 text-muted-foreground">
-            <Phone className="h-3 w-3 shrink-0" />
-            <span className="truncate">{contributor.phoneNumber}</span>
-          </div>
+          <a
+            href={`tel:${contributor.phoneNumber}`}
+            onClick={(e) => e.stopPropagation()}
+            className="flex items-center gap-1.5 mt-2.5 text-muted-foreground hover:text-indigo-600 transition-colors text-xs font-mono"
+            title="Click to call"
+          >
+            <Phone className="h-3 w-3 shrink-0 text-indigo-500" />
+            <span className="truncate underline decoration-dotted underline-offset-2">{contributor.phoneNumber}</span>
+          </a>
         )}
         {onContributorClick && contributor && (
           <div className="flex items-center gap-0.5 mt-2 text-[11px] font-semibold text-indigo-500">
