@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Search, Phone, KeyRound, Mail, CheckCircle2, XCircle, Receipt } from "lucide-react";
+import { Search, Phone, Mail, CheckCircle2, XCircle, Receipt } from "lucide-react";
 import { toast } from "sonner";
 import { AppButton, AppCard, AppInput, AppPageHero } from "@/components/common";
 import {
@@ -32,28 +32,28 @@ const methodConfig: {
   placeholder: string;
   hint: string;
 }[] = [
-  {
-    id: "phone",
-    label: "Phone",
-    icon: <Phone className="h-4 w-4" />,
-    placeholder: "10-digit mobile number",
-    hint: "Enter the mobile number used at the time of contribution.",
-  },
-  {
-    id: "key",
-    label: "Contributor Key",
-    icon: <KeyRound className="h-4 w-4" />,
-    placeholder: "Paste your contributor key",
-    hint: "Share the verification key printed on your receipt.",
-  },
-  {
-    id: "email",
-    label: "Email",
-    icon: <Mail className="h-4 w-4" />,
-    placeholder: "e.g. name@example.com",
-    hint: "Enter the email used to register your contributions.",
-  },
-];
+    {
+      id: "phone",
+      label: "Phone",
+      icon: <Phone className="h-4 w-4" />,
+      placeholder: "10-digit mobile number",
+      hint: "Enter the mobile number used at the time of contribution.",
+    },
+    // {
+    //   id: "key",
+    //   label: "Contributor Key",
+    //   icon: <KeyRound className="h-4 w-4" />,
+    //   placeholder: "Paste your contributor key",
+    //   hint: "Share the verification key printed on your receipt.",
+    // },
+    {
+      id: "email",
+      label: "Email",
+      icon: <Mail className="h-4 w-4" />,
+      placeholder: "e.g. name@example.com",
+      hint: "Enter the email used to register your contributions.",
+    },
+  ];
 
 function ContributorLookupPage({ initialQuery }: ContributorLookupPageProps) {
   const initialMethod: LookupMethod = initialQuery?.phone
@@ -133,7 +133,7 @@ function ContributorLookupPage({ initialQuery }: ContributorLookupPageProps) {
       const message =
         typeof error === "object" && error !== null && "response" in error
           ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            ((error as any).response?.data?.message as string | undefined)
+          ((error as any).response?.data?.message as string | undefined)
           : undefined;
 
       setLookupState({
@@ -205,11 +205,10 @@ function ContributorLookupPage({ initialQuery }: ContributorLookupPageProps) {
                       setQuery("");
                       setLookupState({ status: "idle" });
                     }}
-                    className={`inline-flex flex-1 items-center justify-center gap-1.5 rounded-xl px-3 py-2 text-sm font-semibold transition-all ${
-                      isActive
+                    className={`inline-flex flex-1 items-center justify-center gap-1.5 rounded-xl px-3 py-2 text-sm font-semibold transition-all ${isActive
                         ? "border border-border/60 bg-background text-foreground shadow-sm"
                         : "text-muted-foreground hover:text-foreground"
-                    }`}
+                      }`}
                   >
                     {config.icon}
                     {config.label}

@@ -131,7 +131,7 @@ export type FestivalFacets = {
 
 export type CreateFestivalPayload = {
   name: string;
-  year: number;
+  year?: number;
   openingBalance?: number;
   organizationId?: string;
   status?: FestivalStatus;
