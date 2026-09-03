@@ -66,7 +66,7 @@ export function DashboardOverview({ data }: DashboardOverviewProps) {
     // Fallback: If timeSeries produced no items, construct rows from recent records
     if (map.size === 0) {
       (data?.contributions?.recent || []).forEach((c) => {
-        if (!c || !c.date) return;
+        if (!c || !c.date || c.status !== "DEPOSITED") return;
         const key = String(c.date).split("T")[0];
         const existing = map.get(key) || { date: key, income: 0, expense: 0 };
         const amt = c.type === "MONEY" ? (c.amount || 0) : (c.estimatedValue || 0);
@@ -74,7 +74,7 @@ export function DashboardOverview({ data }: DashboardOverviewProps) {
         map.set(key, existing);
       });
       (data?.expenses?.recent || []).forEach((e) => {
-        if (!e || !e.date) return;
+        if (!e || !e.date || e.status !== "PAID") return;
         const key = String(e.date).split("T")[0];
         const existing = map.get(key) || { date: key, income: 0, expense: 0 };
         existing.expense += e.amount || 0;
