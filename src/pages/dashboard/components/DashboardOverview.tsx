@@ -48,16 +48,23 @@ export function DashboardOverview({ data }: DashboardOverviewProps) {
 
   const rows: GroupedBarRow[] = useMemo(() => {
     const map = new Map<string, { date: string; income: number; expense: number }>();
+    const fallbackDateKey =
+      (data?.contributions?.recent?.[0]?.date
+        ? String(data.contributions.recent[0].date).split("T")[0]
+        : null) || new Date().toISOString().split("T")[0];
+
     (data?.contributions?.timeSeries || []).forEach((p) => {
-      if (!p || !p.date) return;
-      const key = String(p.date).split("T")[0];
+      if (!p) return;
+      const rawDate = p.date ? String(p.date) : fallbackDateKey;
+      const key = rawDate.split("T")[0] || fallbackDateKey;
       const existing = map.get(key) || { date: key, income: 0, expense: 0 };
       existing.income = (existing.income || 0) + (p.income || 0);
       map.set(key, existing);
     });
     (data?.expenses?.timeSeries || []).forEach((p) => {
-      if (!p || !p.date) return;
-      const key = String(p.date).split("T")[0];
+      if (!p) return;
+      const rawDate = p.date ? String(p.date) : fallbackDateKey;
+      const key = rawDate.split("T")[0] || fallbackDateKey;
       const existing = map.get(key) || { date: key, income: 0, expense: 0 };
       existing.expense = (existing.expense || 0) + (p.expense || 0);
       map.set(key, existing);

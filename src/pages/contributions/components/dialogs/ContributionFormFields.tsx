@@ -1,9 +1,10 @@
 import { AppInput } from "@/components/common/AppInput";
 import { AppSelect, type AppSelectOption } from "@/components/common/AppSelect";
 import { ContributorSearchPicker } from "@/components/common/ContributorSearchPicker";
+import { AmountQuickPick } from "./AmountQuickPick";
+import { ContributionStatusQuickPick } from "./ContributionStatusQuickPick";
 import {
   contributionPaymentOptions,
-  contributionStatusCreateOptions,
   contributionStatusLabel,
   contributionTypeOptions,
 } from "../../lib/contributionMeta";
@@ -122,23 +123,33 @@ export function ContributionFormFields({
         </>
       )}
 
-      <AppSelect
-        id={`${prefix}-type`}
-        label="Contribution Type"
-        value={type}
-        onChange={(val) => setValue("type", val, { shouldValidate: true })}
-        options={contributionTypeOptions}
-        error={errors.type?.message}
-      />
-      {mode === "add" ? (
+      <div className="col-span-1 min-[360px]:col-span-2">
         <AppSelect
-          id={`${prefix}-status`}
-          label="Status"
-          value={watch("status") || "PENDING"}
-          onChange={(val) => setValue("status", val, { shouldValidate: true })}
-          options={contributionStatusCreateOptions}
-          error={errors.status?.message}
+          id={`${prefix}-type`}
+          label="Contribution Type"
+          value={type}
+          onChange={(val) => setValue("type", val, { shouldValidate: true })}
+          options={contributionTypeOptions}
+          error={errors.type?.message}
         />
+      </div>
+
+      {mode === "add" ? (
+        <div className="col-span-1 min-[360px]:col-span-2">
+          <label
+            htmlFor={`${prefix}-status`}
+            className="mb-1.5 block text-xs font-semibold text-foreground"
+          >
+            Initial Status
+          </label>
+          <ContributionStatusQuickPick
+            value={watch("status") || "PENDING"}
+            onChange={(val) => setValue("status", val, { shouldValidate: true })}
+          />
+          {errors.status?.message && (
+            <p className="mt-1 text-xs text-destructive">{errors.status.message}</p>
+          )}
+        </div>
       ) : (
         <div className="col-span-1 min-[360px]:col-span-2 rounded-xl border border-border/60 bg-muted/40 px-3 py-2.5">
           <span className="block text-[11px] font-semibold text-muted-foreground">Status</span>
@@ -151,18 +162,14 @@ export function ContributionFormFields({
         </div>
       )}
 
-      <div className="col-span-1 min-[360px]:col-span-2">
-        <AppInput
-          id={`${prefix}-date`}
-          label="Contribution Date"
-          type="date"
-          {...register("date")}
-          error={errors.date?.message}
-        />
-      </div>
-
       {type === "MONEY" ? (
         <>
+          <div className="col-span-1 min-[360px]:col-span-2">
+            <AmountQuickPick
+              value={watch("amount")}
+              onChange={(val) => setValue("amount", val, { shouldValidate: true })}
+            />
+          </div>
           <AppInput
             id={`${prefix}-amount`}
             label="Amount (₹)"
@@ -215,6 +222,17 @@ export function ContributionFormFields({
           />
         </>
       )}
+
+      <div className="col-span-1 min-[360px]:col-span-2">
+        <AppInput
+          id={`${prefix}-date`}
+          label="Contribution Date"
+          type="date"
+          {...register("date")}
+          error={errors.date?.message}
+        />
+      </div>
     </div>
   );
 }
+
