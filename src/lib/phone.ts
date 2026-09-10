@@ -4,9 +4,15 @@ export const PHONE_REGEX = /^\d{10}$/;
 
 export const PHONE_ERROR = "Enter a valid 10-digit mobile number";
 
-/** Strip everything but digits and cap at 10 (blocks typing/paste of +91 & dashes). */
+/** Strip non-digits and normalize 10-digit mobile number (handles +91, 91, and leading 0). */
 export function sanitizePhone(value: string): string {
-  return value.replace(/\D/g, "").slice(0, 10);
+  let digits = value.replace(/\D/g, "");
+  if (digits.length === 12 && digits.startsWith("91")) {
+    digits = digits.slice(2);
+  } else if (digits.length === 11 && digits.startsWith("0")) {
+    digits = digits.slice(1);
+  }
+  return digits.slice(0, 10);
 }
 
 export function isValidPhone(value?: string | null): boolean {

@@ -329,6 +329,10 @@ export type Contribution = {
   quantity?: number;
   estimatedValue?: number;
   slipPath?: string;
+  slipKey?: string;
+  slipEmailSent?: boolean;
+  slipEmailSentAt?: string;
+  slipEmailRecipient?: string;
   recordedBy?: User | string;
   contributionCode: string;
   paymentMode: PaymentMode;
@@ -386,6 +390,10 @@ export type ContributionListItem = {
   estimatedValue?: number;
   isBalanceApplied: boolean;
   slipPath?: string;
+  slipKey?: string;
+  slipEmailSent?: boolean;
+  slipEmailSentAt?: string;
+  slipEmailRecipient?: string;
   statusHistory?: ContributionStatusHistoryEntry[];
   createdAt?: string;
   updatedAt?: string;
@@ -395,6 +403,7 @@ export type ContributionListItem = {
     name?: string;
     category?: ContributorCategory;
     phoneNumber?: string;
+    email?: string;
   };
   festival?: {
     _id: string;
