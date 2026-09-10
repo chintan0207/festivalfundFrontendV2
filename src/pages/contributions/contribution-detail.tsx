@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Pencil, Trash2, FileDown, Mail, MailCheck } from "lucide-react";
+import { Pencil, Trash2, FileDown, Mail, MailCheck, MessageSquare } from "lucide-react";
 import { useParams, useRouter } from "@tanstack/react-router";
 import {
   useContribution,
@@ -19,6 +19,7 @@ import { StatusConfirmDialog } from "./components/StatusConfirmDialog";
 import { ContributionStatusHistory } from "./components/detail/ContributionStatusHistory";
 import { ContributionDialogs } from "./components/dialogs/ContributionDialogs";
 import { SendSlipEmailDialog } from "./components/dialogs/SendSlipEmailDialog";
+import { SendSlipWhatsAppDialog } from "./components/dialogs/SendSlipWhatsAppDialog";
 import { useContributionDialogs } from "./useContributionDialogs";
 import type { ContributionStatus } from "@/types/Types";
 
@@ -35,6 +36,7 @@ export default function ContributionDetailPage() {
   const updateStatus = useUpdateContributionStatus();
   const [statusTarget, setStatusTarget] = useState<ContributionStatus | null>(null);
   const [emailDialogOpen, setEmailDialogOpen] = useState(false);
+  const [whatsAppDialogOpen, setWhatsAppDialogOpen] = useState(false);
 
   const dialogs = useContributionDialogs({
     themeGradient: theme.gradient,
@@ -103,6 +105,26 @@ export default function ContributionDetailPage() {
                       </span>
                       <span className="sm:hidden">
                         {contribution.slipEmailSent ? "Resend" : "Email"}
+                      </span>
+                    </AppButton>
+
+                    <AppButton
+                      variant="outline"
+                      leftIcon={
+                        <MessageSquare className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
+                      }
+                      className={`h-8 text-xs rounded-full ${
+                        contribution.slipWhatsAppSent
+                          ? "border-emerald-500/30 text-emerald-700 bg-emerald-500/5 hover:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/30"
+                          : ""
+                      }`}
+                      onClick={() => setWhatsAppDialogOpen(true)}
+                    >
+                      <span className="hidden sm:inline">
+                        {contribution.slipWhatsAppSent ? "Resend WhatsApp" : "WhatsApp Slip"}
+                      </span>
+                      <span className="sm:hidden">
+                        {contribution.slipWhatsAppSent ? "Resend WA" : "WhatsApp"}
                       </span>
                     </AppButton>
                   </>
@@ -174,6 +196,12 @@ export default function ContributionDetailPage() {
       <SendSlipEmailDialog
         open={emailDialogOpen}
         onOpenChange={setEmailDialogOpen}
+        contribution={contribution}
+      />
+
+      <SendSlipWhatsAppDialog
+        open={whatsAppDialogOpen}
+        onOpenChange={setWhatsAppDialogOpen}
         contribution={contribution}
       />
     </PageContainer>

@@ -103,4 +103,12 @@ export const ContributionService = {
     );
     return response.data;
   },
+
+  sendContributionSlipWhatsApp: async (id: string, payload?: { phone?: string; force?: boolean }) => {
+    const response = await ApiClient.post<ApiResponse<{ contributionId: string; recipient: string; messageId?: string }>>(
+      `/contributions/${id}/send-slip-whatsapp`,
+      payload || { force: true },
+    );
+    return response.data;
+  },
 };
