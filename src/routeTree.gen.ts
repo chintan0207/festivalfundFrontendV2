@@ -9,11 +9,20 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SuperAdminRouteRouteImport } from './routes/super-admin/route'
 import { Route as DashboardRouteRouteImport } from './routes/dashboard/route'
 import { Route as MarketingRouteRouteImport } from './routes/_marketing/route'
 import { Route as AuthRouteRouteImport } from './routes/_auth/route'
+import { Route as SuperAdminIndexRouteImport } from './routes/super-admin/index'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
 import { Route as MarketingIndexRouteImport } from './routes/_marketing/index'
+import { Route as SuperAdminUsersRouteImport } from './routes/super-admin/users'
+import { Route as SuperAdminSettingsRouteImport } from './routes/super-admin/settings'
+import { Route as SuperAdminPlansRouteImport } from './routes/super-admin/plans'
+import { Route as SuperAdminOrganizationsRouteImport } from './routes/super-admin/organizations'
+import { Route as SuperAdminFestivalsRouteImport } from './routes/super-admin/festivals'
+import { Route as SuperAdminDashboardRouteImport } from './routes/super-admin/dashboard'
+import { Route as SuperAdminAuditLogsRouteImport } from './routes/super-admin/audit-logs'
 import { Route as DashboardSettingsRouteImport } from './routes/dashboard/settings'
 import { Route as DashboardReportsRouteImport } from './routes/dashboard/reports'
 import { Route as DashboardProfileRouteImport } from './routes/dashboard/profile'
@@ -48,6 +57,11 @@ import { Route as DashboardContributorsContributorIdRouteImport } from './routes
 import { Route as DashboardContributionsContributionIdRouteImport } from './routes/dashboard/contributions.$contributionId'
 import { Route as DashboardFestivalsFestivalIdEditRouteImport } from './routes/dashboard/festivals.$festivalId.edit'
 
+const SuperAdminRouteRoute = SuperAdminRouteRouteImport.update({
+  id: '/super-admin',
+  path: '/super-admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DashboardRouteRoute = DashboardRouteRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -61,6 +75,11 @@ const AuthRouteRoute = AuthRouteRouteImport.update({
   id: '/_auth',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SuperAdminIndexRoute = SuperAdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => SuperAdminRouteRoute,
+} as any)
 const DashboardIndexRoute = DashboardIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -70,6 +89,41 @@ const MarketingIndexRoute = MarketingIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => MarketingRouteRoute,
+} as any)
+const SuperAdminUsersRoute = SuperAdminUsersRouteImport.update({
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => SuperAdminRouteRoute,
+} as any)
+const SuperAdminSettingsRoute = SuperAdminSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => SuperAdminRouteRoute,
+} as any)
+const SuperAdminPlansRoute = SuperAdminPlansRouteImport.update({
+  id: '/plans',
+  path: '/plans',
+  getParentRoute: () => SuperAdminRouteRoute,
+} as any)
+const SuperAdminOrganizationsRoute = SuperAdminOrganizationsRouteImport.update({
+  id: '/organizations',
+  path: '/organizations',
+  getParentRoute: () => SuperAdminRouteRoute,
+} as any)
+const SuperAdminFestivalsRoute = SuperAdminFestivalsRouteImport.update({
+  id: '/festivals',
+  path: '/festivals',
+  getParentRoute: () => SuperAdminRouteRoute,
+} as any)
+const SuperAdminDashboardRoute = SuperAdminDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => SuperAdminRouteRoute,
+} as any)
+const SuperAdminAuditLogsRoute = SuperAdminAuditLogsRouteImport.update({
+  id: '/audit-logs',
+  path: '/audit-logs',
+  getParentRoute: () => SuperAdminRouteRoute,
 } as any)
 const DashboardSettingsRoute = DashboardSettingsRouteImport.update({
   id: '/settings',
@@ -249,6 +303,7 @@ const DashboardFestivalsFestivalIdEditRoute =
 export interface FileRoutesByFullPath {
   '/': typeof MarketingIndexRoute
   '/dashboard': typeof DashboardRouteRouteWithChildren
+  '/super-admin': typeof SuperAdminRouteRouteWithChildren
   '/accept-invite': typeof AuthAcceptInviteRoute
   '/forgot-password': typeof AuthForgotPasswordRoute
   '/login': typeof AuthLoginRoute
@@ -269,7 +324,15 @@ export interface FileRoutesByFullPath {
   '/dashboard/profile': typeof DashboardProfileRoute
   '/dashboard/reports': typeof DashboardReportsRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
+  '/super-admin/audit-logs': typeof SuperAdminAuditLogsRoute
+  '/super-admin/dashboard': typeof SuperAdminDashboardRoute
+  '/super-admin/festivals': typeof SuperAdminFestivalsRoute
+  '/super-admin/organizations': typeof SuperAdminOrganizationsRoute
+  '/super-admin/plans': typeof SuperAdminPlansRoute
+  '/super-admin/settings': typeof SuperAdminSettingsRoute
+  '/super-admin/users': typeof SuperAdminUsersRoute
   '/dashboard/': typeof DashboardIndexRoute
+  '/super-admin/': typeof SuperAdminIndexRoute
   '/dashboard/contributions/$contributionId': typeof DashboardContributionsContributionIdRoute
   '/dashboard/contributors/$contributorId': typeof DashboardContributorsContributorIdRoute
   '/dashboard/expenses/$expenseId': typeof DashboardExpensesExpenseIdRoute
@@ -306,7 +369,15 @@ export interface FileRoutesByTo {
   '/dashboard/profile': typeof DashboardProfileRoute
   '/dashboard/reports': typeof DashboardReportsRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
+  '/super-admin/audit-logs': typeof SuperAdminAuditLogsRoute
+  '/super-admin/dashboard': typeof SuperAdminDashboardRoute
+  '/super-admin/festivals': typeof SuperAdminFestivalsRoute
+  '/super-admin/organizations': typeof SuperAdminOrganizationsRoute
+  '/super-admin/plans': typeof SuperAdminPlansRoute
+  '/super-admin/settings': typeof SuperAdminSettingsRoute
+  '/super-admin/users': typeof SuperAdminUsersRoute
   '/dashboard': typeof DashboardIndexRoute
+  '/super-admin': typeof SuperAdminIndexRoute
   '/dashboard/contributions/$contributionId': typeof DashboardContributionsContributionIdRoute
   '/dashboard/contributors/$contributorId': typeof DashboardContributorsContributorIdRoute
   '/dashboard/expenses/$expenseId': typeof DashboardExpensesExpenseIdRoute
@@ -326,6 +397,7 @@ export interface FileRoutesById {
   '/_auth': typeof AuthRouteRouteWithChildren
   '/_marketing': typeof MarketingRouteRouteWithChildren
   '/dashboard': typeof DashboardRouteRouteWithChildren
+  '/super-admin': typeof SuperAdminRouteRouteWithChildren
   '/_auth/accept-invite': typeof AuthAcceptInviteRoute
   '/_auth/forgot-password': typeof AuthForgotPasswordRoute
   '/_auth/login': typeof AuthLoginRoute
@@ -346,8 +418,16 @@ export interface FileRoutesById {
   '/dashboard/profile': typeof DashboardProfileRoute
   '/dashboard/reports': typeof DashboardReportsRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
+  '/super-admin/audit-logs': typeof SuperAdminAuditLogsRoute
+  '/super-admin/dashboard': typeof SuperAdminDashboardRoute
+  '/super-admin/festivals': typeof SuperAdminFestivalsRoute
+  '/super-admin/organizations': typeof SuperAdminOrganizationsRoute
+  '/super-admin/plans': typeof SuperAdminPlansRoute
+  '/super-admin/settings': typeof SuperAdminSettingsRoute
+  '/super-admin/users': typeof SuperAdminUsersRoute
   '/_marketing/': typeof MarketingIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
+  '/super-admin/': typeof SuperAdminIndexRoute
   '/dashboard/contributions/$contributionId': typeof DashboardContributionsContributionIdRoute
   '/dashboard/contributors/$contributorId': typeof DashboardContributorsContributorIdRoute
   '/dashboard/expenses/$expenseId': typeof DashboardExpensesExpenseIdRoute
@@ -367,6 +447,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/dashboard'
+    | '/super-admin'
     | '/accept-invite'
     | '/forgot-password'
     | '/login'
@@ -387,7 +468,15 @@ export interface FileRouteTypes {
     | '/dashboard/profile'
     | '/dashboard/reports'
     | '/dashboard/settings'
+    | '/super-admin/audit-logs'
+    | '/super-admin/dashboard'
+    | '/super-admin/festivals'
+    | '/super-admin/organizations'
+    | '/super-admin/plans'
+    | '/super-admin/settings'
+    | '/super-admin/users'
     | '/dashboard/'
+    | '/super-admin/'
     | '/dashboard/contributions/$contributionId'
     | '/dashboard/contributors/$contributorId'
     | '/dashboard/expenses/$expenseId'
@@ -424,7 +513,15 @@ export interface FileRouteTypes {
     | '/dashboard/profile'
     | '/dashboard/reports'
     | '/dashboard/settings'
+    | '/super-admin/audit-logs'
+    | '/super-admin/dashboard'
+    | '/super-admin/festivals'
+    | '/super-admin/organizations'
+    | '/super-admin/plans'
+    | '/super-admin/settings'
+    | '/super-admin/users'
     | '/dashboard'
+    | '/super-admin'
     | '/dashboard/contributions/$contributionId'
     | '/dashboard/contributors/$contributorId'
     | '/dashboard/expenses/$expenseId'
@@ -443,6 +540,7 @@ export interface FileRouteTypes {
     | '/_auth'
     | '/_marketing'
     | '/dashboard'
+    | '/super-admin'
     | '/_auth/accept-invite'
     | '/_auth/forgot-password'
     | '/_auth/login'
@@ -463,8 +561,16 @@ export interface FileRouteTypes {
     | '/dashboard/profile'
     | '/dashboard/reports'
     | '/dashboard/settings'
+    | '/super-admin/audit-logs'
+    | '/super-admin/dashboard'
+    | '/super-admin/festivals'
+    | '/super-admin/organizations'
+    | '/super-admin/plans'
+    | '/super-admin/settings'
+    | '/super-admin/users'
     | '/_marketing/'
     | '/dashboard/'
+    | '/super-admin/'
     | '/dashboard/contributions/$contributionId'
     | '/dashboard/contributors/$contributorId'
     | '/dashboard/expenses/$expenseId'
@@ -484,10 +590,18 @@ export interface RootRouteChildren {
   AuthRouteRoute: typeof AuthRouteRouteWithChildren
   MarketingRouteRoute: typeof MarketingRouteRouteWithChildren
   DashboardRouteRoute: typeof DashboardRouteRouteWithChildren
+  SuperAdminRouteRoute: typeof SuperAdminRouteRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/super-admin': {
+      id: '/super-admin'
+      path: '/super-admin'
+      fullPath: '/super-admin'
+      preLoaderRoute: typeof SuperAdminRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dashboard': {
       id: '/dashboard'
       path: '/dashboard'
@@ -509,6 +623,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/super-admin/': {
+      id: '/super-admin/'
+      path: '/'
+      fullPath: '/super-admin/'
+      preLoaderRoute: typeof SuperAdminIndexRouteImport
+      parentRoute: typeof SuperAdminRouteRoute
+    }
     '/dashboard/': {
       id: '/dashboard/'
       path: '/'
@@ -522,6 +643,55 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof MarketingIndexRouteImport
       parentRoute: typeof MarketingRouteRoute
+    }
+    '/super-admin/users': {
+      id: '/super-admin/users'
+      path: '/users'
+      fullPath: '/super-admin/users'
+      preLoaderRoute: typeof SuperAdminUsersRouteImport
+      parentRoute: typeof SuperAdminRouteRoute
+    }
+    '/super-admin/settings': {
+      id: '/super-admin/settings'
+      path: '/settings'
+      fullPath: '/super-admin/settings'
+      preLoaderRoute: typeof SuperAdminSettingsRouteImport
+      parentRoute: typeof SuperAdminRouteRoute
+    }
+    '/super-admin/plans': {
+      id: '/super-admin/plans'
+      path: '/plans'
+      fullPath: '/super-admin/plans'
+      preLoaderRoute: typeof SuperAdminPlansRouteImport
+      parentRoute: typeof SuperAdminRouteRoute
+    }
+    '/super-admin/organizations': {
+      id: '/super-admin/organizations'
+      path: '/organizations'
+      fullPath: '/super-admin/organizations'
+      preLoaderRoute: typeof SuperAdminOrganizationsRouteImport
+      parentRoute: typeof SuperAdminRouteRoute
+    }
+    '/super-admin/festivals': {
+      id: '/super-admin/festivals'
+      path: '/festivals'
+      fullPath: '/super-admin/festivals'
+      preLoaderRoute: typeof SuperAdminFestivalsRouteImport
+      parentRoute: typeof SuperAdminRouteRoute
+    }
+    '/super-admin/dashboard': {
+      id: '/super-admin/dashboard'
+      path: '/dashboard'
+      fullPath: '/super-admin/dashboard'
+      preLoaderRoute: typeof SuperAdminDashboardRouteImport
+      parentRoute: typeof SuperAdminRouteRoute
+    }
+    '/super-admin/audit-logs': {
+      id: '/super-admin/audit-logs'
+      path: '/audit-logs'
+      fullPath: '/super-admin/audit-logs'
+      preLoaderRoute: typeof SuperAdminAuditLogsRouteImport
+      parentRoute: typeof SuperAdminRouteRoute
     }
     '/dashboard/settings': {
       id: '/dashboard/settings'
@@ -873,10 +1043,37 @@ const DashboardRouteRouteWithChildren = DashboardRouteRoute._addFileChildren(
   DashboardRouteRouteChildren,
 )
 
+interface SuperAdminRouteRouteChildren {
+  SuperAdminAuditLogsRoute: typeof SuperAdminAuditLogsRoute
+  SuperAdminDashboardRoute: typeof SuperAdminDashboardRoute
+  SuperAdminFestivalsRoute: typeof SuperAdminFestivalsRoute
+  SuperAdminOrganizationsRoute: typeof SuperAdminOrganizationsRoute
+  SuperAdminPlansRoute: typeof SuperAdminPlansRoute
+  SuperAdminSettingsRoute: typeof SuperAdminSettingsRoute
+  SuperAdminUsersRoute: typeof SuperAdminUsersRoute
+  SuperAdminIndexRoute: typeof SuperAdminIndexRoute
+}
+
+const SuperAdminRouteRouteChildren: SuperAdminRouteRouteChildren = {
+  SuperAdminAuditLogsRoute: SuperAdminAuditLogsRoute,
+  SuperAdminDashboardRoute: SuperAdminDashboardRoute,
+  SuperAdminFestivalsRoute: SuperAdminFestivalsRoute,
+  SuperAdminOrganizationsRoute: SuperAdminOrganizationsRoute,
+  SuperAdminPlansRoute: SuperAdminPlansRoute,
+  SuperAdminSettingsRoute: SuperAdminSettingsRoute,
+  SuperAdminUsersRoute: SuperAdminUsersRoute,
+  SuperAdminIndexRoute: SuperAdminIndexRoute,
+}
+
+const SuperAdminRouteRouteWithChildren = SuperAdminRouteRoute._addFileChildren(
+  SuperAdminRouteRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   AuthRouteRoute: AuthRouteRouteWithChildren,
   MarketingRouteRoute: MarketingRouteRouteWithChildren,
   DashboardRouteRoute: DashboardRouteRouteWithChildren,
+  SuperAdminRouteRoute: SuperAdminRouteRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
