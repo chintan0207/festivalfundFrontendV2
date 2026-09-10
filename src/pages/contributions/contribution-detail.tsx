@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Pencil, Trash2, FileDown } from "lucide-react";
+import { Pencil, Trash2, FileDown, Mail, MailCheck } from "lucide-react";
 import { useParams, useRouter } from "@tanstack/react-router";
 import {
   useContribution,
@@ -18,6 +18,7 @@ import { ContributionLinkedCards } from "./components/detail/ContributionLinkedC
 import { StatusConfirmDialog } from "./components/StatusConfirmDialog";
 import { ContributionStatusHistory } from "./components/detail/ContributionStatusHistory";
 import { ContributionDialogs } from "./components/dialogs/ContributionDialogs";
+import { SendSlipEmailDialog } from "./components/dialogs/SendSlipEmailDialog";
 import { useContributionDialogs } from "./useContributionDialogs";
 import type { ContributionStatus } from "@/types/Types";
 
@@ -33,6 +34,7 @@ export default function ContributionDetailPage() {
   const downloadSlip = useDownloadContributionSlip();
   const updateStatus = useUpdateContributionStatus();
   const [statusTarget, setStatusTarget] = useState<ContributionStatus | null>(null);
+  const [emailDialogOpen, setEmailDialogOpen] = useState(false);
 
   const dialogs = useContributionDialogs({
     themeGradient: theme.gradient,
@@ -68,16 +70,42 @@ export default function ContributionDetailPage() {
             {isAdmin && (
               <>
                 {isDeposited && (
-                  <AppButton
-                    variant="outline"
-                    leftIcon={<FileDown className="h-3.5 w-3.5" />}
-                    className="h-8 text-xs rounded-full"
-                    onClick={() => downloadSlip.mutate(contribution._id)}
-                    loading={downloadSlip.isPending}
-                  >
-                    <span className="hidden sm:inline">Download Slip</span>
-                    <span className="sm:hidden">Slip</span>
-                  </AppButton>
+                  <>
+                    <AppButton
+                      variant="outline"
+                      leftIcon={<FileDown className="h-3.5 w-3.5" />}
+                      className="h-8 text-xs rounded-full"
+                      onClick={() => downloadSlip.mutate(contribution._id)}
+                      loading={downloadSlip.isPending}
+                    >
+                      <span className="hidden sm:inline">Download Slip</span>
+                      <span className="sm:hidden">Slip</span>
+                    </AppButton>
+
+                    <AppButton
+                      variant="outline"
+                      leftIcon={
+                        contribution.slipEmailSent ? (
+                          <MailCheck className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
+                        ) : (
+                          <Mail className="h-3.5 w-3.5" />
+                        )
+                      }
+                      className={`h-8 text-xs rounded-full ${
+                        contribution.slipEmailSent
+                          ? "border-emerald-500/30 text-emerald-700 bg-emerald-500/5 hover:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/30"
+                          : ""
+                      }`}
+                      onClick={() => setEmailDialogOpen(true)}
+                    >
+                      <span className="hidden sm:inline">
+                        {contribution.slipEmailSent ? "Resend Slip" : "Email Slip"}
+                      </span>
+                      <span className="sm:hidden">
+                        {contribution.slipEmailSent ? "Resend" : "Email"}
+                      </span>
+                    </AppButton>
+                  </>
                 )}
                 {status === "PENDING" && (
                   <AppButton
@@ -142,6 +170,12 @@ export default function ContributionDetailPage() {
       />
 
       <ContributionDialogs {...dialogs.dialogsProps} />
+
+      <SendSlipEmailDialog
+        open={emailDialogOpen}
+        onOpenChange={setEmailDialogOpen}
+        contribution={contribution}
+      />
     </PageContainer>
   );
 }

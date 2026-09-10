@@ -95,4 +95,12 @@ export const ContributionService = {
     });
     return response.data as Blob;
   },
+
+  sendContributionSlipEmail: async (id: string, payload?: { email?: string; force?: boolean }) => {
+    const response = await ApiClient.post<ApiResponse<{ contributionId: string; recipient: string; messageId?: string }>>(
+      `/contributions/${id}/send-slip-email`,
+      payload || { force: true },
+    );
+    return response.data;
+  },
 };

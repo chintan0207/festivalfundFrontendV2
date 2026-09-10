@@ -56,19 +56,33 @@ const methodConfig: {
   ];
 
 function ContributorLookupPage({ initialQuery }: ContributorLookupPageProps) {
-  const initialMethod: LookupMethod = initialQuery?.phone
-    ? "phone"
-    : initialQuery?.key
-      ? "key"
-      : initialQuery?.email
-        ? "email"
-        : "phone";
+  // Extract parameters from initialQuery props with window.location.search fallback
+  const resolvedParams = useMemo(() => {
+    let p = initialQuery?.phone;
+    let e = initialQuery?.email;
+    let k = initialQuery?.key;
 
-  const initialValue =
-    initialQuery?.phone ?? initialQuery?.key ?? initialQuery?.email ?? "";
+    if (typeof window !== "undefined" && window.location?.search) {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (!p && urlParams.get("phone")) p = urlParams.get("phone") || undefined;
+      if (!e && urlParams.get("email")) e = urlParams.get("email") || undefined;
+      if (!k && urlParams.get("key")) k = urlParams.get("key") || undefined;
+    }
 
-  const [method, setMethod] = useState<LookupMethod>(initialMethod);
-  const [query, setQuery] = useState(initialValue);
+    const resolvedMethod: LookupMethod = p ? "phone" : e ? "email" : k ? "key" : "phone";
+    const resolvedValue = p ? sanitizePhone(p) : (e || k || "");
+
+    return {
+      phone: p,
+      email: e,
+      key: k,
+      method: resolvedMethod,
+      value: resolvedValue,
+    };
+  }, [initialQuery?.phone, initialQuery?.email, initialQuery?.key]);
+
+  const [method, setMethod] = useState<LookupMethod>(resolvedParams.method);
+  const [query, setQuery] = useState(resolvedParams.value);
   const [lookupState, setLookupState] = useState<LookupState>({ status: "idle" });
   const [lastPayload, setLastPayload] = useState<PublicLookupPayload | null>(null);
   const [pdfLoading, setPdfLoading] = useState(false);
@@ -80,22 +94,25 @@ function ContributorLookupPage({ initialQuery }: ContributorLookupPageProps) {
   );
 
   useEffect(() => {
-    if (initialValue) {
-      void handleSearch();
+    if (resolvedParams.value) {
+      setMethod(resolvedParams.method);
+      setQuery(resolvedParams.value);
+      void handleSearch(resolvedParams.value, resolvedParams.method);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [resolvedParams.value, resolvedParams.method]);
 
-  async function handleSearch() {
-    const rawValue = query.trim();
+  async function handleSearch(targetValue?: string, targetMethod?: LookupMethod) {
+    const activeMethod = targetMethod ?? method;
+    const rawValue = (targetValue ?? query).trim();
     if (!rawValue) {
       setLookupState({ status: "error", message: "Please enter a value to search." });
       return;
     }
 
-    const value = method === "phone" ? sanitizePhone(rawValue) : rawValue;
+    const value = activeMethod === "phone" ? sanitizePhone(rawValue) : rawValue;
 
-    if (method === "phone" && !isValidPhone(value)) {
+    if (activeMethod === "phone" && !isValidPhone(value)) {
       setLookupState({
         status: "error",
         message: "Please enter a valid 10-digit mobile number.",
@@ -106,9 +123,9 @@ function ContributorLookupPage({ initialQuery }: ContributorLookupPageProps) {
     setLookupState({ status: "loading" });
 
     const payload =
-      method === "phone"
+      activeMethod === "phone"
         ? { phoneNumber: value }
-        : method === "key"
+        : activeMethod === "key"
           ? { globalContributorKey: value }
           : { email: value };
 
@@ -236,7 +253,7 @@ function ContributorLookupPage({ initialQuery }: ContributorLookupPageProps) {
                 />
               </div>
               <AppButton
-                onClick={handleSearch}
+                onClick={() => handleSearch()}
                 loading={lookupState.status === "loading"}
                 leftIcon={<Search className="h-4 w-4" />}
                 className="sm:h-10.5"
