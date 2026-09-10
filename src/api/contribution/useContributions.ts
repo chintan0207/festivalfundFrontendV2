@@ -199,3 +199,19 @@ export const useSendContributionSlipEmail = () => {
     },
   });
 };
+
+export const useSendContributionSlipWhatsApp = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, phone, force = true }: { id: string; phone?: string; force?: boolean }) =>
+      ContributionService.sendContributionSlipWhatsApp(id, { phone, force }),
+    onSuccess: (data, variables) => {
+      toast.success(data?.message || `Receipt slip sent to WhatsApp successfully`);
+      queryClient.invalidateQueries({ queryKey: CONTRIBUTION_QUERY_KEYS.detail(variables.id) });
+      queryClient.invalidateQueries({ queryKey: ["contributions"] });
+    },
+    onError: (error: any) => {
+      toast.error(error?.response?.data?.message || "Failed to send receipt slip via WhatsApp");
+    },
+  });
+};

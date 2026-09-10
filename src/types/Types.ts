@@ -333,6 +333,9 @@ export type Contribution = {
   slipEmailSent?: boolean;
   slipEmailSentAt?: string;
   slipEmailRecipient?: string;
+  slipWhatsAppSent?: boolean;
+  slipWhatsAppSentAt?: string;
+  slipWhatsAppRecipient?: string;
   recordedBy?: User | string;
   contributionCode: string;
   paymentMode: PaymentMode;
@@ -394,6 +397,9 @@ export type ContributionListItem = {
   slipEmailSent?: boolean;
   slipEmailSentAt?: string;
   slipEmailRecipient?: string;
+  slipWhatsAppSent?: boolean;
+  slipWhatsAppSentAt?: string;
+  slipWhatsAppRecipient?: string;
   statusHistory?: ContributionStatusHistoryEntry[];
   createdAt?: string;
   updatedAt?: string;
