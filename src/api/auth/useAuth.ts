@@ -11,6 +11,7 @@ import type {
   ResetPasswordPayload,
   UpdateProfilePayload,
 } from "@/types/Types";
+import { GlobalRoleEnum } from "@/lib/constants";
 
 export const useLogin = () => {
   const setAuth = useAuthStore((s) => s.setAuth);
@@ -27,7 +28,11 @@ export const useLogin = () => {
       const { accessToken, refreshToken, loggedInUser, organization } = data;
       setAuth({ user: loggedInUser, organization, accessToken, refreshToken });
       toast.success(res.message || "Login successful");
-      navigate({ to: "/dashboard", replace: true });
+      if (loggedInUser.role === GlobalRoleEnum.SUPER_ADMIN) {
+        navigate({ to: "/super-admin/dashboard" as any, replace: true });
+      } else {
+        navigate({ to: "/dashboard", replace: true });
+      }
     },
     onError: (error: any) => {
       toast.error(error?.response?.data?.message || "Login failed");
@@ -163,7 +168,11 @@ export const useGoogleAuth = () => {
       const { accessToken, refreshToken, loggedInUser, organization } = data;
       setAuth({ user: loggedInUser, organization, accessToken, refreshToken });
       toast.success(res.message || "Logged in with Google successfully");
-      navigate({ to: "/dashboard", replace: true });
+      if (loggedInUser.role === GlobalRoleEnum.SUPER_ADMIN) {
+        navigate({ to: "/super-admin/dashboard" as any, replace: true });
+      } else {
+        navigate({ to: "/dashboard", replace: true });
+      }
     },
     onError: (error: any) => {
       toast.error(error?.response?.data?.message || "Google login failed");

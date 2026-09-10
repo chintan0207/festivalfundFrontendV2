@@ -1,4 +1,4 @@
-const ENV = import.meta.env.VITE_APP_ENV;
+const ENV = import.meta.env.VITE_APP_ENV || "development";
 
 const API_BASE_URL =
   ENV === "production"

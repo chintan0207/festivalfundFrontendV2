@@ -106,7 +106,8 @@ export const moduleGradientColors: Record<string, string> = {
   integrations: gradientColors[9],
   settings: gradientColors[5],
   help: gradientColors[4],
-  "super-admin": gradientColors[0],
+  organizations: gradientColors[1],
+  "super-admin": gradientColors[1],
   "public-lookup": gradientColors[1],
   default: gradientColors[1],
 };
@@ -126,12 +127,13 @@ export const moduleIconColors: Record<string, string> = {
   reports: "text-red-500 dark:text-red-400",
   analytics: "text-red-500 dark:text-red-400",
   users: "text-sky-500 dark:text-sky-400",
+  organizations: "text-blue-500 dark:text-blue-400",
   documents: "text-amber-500 dark:text-amber-400",
   "audit-logs": "text-slate-500 dark:text-slate-400",
   integrations: "text-fuchsia-500 dark:text-fuchsia-400",
   settings: "text-slate-400 dark:text-slate-400",
   help: "text-purple-500 dark:text-purple-400",
-  "super-admin": "text-pink-500 dark:text-pink-400",
+  "super-admin": "text-sky-500 dark:text-sky-400",
   "public-lookup": "text-sky-500 dark:text-sky-400",
   default: "text-sky-500 dark:text-sky-400",
 };
@@ -166,6 +168,8 @@ export const moduleFillColors: Record<string, string> = {
     "bg-gradient-to-r from-red-500/20 via-rose-500/10 to-transparent border-l-4 border-red-500 text-foreground font-semibold shadow-xs",
   users:
     "bg-gradient-to-r from-blue-500/20 via-indigo-500/10 to-transparent border-l-4 border-blue-500 text-foreground font-semibold shadow-xs",
+  organizations:
+    "bg-gradient-to-r from-blue-500/20 via-indigo-500/10 to-transparent border-l-4 border-blue-500 text-foreground font-semibold shadow-xs",
   documents:
     "bg-gradient-to-r from-yellow-500/20 via-amber-500/10 to-transparent border-l-4 border-yellow-500 text-foreground font-semibold shadow-xs",
   "audit-logs":
@@ -176,7 +180,7 @@ export const moduleFillColors: Record<string, string> = {
     "bg-gradient-to-r from-slate-500/20 via-zinc-500/10 to-transparent border-l-4 border-slate-500 text-foreground font-semibold shadow-xs",
   help: "bg-gradient-to-r from-purple-500/20 via-indigo-500/10 to-transparent border-l-4 border-purple-500 text-foreground font-semibold shadow-xs",
   "super-admin":
-    "bg-gradient-to-r from-pink-500/20 via-rose-500/10 to-transparent border-l-4 border-pink-500 text-foreground font-semibold shadow-xs",
+    "bg-gradient-to-r from-sky-500/20 via-blue-500/10 to-transparent border-l-4 border-sky-500 text-foreground font-semibold shadow-xs",
   "public-lookup":
     "bg-gradient-to-r from-sky-500/20 via-blue-500/10 to-transparent border-l-4 border-sky-500 text-foreground font-semibold shadow-xs",
   default:
@@ -201,6 +205,7 @@ export const moduleBadgeColors: Record<string, string> = {
   reports: "bg-cyan-500/15 text-cyan-600 dark:text-cyan-400 border border-cyan-500/20",
   analytics: "bg-red-500/15 text-red-600 dark:text-red-400 border border-red-500/20",
   users: "bg-blue-500/15 text-blue-600 dark:text-blue-400 border border-blue-500/20",
+  organizations: "bg-blue-500/15 text-blue-600 dark:text-blue-400 border border-blue-500/20",
   documents:
     "bg-yellow-500/15 text-yellow-600 dark:text-yellow-400 border border-yellow-500/20",
   "audit-logs":
@@ -211,7 +216,7 @@ export const moduleBadgeColors: Record<string, string> = {
     "bg-slate-500/15 text-slate-600 dark:text-slate-400 border border-slate-500/20",
   help: "bg-purple-500/15 text-purple-600 dark:text-purple-400 border border-purple-500/20",
   "super-admin":
-    "bg-pink-500/15 text-pink-600 dark:text-pink-400 border border-pink-500/20",
+    "bg-sky-500/15 text-sky-600 dark:text-sky-400 border border-sky-500/20",
   "public-lookup":
     "bg-sky-500/15 text-sky-600 dark:text-sky-400 border border-sky-500/20",
   default: "bg-primary/15 text-primary border border-primary/20",

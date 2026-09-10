@@ -73,8 +73,17 @@ export function formatDate(date: string | Date): string {
   });
 }
 
+export function formatINR(value: number | string | null | undefined): string {
+  const n = Number(value) || 0;
+  return new Intl.NumberFormat("en-IN", {
+    maximumFractionDigits: 2,
+  }).format(n);
+}
+
 export const getDashboardRoute = (user: any) => {
   switch (user?.role) {
+    case GlobalRoleEnum.SUPER_ADMIN:
+      return "/super-admin/dashboard" as const;
     case GlobalRoleEnum.ORG_ADMIN:
       return "/dashboard" as const;
     case GlobalRoleEnum.ORG_VIEWER:
@@ -83,3 +92,4 @@ export const getDashboardRoute = (user: any) => {
       return "/" as const;
   }
 };
+
